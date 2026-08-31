@@ -1,0 +1,112 @@
+@import 'tailwindcss';
+
+@theme {
+	--color-border: hsl(var(--border));
+	--color-input: hsl(var(--input));
+	--color-ring: hsl(var(--ring));
+	--color-background: hsl(var(--background));
+	--color-foreground: hsl(var(--foreground));
+	--color-primary: hsl(var(--primary));
+	--color-primary-foreground: hsl(var(--primary-foreground));
+	--color-secondary: hsl(var(--secondary));
+	--color-secondary-foreground: hsl(var(--secondary-foreground));
+	--color-muted: hsl(var(--muted));
+	--color-muted-foreground: hsl(var(--muted-foreground));
+	--color-accent: hsl(var(--accent));
+	--color-accent-foreground: hsl(var(--accent-foreground));
+	--color-destructive: hsl(var(--destructive));
+	--color-destructive-foreground: hsl(var(--destructive-foreground));
+	--color-card: hsl(var(--card));
+	--color-card-foreground: hsl(var(--card-foreground));
+	--color-popover: hsl(var(--popover));
+	--color-popover-foreground: hsl(var(--popover-foreground));
+}
+
+:root {
+	--background: 0 0% 100%;
+	--foreground: 240 10% 3.9%;
+	--card: 0 0% 100%;
+	--card-foreground: 240 10% 3.9%;
+	--popover: 0 0% 100%;
+	--popover-foreground: 240 10% 3.9%;
+	--primary: 240 5.9% 10%;
+	--primary-foreground: 0 0% 98%;
+	--secondary: 240 4.8% 95.9%;
+	--secondary-foreground: 240 5.9% 10%;
+	--muted: 240 4.8% 95.9%;
+	--muted-foreground: 240 3.8% 46.1%;
+	--accent: 240 4.8% 95.9%;
+	--accent-foreground: 240 5.9% 10%;
+	--destructive: 0 84.2% 60.2%;
+	--destructive-foreground: 0 0% 98%;
+	--border: 240 5.9% 90%;
+	--input: 240 5.9% 90%;
+	--ring: 240 10% 3.9%;
+	--radius: 0.5rem;
+	/* liquid glass tokens */
+	--liquid-radius: 28px;
+	--liquid-radius-card: 24px;
+	--liquid-blur: 20px;
+	--liquid-bg: 0 0% 100% / 0.62;
+	--liquid-border: 0 0% 100% / 0.35;
+	--liquid-shadow: 0 12px 40px 0 hsl(240 10% 3.9% / 0.08), 0 2px 12px 0 hsl(240 10% 3.9% / 0.06);
+	--liquid-shadow-hover: 0 20px 56px 0 hsl(240 10% 3.9% / 0.12), 0 4px 16px 0 hsl(240 10% 3.9% / 0.08);
+}
+
+.dark {
+	--background: 240 10% 3.9%;
+	--foreground: 0 0% 98%;
+	--card: 240 10% 3.9%;
+	--card-foreground: 0 0% 98%;
+	--popover: 240 10% 3.9%;
+	--popover-foreground: 0 0% 98%;
+	--primary: 0 0% 98%;
+	--primary-foreground: 240 5.9% 10%;
+	--secondary: 240 3.7% 15.9%;
+	--secondary-foreground: 0 0% 98%;
+	--muted: 240 3.7% 15.9%;
+	--muted-foreground: 240 5% 64.9%;
+	--accent: 240 3.7% 15.9%;
+	--accent-foreground: 0 0% 98%;
+	--destructive: 0 62.8% 30.6%;
+	--destructive-foreground: 0 0% 98%;
+	--border: 240 3.7% 15.9%;
+	--input: 240 3.7% 15.9%;
+	--ring: 240 4.9% 83.9%;
+}
+
+* {
+	border-color: hsl(var(--border));
+}
+body {
+	background-color: hsl(var(--background));
+	color: hsl(var(--foreground));
+	/* apple liquid canvas - subtle radial gradients */
+	background-image:
+		radial-gradient(ellipse 900px 500px at 15% -10%, hsl(240 100% 97% / 0.9) 0%, transparent 60%),
+		radial-gradient(ellipse 800px 600px at 85% 0%, hsl(220 100% 96% / 0.6) 0%, transparent 55%),
+		radial-gradient(ellipse 600px 400px at 50% 20%, hsl(280 60% 97% / 0.4) 0%, transparent 60%);
+	background-attachment: fixed;
+}
+
+.dark body {
+	background-image:
+		radial-gradient(ellipse 900px 500px at 15% -10%, hsl(240 30% 12% / 0.6) 0%, transparent 60%),
+		radial-gradient(ellipse 800px 600px at 85% 0%, hsl(230 25% 14% / 0.4) 0%, transparent 55%);
+}
+
+/* liquid utilities */
+.liquid-glass {
+	background: hsl(var(--liquid-bg));
+	backdrop-filter: blur(var(--liquid-blur)) saturate(1.2);
+	-webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(1.2);
+	border: 1px solid hsl(var(--liquid-border));
+	box-shadow: var(--liquid-shadow);
+}
+.liquid-glass-strong {
+	background: hsl(0 0% 100% / 0.72);
+	backdrop-filter: blur(24px) saturate(1.25);
+	-webkit-backdrop-filter: blur(24px) saturate(1.25);
+	border: 1px solid hsl(0 0% 100% / 0.4);
+	box-shadow: var(--liquid-shadow);
+}
