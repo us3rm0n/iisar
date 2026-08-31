@@ -3,24 +3,23 @@
 	import { Button } from '$lib/components/ui/button';
 	import { LayoutDashboard, ShieldCheck, LogIn, LogOut, UserPlus } from '@lucide/svelte';
 	import { supabase } from '$lib/supabase';
+	import { getCurrentUser, getProfileRole, onAuthChange } from '$lib/auth';
 
 	let { children } = $props();
-	let user: any = $state(null);
+	let user: { id: string } | null = $state(null);
 	let role: string | null = $state(null);
-	async function fetchRole(uid: string | null) {
-		if (!uid) { role = null; return; }
-		const { data } = await supabase.from('profiles').select('role').eq('id', uid).maybeSingle();
-		role = data?.role ?? null;
+
+	async function syncAuth(nextUser: { id: string } | null) {
+		user = nextUser;
+		role = await getProfileRole(nextUser?.id ?? null);
 	}
-	onMount(async () => {
-		const { data } = await supabase.auth.getSession();
-		user = data.session?.user ?? null;
-		await fetchRole(user?.id ?? null);
-		supabase.auth.onAuthStateChange(async (_e, s) => {
-			user = s?.user ?? null;
-			await fetchRole(user?.id ?? null);
-		});
+
+	onMount(() => {
+		void (async () => await syncAuth((await getCurrentUser()) as unknown as never))();
+		const unsubscribe = onAuthChange((nextUser) => void syncAuth(nextUser as unknown as never));
+		return unsubscribe;
 	});
+
 	async function logout() {
 		await supabase.auth.signOut();
 		location.href = '/';

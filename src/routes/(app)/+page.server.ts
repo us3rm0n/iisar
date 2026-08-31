@@ -1,12 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { getAnonSupabase } from '$lib/supabase/helpers';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const q = url.searchParams.get('q')?.trim() ?? '';
 	const categoria = url.searchParams.get('categoria')?.trim() ?? '';
 
-	const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
+	const supabase = getAnonSupabase();
 
 	const { data: categories } = await supabase
 		.from('categories')
