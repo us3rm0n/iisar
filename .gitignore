@@ -23,6 +23,8 @@ Thumbs.db
 .env.*
 !.env.example
 !.env.test
+# Credenciales locales sensibles (contiene service_role demo)
+CREDENCIALES.md
 
 # Vite
 vite.config.js.timestamp-*
