@@ -39,8 +39,12 @@
 	const categoryName = $derived(
 		(business.categories as any)?.nombre ?? (business.categories as any)?.[0]?.nombre
 	);
-	const provinciaName = $derived(
-		(business.provincias as any)?.nombre ?? (business.provincias as any)?.[0]?.nombre
+	// Supabase may embed the relation as an object or a single-element array.
+	const provincia = $derived(
+		(Array.isArray(business.provincias) ? business.provincias[0] : business.provincias) as
+			| { nombre: string; slug: string }
+			| null
+			| undefined
 	);
 	const isArtista = $derived(business.tipo === 'artista');
 	const isLugar = $derived(business.tipo === 'lugar');
@@ -112,17 +116,17 @@
 				<div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
 					<div>
 						<CardTitle class="text-2xl sm:text-3xl">{business.nombre}</CardTitle>
-						{#if categoryName || business.ciudad}
+						{#if categoryName || business.ciudad || provincia}
 							<CardDescription class="mt-1 flex flex-wrap items-center gap-2">
 								{#if categoryName}<Badge variant="secondary">{categoryName}</Badge>{/if}
 								{#if business.ciudad}<span class="flex items-center gap-1"
 										><MapPin class="h-3 w-3" /> {business.ciudad}</span
 									>{/if}
-								{#if provinciaName}
+								{#if provincia?.slug}
 									<a
-										href="/ecuador/{(business.provincias as any)?.slug}"
+										href="/ecuador/{provincia.slug}"
 										class="flex items-center gap-1 underline-offset-2 hover:underline"
-										><MapPin class="h-3 w-3" /> {provinciaName}</a
+										><MapPin class="h-3 w-3" /> {provincia.nombre}</a
 									>
 								{/if}
 							</CardDescription>
