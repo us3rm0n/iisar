@@ -21,12 +21,14 @@ export const load: PageServerLoad = async ({ url }) => {
 		.select('id,slug,nombre,region,orden')
 		.order('orden');
 
-	if (provinciasError) throw error(500, 'No se pudieron cargar las provincias');
+	// Provinces are auxiliary: without a filter the home still lists businesses.
+	// With a filter we cannot resolve it, so list nothing and flag it instead of failing the page.
+	if (provinciasError) console.error('home: provincias lookup failed', provinciasError);
+	const provinciaFilterFailed = Boolean(provinciasError) && Boolean(provincia);
 
-	const { provinciaId, notFound: provinciaNotFound } = resolveProvinciaFilter(
-		provincias ?? [],
-		provincia
-	);
+	const { provinciaId, notFound: provinciaNotFound } = provinciasError
+		? { provinciaId: null, notFound: false }
+		: resolveProvinciaFilter(provincias ?? [], provincia);
 
 	let query = supabase
 		.from('businesses')
@@ -48,9 +50,8 @@ export const load: PageServerLoad = async ({ url }) => {
 	}
 
 	// Slug desconocido: no ejecutar la query como si no hubiera filtro, no hay nada que listar.
-	const { data: businesses, error: businessesError } = provinciaNotFound
-		? { data: [], error: null }
-		: await query;
+	const { data: businesses, error: businessesError } =
+		provinciaNotFound || provinciaFilterFailed ? { data: [], error: null } : await query;
 
 	if (businessesError) throw error(500, 'No se pudieron cargar los negocios');
 
@@ -67,6 +68,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		categoria,
 		provincia,
 		provinciaNotFound,
+		provinciaFilterFailed,
 		categories: categories ?? [],
 		provincias: provincias ?? [],
 		businesses: businesses ?? [],

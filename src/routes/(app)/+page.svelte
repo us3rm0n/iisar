@@ -93,13 +93,17 @@
 		</form>
 	</div>
 
-	{#if data.provinciaNotFound}
+	{#if data.provinciaNotFound || data.provinciaFilterFailed}
 		<div
 			class="mx-auto mb-8 flex max-w-3xl items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-100"
 			role="alert"
 		>
 			<AlertTriangle class="h-4 w-4 shrink-0" aria-hidden="true" />
-			<span>La provincia «{data.provincia}» no existe. Mostrando ningún resultado para ese filtro.</span>
+			{#if data.provinciaFilterFailed}
+				<span>No se pudo aplicar el filtro de provincia. Inténtalo de nuevo más tarde.</span>
+			{:else}
+				<span>La provincia «{data.provincia}» no existe. No hay resultados para ese filtro.</span>
+			{/if}
 		</div>
 	{/if}
 

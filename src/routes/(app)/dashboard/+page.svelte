@@ -63,7 +63,8 @@
 	}
 
 	async function loadProvincias() {
-		const { data } = await supabase.from('provincias').select('id,slug,nombre,region,orden').order('orden');
+		const { data, error } = await supabase.from('provincias').select('id,slug,nombre,region,orden').order('orden');
+		if (error) provinciaUpdateError = `No se pudieron cargar las provincias: ${error.message}`;
 		provincias = (data as Provincia[]) ?? [];
 	}
 
@@ -121,17 +122,22 @@
 		};
 	}
 
-	async function updateBusinessProvincia(business: Business, newProvinciaId: string) {
+	async function updateBusinessProvincia(business: Business, select: HTMLSelectElement) {
 		provinciaUpdateError = '';
+		const newProvinciaId = select.value || null;
 		const { error } = await supabase
 			.from('businesses')
-			.update({ provincia_id: newProvinciaId || null })
+			.update({ provincia_id: newProvinciaId })
 			.eq('id', business.id);
 		if (error) {
 			provinciaUpdateError = `No se pudo actualizar la provincia: ${error.message}`;
+			// The one-way value binding does not reset the DOM on its own.
+			select.value = business.provincia_id ?? '';
 			return;
 		}
-		business.provincia_id = newProvinciaId || null;
+		const saved = provincias.find((p) => p.id === newProvinciaId);
+		business.provincia_id = newProvinciaId;
+		business.provincias = saved ? { nombre: saved.nombre, slug: saved.slug } : null;
 	}
 
 	async function createBusinessRecord(payload: ReturnType<typeof buildBusinessPayload>) {
@@ -360,7 +366,7 @@
 											id="provincia-{business.id}"
 											value={business.provincia_id ?? ''}
 											onchange={(e) =>
-												updateBusinessProvincia(business, (e.currentTarget as HTMLSelectElement).value)}
+												updateBusinessProvincia(business, e.currentTarget as HTMLSelectElement)}
 											class="h-11 min-w-[10rem] rounded-md border border-input bg-background px-2 text-xs"
 										>
 											<option value="">Sin provincia</option>
