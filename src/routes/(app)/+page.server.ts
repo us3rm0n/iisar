@@ -1,4 +1,6 @@
+import { error } from '@sveltejs/kit';
 import { getAnonSupabase } from '$lib/supabase/helpers';
+import { resolveProvinciaFilter } from '$lib/utils/provincia-filter';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -14,10 +16,17 @@ export const load: PageServerLoad = async ({ url }) => {
 		.eq('activo', true)
 		.order('nombre');
 
-	const { data: provincias } = await supabase
+	const { data: provincias, error: provinciasError } = await supabase
 		.from('provincias')
 		.select('id,slug,nombre,region,orden')
 		.order('orden');
+
+	if (provinciasError) throw error(500, 'No se pudieron cargar las provincias');
+
+	const { provinciaId, notFound: provinciaNotFound } = resolveProvinciaFilter(
+		provincias ?? [],
+		provincia
+	);
 
 	let query = supabase
 		.from('businesses')
@@ -31,17 +40,19 @@ export const load: PageServerLoad = async ({ url }) => {
 		if (cat) query = query.eq('category_id', cat.id);
 	}
 
-	if (provincia) {
-		const prov = provincias?.find((p) => p.slug === provincia);
-		if (prov) query = query.eq('provincia_id', prov.id);
-	}
+	if (provinciaId) query = query.eq('provincia_id', provinciaId);
 
 	if (q) {
 		// pg_trgm ilike simple para MVP; luego migrar a tsvector
 		query = query.or(`nombre.ilike.%${q}%,descripcion.ilike.%${q}%`);
 	}
 
-	const { data: businesses } = await query;
+	// Slug desconocido: no ejecutar la query como si no hubiera filtro, no hay nada que listar.
+	const { data: businesses, error: businessesError } = provinciaNotFound
+		? { data: [], error: null }
+		: await query;
+
+	if (businessesError) throw error(500, 'No se pudieron cargar los negocios');
 
 	// ad slots home (max 2 no intrusivo)
 	const { data: ads } = await supabase
@@ -55,6 +66,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		q,
 		categoria,
 		provincia,
+		provinciaNotFound,
 		categories: categories ?? [],
 		provincias: provincias ?? [],
 		businesses: businesses ?? [],

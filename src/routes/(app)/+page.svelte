@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Separator } from '$lib/components/ui/separator';
-	import { Search, Store, MapPin, Megaphone, Plus, SearchX } from '@lucide/svelte';
+	import { Search, Store, MapPin, Megaphone, Plus, SearchX, AlertTriangle } from '@lucide/svelte';
 
 	let { data } = $props();
 </script>
@@ -92,6 +92,16 @@
 			</div>
 		</form>
 	</div>
+
+	{#if data.provinciaNotFound}
+		<div
+			class="mx-auto mb-8 flex max-w-3xl items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-100"
+			role="alert"
+		>
+			<AlertTriangle class="h-4 w-4 shrink-0" aria-hidden="true" />
+			<span>La provincia «{data.provincia}» no existe. Mostrando ningún resultado para ese filtro.</span>
+		</div>
+	{/if}
 
 	{#if data.ads.length}
 		<div class="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2">

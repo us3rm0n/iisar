@@ -12,20 +12,23 @@ export type BusinessCard = Pick<
 export const load: PageServerLoad = async ({ params }) => {
 	const supabase = getAnonSupabase();
 
-	const { data: provincia } = await supabase
+	const { data: provincia, error: provinciaError } = await supabase
 		.from('provincias')
 		.select('id,slug,nombre,region,orden')
 		.eq('slug', params.provincia)
-		.single();
+		.maybeSingle();
 
+	if (provinciaError) throw error(500, 'No se pudo cargar la provincia');
 	if (!provincia) throw error(404, 'Provincia no encontrada');
 
-	const { data: businesses } = await supabase
+	const { data: businesses, error: businessesError } = await supabase
 		.from('businesses')
 		.select('id,nombre,slug,tipo,descripcion,ciudad,category_id, categories(nombre,slug)')
 		.eq('provincia_id', provincia.id)
 		.eq('estado', 'activo')
 		.order('nombre');
+
+	if (businessesError) throw error(500, 'No se pudieron cargar los negocios de esta provincia');
 
 	const lesson = getProvinceContent(provincia.slug);
 
