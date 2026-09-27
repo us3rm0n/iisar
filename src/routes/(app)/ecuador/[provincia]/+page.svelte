@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
-	import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '$lib/components/ui/card';
+	import {
+		Card,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent
+	} from '$lib/components/ui/card';
 	import { ArrowLeft, MapPin, Store, Palette, Landmark, PackageOpen } from '@lucide/svelte';
 	import type { Provincia } from '$lib/types';
 	import type { BusinessCard } from './+page.server';
@@ -27,17 +33,29 @@
 
 <svelte:head>
 	<title>{provincia.nombre} — Geografía de Ecuador | IISAR</title>
-	<meta name="description" content="Conoce {provincia.nombre} ({REGION_LABELS[provincia.region]}) y los negocios, artistas y lugares registrados ahí." />
+	<meta
+		name="description"
+		content="Conoce {provincia.nombre} ({REGION_LABELS[
+			provincia.region
+		]}) y los negocios, artistas y lugares registrados ahí."
+	/>
 </svelte:head>
 
 <div class="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-	<a href="/ecuador" class="mb-4 inline-flex min-h-11 items-center gap-1 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+	<a
+		href="/ecuador"
+		class="mb-4 inline-flex min-h-11 items-center gap-1 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+	>
 		<ArrowLeft class="h-4 w-4" /> Todas las provincias
 	</a>
 
 	<div class="mb-6 flex flex-wrap items-center gap-2">
-		<h1 class="text-2xl font-semibold tracking-[-0.01em] text-zinc-900 sm:text-3xl dark:text-white">{provincia.nombre}</h1>
-		<Badge variant="secondary" class="rounded-full"><MapPin class="mr-1 h-3 w-3" /> {REGION_LABELS[provincia.region] ?? provincia.region}</Badge>
+		<h1 class="text-2xl font-semibold tracking-[-0.01em] text-zinc-900 sm:text-3xl dark:text-white">
+			{provincia.nombre}
+		</h1>
+		<Badge variant="secondary" class="rounded-full"
+			><MapPin class="mr-1 h-3 w-3" /> {REGION_LABELS[provincia.region] ?? provincia.region}</Badge
+		>
 	</div>
 
 	{#if data.lessonHtml}
@@ -46,7 +64,9 @@
 			{@html data.lessonHtml}
 		</article>
 	{:else}
-		<p class="mb-10 text-sm text-muted-foreground">Aún no hay contenido editorial para esta provincia.</p>
+		<p class="mb-10 text-sm text-muted-foreground">
+			Aún no hay contenido editorial para esta provincia.
+		</p>
 	{/if}
 
 	<section aria-labelledby="negocios-heading">
@@ -60,7 +80,9 @@
 				<CardContent class="flex flex-col items-center gap-3">
 					<PackageOpen class="h-10 w-10 text-muted-foreground" />
 					<CardTitle class="text-base">Sin registros aún</CardTitle>
-					<CardDescription>Nadie ha registrado un negocio, artista o lugar en {provincia.nombre} todavía.</CardDescription>
+					<CardDescription
+						>Nadie ha registrado un negocio, artista o lugar en {provincia.nombre} todavía.</CardDescription
+					>
 					<Button href="/dashboard" size="sm" class="mt-1">Registrar el mío</Button>
 				</CardContent>
 			</Card>
@@ -69,15 +91,22 @@
 				{#each businesses as business (business.id)}
 					{@const meta = TIPO_META[business.tipo] ?? TIPO_META.negocio}
 					<li>
-						<a href="/negocio/{business.slug}" class="block h-full min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/20 rounded-xl">
+						<a
+							href="/negocio/{business.slug}"
+							class="block h-full min-h-11 rounded-xl focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:outline-none"
+						>
 							<Card class="h-full transition-shadow hover:shadow-md">
 								<CardHeader class="pb-2">
 									<div class="flex items-center justify-between gap-2">
 										<CardTitle class="line-clamp-1 text-base">{business.nombre}</CardTitle>
-										<Badge variant="outline" class="shrink-0 gap-1 rounded-full"><meta.icon class="h-3 w-3" /> {meta.label}</Badge>
+										<Badge variant="outline" class="shrink-0 gap-1 rounded-full"
+											><meta.icon class="h-3 w-3" /> {meta.label}</Badge
+										>
 									</div>
 									{#if business.ciudad}
-										<CardDescription class="flex items-center gap-1"><MapPin class="h-3 w-3" /> {business.ciudad}</CardDescription>
+										<CardDescription class="flex items-center gap-1"
+											><MapPin class="h-3 w-3" /> {business.ciudad}</CardDescription
+										>
 									{/if}
 								</CardHeader>
 								{#if business.descripcion}

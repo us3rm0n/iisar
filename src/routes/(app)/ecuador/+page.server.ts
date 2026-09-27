@@ -14,7 +14,10 @@ export const load: PageServerLoad = async () => {
 
 	if (dbError) throw error(500, 'No se pudo cargar la geografía de Ecuador');
 
-	const general = getGeneralLessons().map((lesson) => ({ order: lesson.order, title: lesson.title }));
+	const general = getGeneralLessons().map((lesson) => ({
+		order: lesson.order,
+		title: lesson.title
+	}));
 
 	return {
 		provincias: (provincias ?? []) as Provincia[],

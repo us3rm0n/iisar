@@ -7,7 +7,9 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const { data: business } = await supabase
 		.from('businesses')
-		.select('id,nombre,slug,tipo,descripcion,bio,vision,mision,historia,valores,redes,ciudad,contacto,category_id,logo_url,cover_url,primary_color,accent_color, categories(nombre,slug)')
+		.select(
+			'id,nombre,slug,tipo,descripcion,bio,vision,mision,historia,valores,redes,ciudad,contacto,category_id,provincia_id,logo_url,cover_url,primary_color,accent_color, categories(nombre,slug), provincias(nombre,slug)'
+		)
 		.eq('slug', params.slug)
 		.single();
 

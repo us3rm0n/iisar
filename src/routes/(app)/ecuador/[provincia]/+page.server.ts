@@ -4,7 +4,10 @@ import { getProvinceContent, renderLessonHtml } from '$lib/content/ecuador.serve
 import type { Business, Provincia } from '$lib/types';
 import type { PageServerLoad } from './$types';
 
-export type BusinessCard = Pick<Business, 'id' | 'nombre' | 'slug' | 'tipo' | 'descripcion' | 'ciudad' | 'category_id' | 'categories'>;
+export type BusinessCard = Pick<
+	Business,
+	'id' | 'nombre' | 'slug' | 'tipo' | 'descripcion' | 'ciudad' | 'category_id' | 'categories'
+>;
 
 export const load: PageServerLoad = async ({ params }) => {
 	const supabase = getAnonSupabase();

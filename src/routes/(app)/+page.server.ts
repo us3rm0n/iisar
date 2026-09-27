@@ -14,7 +14,10 @@ export const load: PageServerLoad = async ({ url }) => {
 		.eq('activo', true)
 		.order('nombre');
 
-	const { data: provincias } = await supabase.from('provincias').select('id,slug,nombre,region,orden').order('orden');
+	const { data: provincias } = await supabase
+		.from('provincias')
+		.select('id,slug,nombre,region,orden')
+		.order('orden');
 
 	let query = supabase
 		.from('businesses')

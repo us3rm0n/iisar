@@ -76,7 +76,12 @@ export function parseEcuadorLessons(markdown: string): ParsedEcuadorContent {
 
 		const regionKey = classifyRegion(displayTitle);
 		if (regionKey) {
-			const lesson: ParsedLesson = { order, title: displayTitle, slug: slugify(displayTitle), body };
+			const lesson: ParsedLesson = {
+				order,
+				title: displayTitle,
+				slug: slugify(displayTitle),
+				body
+			};
 			regions[regionKey] = lesson;
 			return;
 		}

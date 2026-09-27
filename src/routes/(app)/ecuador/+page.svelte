@@ -20,22 +20,31 @@
 		}))
 	);
 
-	const generalTitles = $derived((data.general as { order: number; title: string }[]).map((l) => l.title));
+	const generalTitles = $derived(
+		(data.general as { order: number; title: string }[]).map((l) => l.title)
+	);
 </script>
 
 <svelte:head>
 	<title>Geografía de Ecuador | IISAR</title>
-	<meta name="description" content="Recorre las 24 provincias del Ecuador por región y descubre negocios, artistas y lugares en cada una." />
+	<meta
+		name="description"
+		content="Recorre las 24 provincias del Ecuador por región y descubre negocios, artistas y lugares en cada una."
+	/>
 </svelte:head>
 
 <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
 	<div class="mb-8 text-center sm:mb-10">
-		<h1 class="mx-auto max-w-2xl text-[28px] font-semibold tracking-[-0.02em] text-zinc-900 sm:text-[38px] dark:text-white">
+		<h1
+			class="mx-auto max-w-2xl text-[28px] font-semibold tracking-[-0.02em] text-zinc-900 sm:text-[38px] dark:text-white"
+		>
 			Geografía de Ecuador
 		</h1>
-		<p class="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-zinc-500 sm:text-[17px] dark:text-zinc-400">
-			24 provincias en cuatro regiones — relieve, clima y cultura de cada una, con los negocios, artistas y lugares
-			que puedes visitar.
+		<p
+			class="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-zinc-500 sm:text-[17px] dark:text-zinc-400"
+		>
+			24 provincias en cuatro regiones — relieve, clima y cultura de cada una, con los negocios,
+			artistas y lugares que puedes visitar.
 		</p>
 		{#if generalTitles.length}
 			<div class="mt-4 flex flex-wrap items-center justify-center gap-2">
@@ -48,15 +57,24 @@
 
 	{#each provinciasByRegion as region (region.key)}
 		<section class="mb-10" aria-labelledby="region-{region.key}-heading">
-			<h2 id="region-{region.key}-heading" class="mb-4 flex items-center gap-2 text-lg font-semibold text-zinc-900 dark:text-white">
+			<h2
+				id="region-{region.key}-heading"
+				class="mb-4 flex items-center gap-2 text-lg font-semibold text-zinc-900 dark:text-white"
+			>
 				<region.icon class="h-5 w-5" aria-hidden="true" />
 				{region.label}
-				<span class="text-sm font-normal text-zinc-500">· {region.provincias.length} {region.provincias.length === 1 ? 'provincia' : 'provincias'}</span>
+				<span class="text-sm font-normal text-zinc-500"
+					>· {region.provincias.length}
+					{region.provincias.length === 1 ? 'provincia' : 'provincias'}</span
+				>
 			</h2>
 			<ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" role="list">
 				{#each region.provincias as provincia (provincia.id)}
 					<li>
-						<a href="/ecuador/{provincia.slug}" class="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/20 rounded-xl">
+						<a
+							href="/ecuador/{provincia.slug}"
+							class="block h-full rounded-xl focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:outline-none"
+						>
 							<Card class="h-full min-h-[44px] transition-shadow hover:shadow-md">
 								<CardHeader>
 									<CardTitle class="text-base">{provincia.nombre}</CardTitle>
