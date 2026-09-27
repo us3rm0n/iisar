@@ -5,20 +5,35 @@
 	import { slugify } from '$lib/utils/slug';
 	import { daysLeft } from '$lib/utils/date';
 	import { getCurrentUser } from '$lib/auth';
-	import type { Business, Subscription } from '$lib/types';
+	import type { Business, Subscription, Provincia, ProvinciaRegion } from '$lib/types';
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Separator } from '$lib/components/ui/separator';
-	import { Store, CreditCard, ShieldCheck, UploadCloud, Plus, LogOut, MapPin } from '@lucide/svelte';
+	import { Store, CreditCard, ShieldCheck, UploadCloud, Plus, LogOut, MapPin, Landmark } from '@lucide/svelte';
+
+	const REGION_LABELS: Record<ProvinciaRegion, string> = {
+		costa: 'Costa',
+		sierra: 'Sierra',
+		amazonia: 'Amazonía',
+		insular: 'Insular'
+	};
 
 	// --- state ---
 	let user: { id: string; email?: string } | null = $state(null);
 	let loading = $state(true);
 	let categories: { id: string; nombre: string; slug: string }[] = $state([]);
+	let provincias: Provincia[] = $state([]);
 	let businesses: Business[] = $state([]);
 	let subscriptions: Record<string, Subscription> = $state({});
+	let provinciaUpdateError = $state('');
+
+	const provinciasByRegion = $derived(
+		(Object.keys(REGION_LABELS) as ProvinciaRegion[])
+			.map((region) => ({ region, label: REGION_LABELS[region], items: provincias.filter((p) => p.region === region) }))
+			.filter((group) => group.items.length > 0)
+	);
 
 	// form
 	let tipo = $state<Business['tipo']>('negocio');
@@ -30,6 +45,7 @@
 	let ciudad = $state('Macas');
 	let contacto = $state('');
 	let categoryId = $state('');
+	let provinciaId = $state('');
 	let primaryColor = $state('#ea580c');
 	let creating = $state(false);
 	let formError = $state('');
@@ -46,10 +62,17 @@
 		categories = data ?? [];
 	}
 
+	async function loadProvincias() {
+		const { data } = await supabase.from('provincias').select('id,slug,nombre,region,orden').order('orden');
+		provincias = (data as Provincia[]) ?? [];
+	}
+
 	async function loadBusinesses(ownerId: string) {
 		const { data } = await supabase
 			.from('businesses')
-			.select('id,nombre,slug,tipo,ciudad,estado,primary_color,vision,mision,category_id,categories(nombre)')
+			.select(
+				'id,nombre,slug,tipo,ciudad,estado,primary_color,vision,mision,category_id,categories(nombre),provincia_id,provincias(nombre,slug)'
+			)
 			.eq('owner_id', ownerId)
 			.order('created_at');
 		businesses = (data as unknown as Business[]) ?? [];
@@ -74,7 +97,7 @@
 			loading = false;
 			return;
 		}
-		await Promise.all([loadCategories(), loadBusinesses(user.id)]);
+		await Promise.all([loadCategories(), loadProvincias(), loadBusinesses(user.id)]);
 		await loadSubscriptions();
 		loading = false;
 	}
@@ -84,6 +107,7 @@
 		return {
 			owner_id: ownerId,
 			category_id: categoryId || null,
+			provincia_id: provinciaId || null,
 			slug: finalSlug,
 			tipo,
 			nombre: nombre.trim(),
@@ -95,6 +119,19 @@
 			estado: 'activo' as const,
 			primary_color: primaryColor
 		};
+	}
+
+	async function updateBusinessProvincia(business: Business, newProvinciaId: string) {
+		provinciaUpdateError = '';
+		const { error } = await supabase
+			.from('businesses')
+			.update({ provincia_id: newProvinciaId || null })
+			.eq('id', business.id);
+		if (error) {
+			provinciaUpdateError = `No se pudo actualizar la provincia: ${error.message}`;
+			return;
+		}
+		business.provincia_id = newProvinciaId || null;
 	}
 
 	async function createBusinessRecord(payload: ReturnType<typeof buildBusinessPayload>) {
@@ -121,6 +158,7 @@
 		vision = '';
 		mision = '';
 		contacto = '';
+		provinciaId = '';
 	}
 
 	async function handleCreate(event: SubmitEvent) {
@@ -180,17 +218,24 @@
 	{:else}
 		<Card class="mb-6">
 			<CardHeader>
-				<CardTitle class="flex items-center gap-2"><Store class="h-5 w-5" /> Crear {tipo === 'artista' ? 'artista' : 'negocio'}</CardTitle>
-				<CardDescription>Al crearlo se activa prueba <Badge>7 días</Badge> con <code>has_active_subscription</code>. Artista solo servicios, negocio productos+servicios.</CardDescription>
+				<CardTitle class="flex items-center gap-2"><Store class="h-5 w-5" /> Crear {tipo === 'artista' ? 'artista' : tipo === 'lugar' ? 'lugar' : 'negocio'}</CardTitle>
+				<CardDescription>Al crearlo se activa prueba <Badge>7 días</Badge> con <code>has_active_subscription</code>. Artista solo servicios, negocio productos+servicios, lugar es un sitio (hotel, mirador, atractivo) con dueño o gestor.</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<form onsubmit={handleCreate} class="grid gap-3">
 					<div class="grid gap-1.5">
 						<p class="text-sm font-medium">Tipo</p>
-						<div class="flex gap-2">
+						<div class="flex flex-wrap gap-2">
 							<Button type="button" variant={tipo === 'negocio' ? 'default' : 'outline'} size="sm" onclick={() => (tipo = 'negocio')}>Negocio</Button>
 							<Button type="button" variant={tipo === 'artista' ? 'default' : 'outline'} size="sm" onclick={() => (tipo = 'artista')}>Artista</Button>
-							<span class="self-center text-xs text-muted-foreground">{tipo === 'artista' ? 'solo servicios' : 'productos y servicios + visión/misión'}</span>
+							<Button type="button" variant={tipo === 'lugar' ? 'default' : 'outline'} size="sm" onclick={() => (tipo = 'lugar')}>Lugar</Button>
+							<span class="self-center text-xs text-muted-foreground"
+								>{tipo === 'artista'
+									? 'solo servicios'
+									: tipo === 'lugar'
+										? 'hotel, mirador, atractivo...'
+										: 'productos y servicios + visión/misión'}</span
+							>
 						</div>
 					</div>
 
@@ -243,6 +288,25 @@
 					</div>
 
 					<div class="grid gap-1.5">
+						<label for="provinciaId" class="text-sm font-medium">Provincia</label>
+						<select
+							id="provinciaId"
+							bind:value={provinciaId}
+							class="flex h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
+						>
+							<option value="">Sin provincia</option>
+							{#each provinciasByRegion as group (group.region)}
+								<optgroup label={group.label}>
+									{#each group.items as p (p.id)}<option value={p.id}>{p.nombre}</option>{/each}
+								</optgroup>
+							{/each}
+						</select>
+						<p class="text-xs text-muted-foreground">
+							Opcional · se muestra en la landing y en <code>/ecuador/[provincia]</code>.
+						</p>
+					</div>
+
+					<div class="grid gap-1.5">
 						<label for="primaryColor" class="text-sm font-medium">Color marca</label>
 						<div class="flex gap-2">
 							<Input id="primaryColorPicker" type="color" bind:value={primaryColor} class="h-10 w-20 p-1" aria-label="Selector color marca" />
@@ -262,15 +326,18 @@
 				<h2 class="font-semibold">Tus negocios ({businesses.length})</h2>
 				<Badge variant="outline">{user.email}</Badge>
 			</div>
+			{#if provinciaUpdateError}
+				<p class="mb-3 rounded bg-destructive/10 px-3 py-2 text-sm text-destructive">{provinciaUpdateError}</p>
+			{/if}
 			<ul class="grid gap-3">
 				{#each businesses as business (business.id)}
 					<li>
 						<Card>
-							<CardContent class="flex items-center justify-between gap-3 p-4">
+							<CardContent class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
 								<div>
 									<p class="flex items-center gap-2 font-medium">
 										<a href="/negocio/{business.slug}" class="hover:underline">{business.nombre}</a>
-										<Badge variant={business.tipo === 'artista' ? 'default' : 'secondary'}>{business.tipo}</Badge>
+										<Badge variant={business.tipo === 'artista' ? 'default' : business.tipo === 'lugar' ? 'outline' : 'secondary'}>{business.tipo}</Badge>
 										<Badge variant="secondary">{business.estado}</Badge>
 										{#if business.primary_color}<span class="h-3 w-3 rounded-full border" style="background:{business.primary_color}"></span>{/if}
 									</p>
@@ -284,6 +351,26 @@
 											{#if remaining <= 0}<span class="text-destructive"> — renovar con comprobante</span>{/if}
 										</p>
 									{/if}
+									<div class="mt-2 flex items-center gap-2">
+										<Landmark class="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+										<label for="provincia-{business.id}" class="sr-only"
+											>Provincia de {business.nombre}</label
+										>
+										<select
+											id="provincia-{business.id}"
+											value={business.provincia_id ?? ''}
+											onchange={(e) =>
+												updateBusinessProvincia(business, (e.currentTarget as HTMLSelectElement).value)}
+											class="h-11 min-w-[10rem] rounded-md border border-input bg-background px-2 text-xs"
+										>
+											<option value="">Sin provincia</option>
+											{#each provinciasByRegion as group (group.region)}
+												<optgroup label={group.label}>
+													{#each group.items as p (p.id)}<option value={p.id}>{p.nombre}</option>{/each}
+												</optgroup>
+											{/each}
+										</select>
+									</div>
 								</div>
 								<Button href="/negocio/{business.slug}" variant="outline" size="sm">Ver</Button>
 							</CardContent>
