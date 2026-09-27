@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { LayoutDashboard, ShieldCheck, LogIn, LogOut, UserPlus } from '@lucide/svelte';
+	import { LayoutDashboard, ShieldCheck, LogIn, LogOut, UserPlus, MapPin } from '@lucide/svelte';
 	import { supabase } from '$lib/supabase';
 	import { getCurrentUser, getProfileRole, onAuthChange } from '$lib/auth';
 
@@ -38,6 +38,9 @@
 	>
 		<a href="/" class="text-lg font-semibold tracking-[-0.02em]">IISAR</a>
 		<nav class="flex items-center gap-1.5 sm:gap-2" aria-label="Principal">
+			<Button href="/ecuador" variant="ghost" size="sm" class="h-9 rounded-full px-4 hover:bg-white/60 dark:hover:bg-white/10">
+				<MapPin class="h-4 w-4" /> <span class="ml-1 hidden sm:inline">Ecuador</span>
+			</Button>
 			{#if user}
 				<Button href="/dashboard" variant="outline" size="sm" class="h-9 rounded-full border-zinc-200/60 bg-white/60 backdrop-blur hover:bg-white/80 dark:border-white/10 dark:bg-white/10">
 					<LayoutDashboard class="h-4 w-4" />

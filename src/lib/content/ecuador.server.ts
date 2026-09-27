@@ -27,5 +27,8 @@ export function getProvinceContent(slug: string): ParsedLesson | undefined {
 
 /** Renderiza el cuerpo (markdown de confianza, del repo) de una lección a HTML. */
 export function renderLessonHtml(lesson: ParsedLesson): string {
-	return marked.parse(lesson.body, { async: false }) as string;
+	const html = marked.parse(lesson.body, { async: false }) as string;
+	// El contenido tiene muchas tablas (comparaciones, actividades); envolverlas en un
+	// contenedor con scroll horizontal para que no rompan el layout mobile-first.
+	return html.replace(/<table>/g, '<div class="table-scroll"><table>').replace(/<\/table>/g, '</table></div>');
 }

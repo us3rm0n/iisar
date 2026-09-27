@@ -58,6 +58,19 @@
 						<option value={c.slug}>{c.nombre}</option>
 					{/each}
 				</select>
+				<label for="provincia" class="sr-only">Provincia</label>
+				<select
+					id="provincia"
+					name="provincia"
+					value={data.provincia}
+					aria-label="Filtrar por provincia"
+					class="h-11 w-full flex-1 rounded-full bg-transparent px-3 py-2 text-sm text-zinc-600 focus:outline-none sm:w-[180px] dark:text-zinc-300"
+				>
+					<option value="">Todas las provincias</option>
+					{#each data.provincias as p (p.slug)}
+						<option value={p.slug}>{p.nombre}</option>
+					{/each}
+				</select>
 				<Button type="submit" size="lg" class="h-11 shrink-0 rounded-full bg-zinc-900 px-6 text-white shadow-[0_4px_16px_rgba(0,0,0,0.12)] hover:bg-zinc-800 dark:bg-white dark:text-zinc-900">
 					<Search class="h-4 w-4" /> Buscar
 				</Button>

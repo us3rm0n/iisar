@@ -4,6 +4,7 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ url }) => {
 	const q = url.searchParams.get('q')?.trim() ?? '';
 	const categoria = url.searchParams.get('categoria')?.trim() ?? '';
+	const provincia = url.searchParams.get('provincia')?.trim() ?? '';
 
 	const supabase = getAnonSupabase();
 
@@ -12,6 +13,8 @@ export const load: PageServerLoad = async ({ url }) => {
 		.select('id,nombre,slug')
 		.eq('activo', true)
 		.order('nombre');
+
+	const { data: provincias } = await supabase.from('provincias').select('id,slug,nombre,region,orden').order('orden');
 
 	let query = supabase
 		.from('businesses')
@@ -23,6 +26,11 @@ export const load: PageServerLoad = async ({ url }) => {
 	if (categoria) {
 		const cat = categories?.find((c) => c.slug === categoria);
 		if (cat) query = query.eq('category_id', cat.id);
+	}
+
+	if (provincia) {
+		const prov = provincias?.find((p) => p.slug === provincia);
+		if (prov) query = query.eq('provincia_id', prov.id);
 	}
 
 	if (q) {
@@ -43,7 +51,9 @@ export const load: PageServerLoad = async ({ url }) => {
 	return {
 		q,
 		categoria,
+		provincia,
 		categories: categories ?? [],
+		provincias: provincias ?? [],
 		businesses: businesses ?? [],
 		ads: ads ?? []
 	};
