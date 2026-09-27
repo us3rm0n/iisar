@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseEcuadorLessons } from './ecuador';
+import { parseEcuadorLessons, wrapTables } from './ecuador';
 
 const FIXTURE = `# Geografía de Ecuador
 
@@ -79,5 +79,20 @@ describe('parseEcuadorLessons', () => {
 	it('preserves appearance order', () => {
 		expect(parsed.general.find((l) => l.title === 'Índice')?.order).toBe(1);
 		expect(parsed.general.find((l) => l.title === 'El relieve')?.order).toBe(2);
+	});
+});
+
+describe('wrapTables', () => {
+	it('wraps every table, with or without attributes, in a horizontal scroll container', () => {
+		const html =
+			'<p>a</p><table><tr><td>1</td></tr></table><table class="x"><tr><td>2</td></tr></table>';
+		expect(wrapTables(html)).toBe(
+			'<p>a</p><div class="table-scroll"><table><tr><td>1</td></tr></table></div>' +
+				'<div class="table-scroll"><table class="x"><tr><td>2</td></tr></table></div>'
+		);
+	});
+
+	it('leaves html without tables untouched', () => {
+		expect(wrapTables('<p>sin tablas</p>')).toBe('<p>sin tablas</p>');
 	});
 });

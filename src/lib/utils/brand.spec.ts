@@ -36,4 +36,10 @@ describe('brandCssVars', () => {
 		const style = brandCssVars({ primary_color: null, accent_color: null });
 		expect(style).toContain(hexToHslTriplet('#18181b'));
 	});
+
+	it('falls back to the zinc brand when a color is not a #rrggbb hex', () => {
+		const style = brandCssVars({ primary_color: '#fff', accent_color: 'red' });
+		expect(style).not.toContain('NaN');
+		expect(style).toBe(brandCssVars({ primary_color: null, accent_color: null }));
+	});
 });

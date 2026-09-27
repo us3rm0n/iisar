@@ -1,6 +1,6 @@
 import { marked } from 'marked';
 import type { ProvinciaRegion } from '$lib/types';
-import { parseEcuadorLessons, type ParsedLesson } from './ecuador';
+import { parseEcuadorLessons, wrapTables, type ParsedLesson } from './ecuador';
 
 // `.server.ts`: SvelteKit garantiza que este módulo (y el markdown de 231 KB que carga)
 // nunca llega al bundle de cliente. Usar solo desde `+page.server.ts` / `load`.
@@ -27,10 +27,5 @@ export function getProvinceContent(slug: string): ParsedLesson | undefined {
 
 /** Renderiza el cuerpo (markdown de confianza, del repo) de una lección a HTML. */
 export function renderLessonHtml(lesson: ParsedLesson): string {
-	const html = marked.parse(lesson.body, { async: false }) as string;
-	// El contenido tiene muchas tablas (comparaciones, actividades); envolverlas en un
-	// contenedor con scroll horizontal para que no rompan el layout mobile-first.
-	return html
-		.replace(/<table>/g, '<div class="table-scroll"><table>')
-		.replace(/<\/table>/g, '</table></div>');
+	return wrapTables(marked.parse(lesson.body, { async: false }) as string);
 }

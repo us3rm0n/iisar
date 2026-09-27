@@ -3,16 +3,21 @@ export const BRAND_FALLBACK = {
 	accent: '#fafafa'
 } as const;
 
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+
 /**
  * Normaliza colores de `businesses.primary_color/accent_color` con fallback zinc.
+ * Cualquier valor que no sea `#rrggbb` (mismo formato que exige el check de la DB) usa el fallback.
  */
 export function getBrandColors(business: {
 	primary_color?: string | null;
 	accent_color?: string | null;
 }) {
+	const valid = (color: string | null | undefined, fallback: string) =>
+		color && HEX_COLOR.test(color) ? color : fallback;
 	return {
-		primary: business.primary_color ?? BRAND_FALLBACK.primary,
-		accent: business.accent_color ?? BRAND_FALLBACK.accent
+		primary: valid(business.primary_color, BRAND_FALLBACK.primary),
+		accent: valid(business.accent_color, BRAND_FALLBACK.accent)
 	};
 }
 
