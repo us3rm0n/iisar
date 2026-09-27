@@ -1,6 +1,15 @@
-export type BusinessTipo = 'negocio' | 'artista';
+export type BusinessTipo = 'negocio' | 'artista' | 'lugar';
 export type SubscriptionType = 'prueba' | 'mensual' | 'semestral' | 'anual';
 export type SubscriptionStatus = 'pendiente' | 'aprobada' | 'rechazada' | 'vencida';
+export type ProvinciaRegion = 'costa' | 'sierra' | 'amazonia' | 'insular';
+
+export type Provincia = {
+	id: string;
+	slug: string;
+	nombre: string;
+	region: ProvinciaRegion;
+	orden: number;
+};
 
 export type Business = {
 	id: string;
@@ -17,7 +26,9 @@ export type Business = {
 	primary_color: string | null;
 	accent_color: string | null;
 	category_id: string | null;
+	provincia_id: string | null;
 	categories?: { nombre: string; slug: string } | null;
+	provincias?: { nombre: string; slug: string } | null;
 };
 
 export type Subscription = {
