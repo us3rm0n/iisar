@@ -20,6 +20,20 @@
 	--color-card-foreground: hsl(var(--card-foreground));
 	--color-popover: hsl(var(--popover));
 	--color-popover-foreground: hsl(var(--popover-foreground));
+
+	/* type scale: size, line-height and tracking per step */
+	--text-display: 1.75rem;
+	--text-display--line-height: 2rem;
+	--text-display--letter-spacing: -0.02em;
+	--text-title: 1.125rem;
+	--text-title--line-height: 1.5rem;
+	--text-title--letter-spacing: -0.01em;
+	--text-body: 0.875rem;
+	--text-body--line-height: 1.375rem;
+	--text-body--letter-spacing: 0;
+	--text-caption: 0.75rem;
+	--text-caption--line-height: 1rem;
+	--text-caption--letter-spacing: 0.01em;
 }
 
 :root {
@@ -43,14 +57,6 @@
 	--input: 240 5.9% 90%;
 	--ring: 240 10% 3.9%;
 	--radius: 0.5rem;
-	/* liquid glass tokens */
-	--liquid-radius: 28px;
-	--liquid-radius-card: 24px;
-	--liquid-blur: 20px;
-	--liquid-bg: 0 0% 100% / 0.62;
-	--liquid-border: 0 0% 100% / 0.35;
-	--liquid-shadow: 0 12px 40px 0 hsl(240 10% 3.9% / 0.08), 0 2px 12px 0 hsl(240 10% 3.9% / 0.06);
-	--liquid-shadow-hover: 0 20px 56px 0 hsl(240 10% 3.9% / 0.12), 0 4px 16px 0 hsl(240 10% 3.9% / 0.08);
 }
 
 .dark {
@@ -79,34 +85,5 @@
 	border-color: hsl(var(--border));
 }
 body {
-	background-color: hsl(var(--background));
-	color: hsl(var(--foreground));
-	/* apple liquid canvas - subtle radial gradients */
-	background-image:
-		radial-gradient(ellipse 900px 500px at 15% -10%, hsl(240 100% 97% / 0.9) 0%, transparent 60%),
-		radial-gradient(ellipse 800px 600px at 85% 0%, hsl(220 100% 96% / 0.6) 0%, transparent 55%),
-		radial-gradient(ellipse 600px 400px at 50% 20%, hsl(280 60% 97% / 0.4) 0%, transparent 60%);
-	background-attachment: fixed;
-}
-
-.dark body {
-	background-image:
-		radial-gradient(ellipse 900px 500px at 15% -10%, hsl(240 30% 12% / 0.6) 0%, transparent 60%),
-		radial-gradient(ellipse 800px 600px at 85% 0%, hsl(230 25% 14% / 0.4) 0%, transparent 55%);
-}
-
-/* liquid utilities */
-.liquid-glass {
-	background: hsl(var(--liquid-bg));
-	backdrop-filter: blur(var(--liquid-blur)) saturate(1.2);
-	-webkit-backdrop-filter: blur(var(--liquid-blur)) saturate(1.2);
-	border: 1px solid hsl(var(--liquid-border));
-	box-shadow: var(--liquid-shadow);
-}
-.liquid-glass-strong {
-	background: hsl(0 0% 100% / 0.72);
-	backdrop-filter: blur(24px) saturate(1.25);
-	-webkit-backdrop-filter: blur(24px) saturate(1.25);
-	border: 1px solid hsl(0 0% 100% / 0.4);
-	box-shadow: var(--liquid-shadow);
+	@apply bg-background text-foreground;
 }

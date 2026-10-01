@@ -38,13 +38,13 @@
 		</p>
 	</div>
 
-	<!-- Buscador liquid pastilla -->
+	<!-- Search bar -->
 	<div class="mx-auto mb-10 max-w-3xl">
 		<form
 			method="GET"
 			role="search"
 			aria-label="Buscar negocios"
-			class="liquid-glass flex flex-col gap-2 rounded-[28px] p-2 sm:flex-row sm:items-center sm:gap-0 sm:p-1.5"
+			class="flex flex-col gap-2 rounded-xl border border-border bg-card p-2 sm:flex-row sm:items-center sm:gap-0 sm:p-1.5"
 		>
 			<div class="relative flex flex-1 items-center">
 				<Search
@@ -119,7 +119,7 @@
 	{#if data.ads.length}
 		<div class="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
 			{#each data.ads as ad (ad.id)}
-				<div class="liquid-glass flex items-center gap-2.5 rounded-2xl px-4 py-3">
+				<div class="flex items-center gap-2.5 rounded-xl border border-border bg-card px-4 py-3">
 					<span
 						class="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
 						><Megaphone class="h-3.5 w-3.5" /></span
@@ -153,7 +153,7 @@
 		</div>
 
 		{#if data.businesses.length === 0}
-			<div class="liquid-glass rounded-[24px] py-12 text-center">
+			<div class="rounded-xl border border-border bg-card py-12 text-center">
 				<div class="mx-auto flex max-w-md flex-col items-center gap-3 px-6">
 					<span
 						class="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
@@ -176,7 +176,7 @@
 					<li>
 						<a
 							href="/negocio/{b.slug}"
-							class="liquid-glass group flex h-full flex-col rounded-[24px] p-5 transition-all hover:translate-y-[-2px] hover:shadow-[0_20px_56px_rgba(0,0,0,0.10)] focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:outline-none"
+							class="group flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-all hover:translate-y-[-2px] hover:shadow-[0_20px_56px_rgba(0,0,0,0.10)] focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:outline-none"
 						>
 							<div class="flex items-start justify-between gap-2">
 								<h3
