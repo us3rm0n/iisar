@@ -37,6 +37,21 @@ describe('brandCssVars', () => {
 		expect(style).toContain(hexToHslTriplet('#18181b'));
 	});
 
+	// Tailwind v4 compila `bg-primary` a `var(--color-primary)`, y el `@theme` de
+	// layout.css lo declara como `hsl(var(--primary))`. Esa sustitución se resuelve y
+	// congela en `:root`, así que sobreescribir solo `--primary` en un wrapper no
+	// alcanza: hay que sobreescribir también el alias `--color-*`.
+	it.each([
+		['--color-primary', '--primary'],
+		['--color-primary-foreground', '--primary-foreground'],
+		['--color-accent', '--accent'],
+		['--color-accent-foreground', '--accent-foreground'],
+		['--color-ring', '--ring']
+	])('aliases %s to the brand override so utilities resolve the business color', (alias, token) => {
+		const style = brandCssVars({ primary_color: '#ea580c', accent_color: '#fff7ed' });
+		expect(style).toContain(`${alias}: hsl(var(${token}))`);
+	});
+
 	it('falls back to the zinc brand when a color is not a #rrggbb hex', () => {
 		const style = brandCssVars({ primary_color: '#fff', accent_color: 'red' });
 		expect(style).not.toContain('NaN');

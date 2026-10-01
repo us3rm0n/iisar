@@ -93,10 +93,21 @@ export function readableForeground(hex: string): string {
 }
 
 /**
- * Construye un `style=` que sobreescribe los tokens shadcn (`--primary`, `--accent`, `--ring`, ...)
- * de `src/routes/layout.css` con los colores de marca del negocio. Los componentes shadcn
- * (Button, Badge, Card) que usan esas clases (`bg-primary`, `text-primary`, ...) heredan la marca
- * sin estilos inline por elemento.
+ * Construye un `style=` que sobreescribe los tokens de marca del negocio.
+ *
+ * Hay que sobreescribir **dos** capas, no una:
+ * 1. Los tokens shadcn (`--primary`, `--accent`, ...) que usa el CSS propio.
+ * 2. Los alias `--color-*` que declara el `@theme` de `src/routes/layout.css`
+ *    como `hsl(var(--primary))`.
+ *
+ * La razón del punto 2: Tailwind v4 compila `bg-primary` a
+ * `background-color: var(--color-primary)`. Una custom property se sustituye
+ * (y se congela) en el elemento donde está declarada, así que el `@theme` de
+ * `:root` resuelve `--color-primary` una sola vez con el zinc por defecto y ese
+ * valor ya sustituido es el que hereda el árbol. Poner `--primary` en un
+ * wrapper NO cambia las utilidades `bg-primary` / `text-primary` /
+ * `border-primary`: sin el alias, la landing de marca renderiza siempre el
+ * fallback zinc.
  */
 export function brandCssVars(business: {
 	primary_color?: string | null;
@@ -111,6 +122,12 @@ export function brandCssVars(business: {
 		`--primary-foreground: ${readableForeground(primary)}`,
 		`--accent: ${accentHsl}`,
 		`--accent-foreground: ${readableForeground(accent)}`,
-		`--ring: ${primaryHsl}`
+		`--ring: ${primaryHsl}`,
+		// Alias para que las utilidades de Tailwind resuelvan la marca del negocio.
+		`--color-primary: hsl(var(--primary))`,
+		`--color-primary-foreground: hsl(var(--primary-foreground))`,
+		`--color-accent: hsl(var(--accent))`,
+		`--color-accent-foreground: hsl(var(--accent-foreground))`,
+		`--color-ring: hsl(var(--ring))`
 	].join('; ');
 }

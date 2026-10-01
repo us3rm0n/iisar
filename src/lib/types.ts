@@ -27,8 +27,12 @@ export type Business = {
 	accent_color: string | null;
 	category_id: string | null;
 	provincia_id: string | null;
-	categories?: { nombre: string; slug: string } | null;
-	provincias?: { nombre: string; slug: string } | null;
+	/**
+	 * Relaciones embebidas por PostgREST. Despite being to-one embeds, the
+	 * REST layer returns them as arrays — `firstRelation` normalizes the shape.
+	 */
+	categories?: { nombre: string; slug: string }[] | null;
+	provincias?: { nombre: string; slug: string }[] | null;
 };
 
 export type Subscription = {
@@ -48,4 +52,20 @@ export type ProductService = {
 	precio_estimado: number | null;
 	moneda: string;
 	imagen_url: string | null;
+};
+
+/** Métrica de la banda de estadísticas: cifra grande + rótulo. */
+export type BusinessStat = {
+	id: string;
+	valor: string;
+	etiqueta: string;
+	orden: number;
+};
+
+/** Diferenciador de la banda "por qué elegirnos": número + título + descripción. */
+export type BusinessHighlight = {
+	id: string;
+	titulo: string;
+	descripcion: string;
+	orden: number;
 };
