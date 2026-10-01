@@ -4,6 +4,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import { UserPlus } from '@lucide/svelte';
 
 	let email = $state('');
 	let password = $state('');
@@ -47,9 +48,10 @@
 					{loading ? 'Ingresando...' : 'Entrar'}
 				</Button>
 			</form>
-			<p class="mt-4 text-center text-sm text-muted-foreground">
-				¿No tienes cuenta? <a href="/auth/register" class="font-medium underline hover:text-foreground">Crear cuenta con prueba 7 días</a>
-			</p>
+			<p class="mt-4 text-center text-sm text-muted-foreground">¿No tienes cuenta?</p>
+			<Button href="/auth/register" variant="outline" class="mt-2 h-11 w-full">
+				<UserPlus class="h-4 w-4" /> Crear cuenta — prueba 7 días
+			</Button>
 		</CardContent>
 	</Card>
 </div>

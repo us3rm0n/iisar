@@ -2,21 +2,23 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Card, CardHeader, CardTitle, CardDescription } from '$lib/components/ui/card';
 	import { Mountain, Waves, TreePalm, Compass } from '@lucide/svelte';
+	import { groupByRegion } from '$lib/utils/provincias';
 	import type { Provincia, ProvinciaRegion } from '$lib/types';
 
 	let { data } = $props();
 
-	const REGIONS: { key: ProvinciaRegion; label: string; icon: typeof Waves }[] = [
-		{ key: 'costa', label: 'Costa', icon: Waves },
-		{ key: 'sierra', label: 'Sierra', icon: Mountain },
-		{ key: 'amazonia', label: 'Amazonía', icon: TreePalm },
-		{ key: 'insular', label: 'Insular', icon: Compass }
-	];
+	// Las etiquetas de región viven en $lib/utils/provincias; aquí solo los íconos.
+	const REGION_ICONS: Record<ProvinciaRegion, typeof Waves> = {
+		costa: Waves,
+		sierra: Mountain,
+		amazonia: TreePalm,
+		insular: Compass
+	};
 
-	const provinciasByRegion = $derived(
-		REGIONS.map((r) => ({
-			...r,
-			provincias: (data.provincias as Provincia[]).filter((p) => p.region === r.key)
+	const provincesByRegion = $derived(
+		groupByRegion(data.provincias as Provincia[]).map((group) => ({
+			...group,
+			icon: REGION_ICONS[group.region]
 		}))
 	);
 
@@ -55,10 +57,10 @@
 		{/if}
 	</div>
 
-	{#each provinciasByRegion as region (region.key)}
-		<section class="mb-10" aria-labelledby="region-{region.key}-heading">
+	{#each provincesByRegion as region (region.region)}
+		<section class="mb-10" aria-labelledby="region-{region.region}-heading">
 			<h2
-				id="region-{region.key}-heading"
+				id="region-{region.region}-heading"
 				class="mb-4 flex items-center gap-2 text-lg font-semibold text-zinc-900 dark:text-white"
 			>
 				<region.icon class="h-5 w-5" aria-hidden="true" />

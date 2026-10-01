@@ -6,25 +6,47 @@ const PROVINCIAS = [
 	{ id: 'p-guayas', slug: 'guayas' }
 ];
 
+const RESOLVED = { provinciaId: 'p-azuay', problem: null };
+
 describe('resolveProvinciaFilter', () => {
-	it('returns no filter and not-found=false when slug is empty', () => {
+	it('applies no filter when slug is empty', () => {
 		expect(resolveProvinciaFilter(PROVINCIAS, '')).toEqual({
 			provinciaId: null,
-			notFound: false
+			problem: null
 		});
 	});
 
 	it('resolves the provincia id when the slug matches', () => {
-		expect(resolveProvinciaFilter(PROVINCIAS, 'azuay')).toEqual({
-			provinciaId: 'p-azuay',
-			notFound: false
+		expect(resolveProvinciaFilter(PROVINCIAS, 'azuay')).toEqual(RESOLVED);
+	});
+
+	it('reports not-found when the slug matches no provincia', () => {
+		expect(resolveProvinciaFilter(PROVINCIAS, 'no-existe')).toEqual({
+			provinciaId: null,
+			problem: 'not-found'
 		});
 	});
 
-	it('flags not-found and returns no id when the slug matches no provincia', () => {
-		expect(resolveProvinciaFilter(PROVINCIAS, 'no-existe')).toEqual({
+	it('reports not-found even for an empty provincia list', () => {
+		expect(resolveProvinciaFilter([], 'azuay')).toEqual({
 			provinciaId: null,
-			notFound: true
+			problem: 'not-found'
+		});
+	});
+
+	describe('when the provincias lookup failed', () => {
+		it('reports lookup-failed instead of claiming the slug does not exist', () => {
+			expect(resolveProvinciaFilter([], 'azuay', true)).toEqual({
+				provinciaId: null,
+				problem: 'lookup-failed'
+			});
+		});
+
+		it('stays quiet when no filter was requested: the page can still list businesses', () => {
+			expect(resolveProvinciaFilter([], '', true)).toEqual({
+				provinciaId: null,
+				problem: null
+			});
 		});
 	});
 });

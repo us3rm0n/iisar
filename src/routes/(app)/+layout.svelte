@@ -38,13 +38,17 @@
 	<div
 		class="mx-auto flex h-[60px] max-w-5xl items-center justify-between gap-3 px-4 sm:h-[68px] sm:px-6 lg:px-8"
 	>
-		<a href="/" class="text-lg font-semibold tracking-[-0.02em]">IISAR</a>
+		<a
+			href="/"
+			class="-my-2 flex min-h-11 items-center py-2 text-lg font-semibold tracking-[-0.02em]"
+			>IISAR</a
+		>
 		<nav class="flex items-center gap-1.5 sm:gap-2" aria-label="Principal">
 			<Button
 				href="/ecuador"
 				variant="ghost"
 				size="sm"
-				class="h-9 rounded-full px-4 hover:bg-white/60 dark:hover:bg-white/10"
+				class="h-11 rounded-full px-4 hover:bg-white/60 sm:h-9 dark:hover:bg-white/10"
 			>
 				<MapPin class="h-4 w-4" /> <span class="ml-1 hidden sm:inline">Ecuador</span>
 			</Button>
@@ -53,7 +57,7 @@
 					href="/dashboard"
 					variant="outline"
 					size="sm"
-					class="h-9 rounded-full border-zinc-200/60 bg-white/60 backdrop-blur hover:bg-white/80 dark:border-white/10 dark:bg-white/10"
+					class="h-11 rounded-full border-zinc-200/60 bg-white/60 backdrop-blur hover:bg-white/80 sm:h-9 dark:border-white/10 dark:bg-white/10"
 				>
 					<LayoutDashboard class="h-4 w-4" />
 					<span class="ml-1 hidden sm:inline">Mi perfil</span><span class="ml-1 sm:hidden"
@@ -63,7 +67,7 @@
 				<Button
 					variant="ghost"
 					size="sm"
-					class="h-9 rounded-full bg-white/0 hover:bg-white/60 dark:hover:bg-white/10"
+					class="h-11 rounded-full bg-white/0 hover:bg-white/60 sm:h-9 dark:hover:bg-white/10"
 					onclick={logout}
 				>
 					<LogOut class="h-4 w-4" /> <span class="ml-1 hidden sm:inline">Salir</span>
@@ -73,7 +77,7 @@
 					href="/auth/login"
 					variant="ghost"
 					size="sm"
-					class="h-9 rounded-full px-4 hover:bg-white/60 dark:hover:bg-white/10"
+					class="h-11 rounded-full px-4 hover:bg-white/60 sm:h-9 dark:hover:bg-white/10"
 				>
 					<LogIn class="h-4 w-4" /> <span class="ml-1 hidden sm:inline">Entrar</span>
 				</Button>
@@ -81,7 +85,7 @@
 					href="/auth/register"
 					variant="default"
 					size="sm"
-					class="h-9 rounded-full bg-zinc-900 px-5 shadow-[0_4px_16px_rgba(0,0,0,0.12)] hover:bg-zinc-800 dark:bg-white dark:text-zinc-900"
+					class="h-11 rounded-full bg-zinc-900 px-5 shadow-[0_4px_16px_rgba(0,0,0,0.12)] hover:bg-zinc-800 sm:h-9 dark:bg-white dark:text-zinc-900"
 				>
 					<UserPlus class="h-4 w-4" /> <span class="ml-1 hidden sm:inline">Crear cuenta</span><span
 						class="ml-1 sm:hidden">Registro</span
@@ -93,7 +97,7 @@
 					href="/admin"
 					variant="ghost"
 					size="sm"
-					class="h-9 rounded-full hover:bg-white/60 dark:hover:bg-white/10"
+					class="h-11 rounded-full hover:bg-white/60 sm:h-9 dark:hover:bg-white/10"
 				>
 					<ShieldCheck class="h-4 w-4" /> <span class="ml-1 hidden sm:inline">Admin</span>
 				</Button>

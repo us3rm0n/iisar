@@ -5,20 +5,57 @@
 	import { slugify } from '$lib/utils/slug';
 	import { daysLeft } from '$lib/utils/date';
 	import { getCurrentUser } from '$lib/auth';
-	import type { Business, Subscription, Provincia, ProvinciaRegion } from '$lib/types';
+	import type { Business, BusinessTipo, Subscription, Provincia } from '$lib/types';
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Store, CreditCard, ShieldCheck, UploadCloud, Plus, LogOut, MapPin, Landmark } from '@lucide/svelte';
+	import { groupByRegion, tipoLabel } from '$lib/utils/provincias';
 
-	const REGION_LABELS: Record<ProvinciaRegion, string> = {
-		costa: 'Costa',
-		sierra: 'Sierra',
-		amazonia: 'Amazonía',
-		insular: 'Insular'
+	/**
+	 * Copy y presentación por tipo. Antes eran siete ternarios `tipo === 'artista' ? ...`
+	 * desparramados por el template, con `lugar` cayendo en la rama de `negocio`
+	 * por accidente en vez de por decisión.
+	 */
+	const TIPO_META: Record<
+		BusinessTipo,
+		{
+			hint: string;
+			nombrePlaceholder: string;
+			slugPlaceholder: string;
+			descripcionLabel: string;
+			descripcionPlaceholder: string;
+			badge: 'default' | 'secondary' | 'outline';
+		}
+	> = {
+		negocio: {
+			hint: 'productos y servicios + visión/misión',
+			nombrePlaceholder: 'Sabor Andino',
+			slugPlaceholder: 'sabor-andino',
+			descripcionLabel: 'Descripción',
+			descripcionPlaceholder: 'Menú diario...',
+			badge: 'secondary'
+		},
+		artista: {
+			hint: 'solo servicios',
+			nombrePlaceholder: 'DJ Andino',
+			slugPlaceholder: 'dj-andino',
+			descripcionLabel: 'Bio / Descripción',
+			descripcionPlaceholder: 'DJ de música andina...',
+			badge: 'default'
+		},
+		lugar: {
+			hint: 'hotel, mirador, atractivo...',
+			nombrePlaceholder: 'Sabor Andino',
+			slugPlaceholder: 'sabor-andino',
+			descripcionLabel: 'Descripción',
+			descripcionPlaceholder: 'Menú diario...',
+			badge: 'outline'
+		}
 	};
+	const TIPOS = Object.keys(TIPO_META) as BusinessTipo[];
 
 	// --- state ---
 	let user: { id: string; email?: string } | null = $state(null);
@@ -29,14 +66,11 @@
 	let subscriptions: Record<string, Subscription> = $state({});
 	let provinciaUpdateError = $state('');
 
-	const provinciasByRegion = $derived(
-		(Object.keys(REGION_LABELS) as ProvinciaRegion[])
-			.map((region) => ({ region, label: REGION_LABELS[region], items: provincias.filter((p) => p.region === region) }))
-			.filter((group) => group.items.length > 0)
-	);
+	const provinciasByRegion = $derived(groupByRegion(provincias));
 
 	// form
 	let tipo = $state<Business['tipo']>('negocio');
+	const meta = $derived(TIPO_META[tipo]);
 	let nombre = $state('');
 	let slug = $state('');
 	let descripcion = $state('');
@@ -137,7 +171,7 @@
 		}
 		const saved = provincias.find((p) => p.id === newProvinciaId);
 		business.provincia_id = newProvinciaId;
-		business.provincias = saved ? { nombre: saved.nombre, slug: saved.slug } : null;
+		business.provincias = saved ? [{ nombre: saved.nombre, slug: saved.slug }] : null;
 	}
 
 	async function createBusinessRecord(payload: ReturnType<typeof buildBusinessPayload>) {
@@ -198,14 +232,16 @@
 </script>
 
 <div class="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-	<header class="mb-6 flex items-center justify-between">
-		<div>
+	<header class="mb-6 flex flex-wrap items-center justify-between gap-3">
+		<div class="min-w-0">
 			<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Mis negocios</h1>
 			<p class="mt-1 text-sm text-muted-foreground">
 				Gestiona tus negocios · prueba <Badge variant="secondary">7 días gratis</Badge> al crear cuenta.
 			</p>
 		</div>
-		{#if user}<Button variant="ghost" size="sm" onclick={logout}><LogOut class="h-4 w-4" /> Salir</Button>{/if}
+		{#if user}<Button variant="ghost" size="sm" onclick={logout} class="h-11 shrink-0 sm:h-8"
+				><LogOut class="h-4 w-4" /> Salir</Button
+			>{/if}
 	</header>
 
 	{#if loading}
@@ -216,7 +252,7 @@
 				<CardTitle>Inicia sesión para crear tu negocio</CardTitle>
 				<CardDescription>Frontend ya disponible — prueba 7 días automática.</CardDescription>
 			</CardHeader>
-			<CardContent class="flex gap-2">
+			<CardContent class="flex flex-wrap gap-2">
 				<Button href="/auth/register"><Plus class="h-4 w-4" /> Crear cuenta</Button>
 				<Button href="/auth/login" variant="outline">Iniciar sesión</Button>
 			</CardContent>
@@ -224,7 +260,7 @@
 	{:else}
 		<Card class="mb-6">
 			<CardHeader>
-				<CardTitle class="flex items-center gap-2"><Store class="h-5 w-5" /> Crear {tipo === 'artista' ? 'artista' : tipo === 'lugar' ? 'lugar' : 'negocio'}</CardTitle>
+				<CardTitle class="flex items-center gap-2"><Store class="h-5 w-5" /> Crear {tipoLabel(tipo)}</CardTitle>
 				<CardDescription>Al crearlo se activa prueba <Badge>7 días</Badge> con <code>has_active_subscription</code>. Artista solo servicios, negocio productos+servicios, lugar es un sitio (hotel, mirador, atractivo) con dueño o gestor.</CardDescription>
 			</CardHeader>
 			<CardContent>
@@ -232,34 +268,34 @@
 					<div class="grid gap-1.5">
 						<p class="text-sm font-medium">Tipo</p>
 						<div class="flex flex-wrap gap-2">
-							<Button type="button" variant={tipo === 'negocio' ? 'default' : 'outline'} size="sm" onclick={() => (tipo = 'negocio')}>Negocio</Button>
-							<Button type="button" variant={tipo === 'artista' ? 'default' : 'outline'} size="sm" onclick={() => (tipo = 'artista')}>Artista</Button>
-							<Button type="button" variant={tipo === 'lugar' ? 'default' : 'outline'} size="sm" onclick={() => (tipo = 'lugar')}>Lugar</Button>
-							<span class="self-center text-xs text-muted-foreground"
-								>{tipo === 'artista'
-									? 'solo servicios'
-									: tipo === 'lugar'
-										? 'hotel, mirador, atractivo...'
-										: 'productos y servicios + visión/misión'}</span
-							>
+							{#each TIPOS as t (t)}
+								<Button
+									type="button"
+									variant={tipo === t ? 'default' : 'outline'}
+									size="sm"
+									onclick={() => (tipo = t)}
+									class="h-11 sm:h-8">{tipoLabel(t)}</Button
+								>
+							{/each}
+							<span class="self-center text-xs text-muted-foreground">{meta.hint}</span>
 						</div>
 					</div>
 
 					<div class="grid gap-3 sm:grid-cols-2">
 						<div class="grid gap-1.5">
 							<label for="nombre" class="text-sm font-medium">Nombre *</label>
-							<Input id="nombre" bind:value={nombre} placeholder={tipo === 'artista' ? 'DJ Andino' : 'Sabor Andino'} required />
+							<Input id="nombre" bind:value={nombre} placeholder={meta.nombrePlaceholder} required />
 						</div>
 						<div class="grid gap-1.5">
 							<label for="slug" class="text-sm font-medium">Slug</label>
-							<Input id="slug" bind:value={slug} placeholder={tipo === 'artista' ? 'dj-andino' : 'sabor-andino'} />
+							<Input id="slug" bind:value={slug} placeholder={meta.slugPlaceholder} />
 							<p class="text-xs text-muted-foreground">/negocio/{slugify(slug || nombre) || '...'}</p>
 						</div>
 					</div>
 
 					<div class="grid gap-1.5">
-						<label for="descripcion" class="text-sm font-medium">{tipo === 'artista' ? 'Bio / Descripción' : 'Descripción'}</label>
-						<Input id="descripcion" bind:value={descripcion} placeholder={tipo === 'artista' ? 'DJ de música andina...' : 'Menú diario...'} />
+						<label for="descripcion" class="text-sm font-medium">{meta.descripcionLabel}</label>
+						<Input id="descripcion" bind:value={descripcion} placeholder={meta.descripcionPlaceholder} />
 					</div>
 
 					{#if tipo === 'negocio'}
@@ -286,7 +322,7 @@
 						</div>
 						<div class="grid gap-1.5">
 							<label for="categoryId" class="text-sm font-medium">Categoría</label>
-							<select id="categoryId" bind:value={categoryId} class="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+							<select id="categoryId" bind:value={categoryId} class="flex h-11 w-full rounded-md border border-input bg-background px-3 text-sm sm:h-10">
 								<option value="">Sin categoría</option>
 								{#each categories as category}<option value={category.id}>{category.nombre}</option>{/each}
 							</select>
@@ -298,12 +334,12 @@
 						<select
 							id="provinciaId"
 							bind:value={provinciaId}
-							class="flex h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
+							class="flex h-11 w-full rounded-md border border-input bg-background px-3 text-sm sm:h-10"
 						>
 							<option value="">Sin provincia</option>
 							{#each provinciasByRegion as group (group.region)}
 								<optgroup label={group.label}>
-									{#each group.items as p (p.id)}<option value={p.id}>{p.nombre}</option>{/each}
+									{#each group.provincias as p (p.id)}<option value={p.id}>{p.nombre}</option>{/each}
 								</optgroup>
 							{/each}
 						</select>
@@ -315,7 +351,7 @@
 					<div class="grid gap-1.5">
 						<label for="primaryColor" class="text-sm font-medium">Color marca</label>
 						<div class="flex gap-2">
-							<Input id="primaryColorPicker" type="color" bind:value={primaryColor} class="h-10 w-20 p-1" aria-label="Selector color marca" />
+							<Input id="primaryColorPicker" type="color" bind:value={primaryColor} class="h-11 w-20 p-1 sm:h-10" aria-label="Selector color marca" />
 							<Input id="primaryColor" bind:value={primaryColor} placeholder="#ea580c" class="flex-1 font-mono" />
 						</div>
 					</div>
@@ -328,9 +364,9 @@
 		</Card>
 
 		{#if businesses.length}
-			<div class="mb-3 flex items-center gap-2">
+			<div class="mb-3 flex flex-wrap items-center gap-2">
 				<h2 class="font-semibold">Tus negocios ({businesses.length})</h2>
-				<Badge variant="outline">{user.email}</Badge>
+				<Badge variant="outline" class="max-w-full truncate">{user.email}</Badge>
 			</div>
 			{#if provinciaUpdateError}
 				<p class="mb-3 rounded bg-destructive/10 px-3 py-2 text-sm text-destructive">{provinciaUpdateError}</p>
@@ -340,10 +376,10 @@
 					<li>
 						<Card>
 							<CardContent class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
-								<div>
-									<p class="flex items-center gap-2 font-medium">
-										<a href="/negocio/{business.slug}" class="hover:underline">{business.nombre}</a>
-										<Badge variant={business.tipo === 'artista' ? 'default' : business.tipo === 'lugar' ? 'outline' : 'secondary'}>{business.tipo}</Badge>
+								<div class="min-w-0">
+									<p class="flex flex-wrap items-center gap-2 font-medium">
+										<a href="/negocio/{business.slug}" class="min-h-11 py-2 hover:underline">{business.nombre}</a>
+										<Badge variant={TIPO_META[business.tipo].badge}>{tipoLabel(business.tipo)}</Badge>
 										<Badge variant="secondary">{business.estado}</Badge>
 										{#if business.primary_color}<span class="h-3 w-3 rounded-full border" style="background:{business.primary_color}"></span>{/if}
 									</p>
@@ -372,13 +408,13 @@
 											<option value="">Sin provincia</option>
 											{#each provinciasByRegion as group (group.region)}
 												<optgroup label={group.label}>
-													{#each group.items as p (p.id)}<option value={p.id}>{p.nombre}</option>{/each}
+													{#each group.provincias as p (p.id)}<option value={p.id}>{p.nombre}</option>{/each}
 												</optgroup>
 											{/each}
 										</select>
 									</div>
 								</div>
-								<Button href="/negocio/{business.slug}" variant="outline" size="sm">Ver</Button>
+								<Button href="/negocio/{business.slug}" variant="outline" size="sm" class="h-11 shrink-0 sm:h-8">Ver</Button>
 							</CardContent>
 						</Card>
 					</li>
@@ -390,7 +426,7 @@
 			<CardHeader><CardTitle class="flex items-center gap-2 text-amber-900 dark:text-amber-100"><CreditCard class="h-5 w-5" /> Flujo pagos después de prueba</CardTitle></CardHeader>
 			<CardContent class="grid gap-2 text-sm">
 				<p>Tras 7d: `fecha_maxima` expira → `has_active_subscription=false` → solo lectura. Renueva subiendo comprobante a <code>comprobantes</code> con `type mensual/semestral/anual` → webmaster aprueba en `/admin`.</p>
-				<div class="flex gap-2"><Button variant="outline" size="sm"><UploadCloud class="h-4 w-4" /> Subir comprobante</Button><Button href="/admin" variant="ghost" size="sm"><ShieldCheck class="h-4 w-4" /> Admin</Button></div>
+				<div class="flex flex-wrap gap-2"><Button variant="outline" size="sm" class="h-11 sm:h-8"><UploadCloud class="h-4 w-4" /> Subir comprobante</Button><Button href="/admin" variant="ghost" size="sm" class="h-11 sm:h-8"><ShieldCheck class="h-4 w-4" /> Admin</Button></div>
 			</CardContent>
 		</Card>
 	{/if}

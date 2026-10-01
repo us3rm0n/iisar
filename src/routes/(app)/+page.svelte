@@ -3,8 +3,15 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Search, Store, MapPin, Megaphone, Plus, SearchX, AlertTriangle } from '@lucide/svelte';
+	import { firstRelation } from '$lib/supabase/helpers';
+	import type { Business } from '$lib/types';
 
 	let { data } = $props();
+
+	// PostgREST embebida la relación como objeto o como arreglo de un elemento.
+	// Solo se pide el campo que se lee, no la fila completa.
+	const categoryName = (business: Pick<Business, 'categories'>) =>
+		firstRelation(business.categories)?.nombre;
 </script>
 
 <svelte:head>
@@ -55,14 +62,16 @@
 				/>
 			</div>
 			<div class="hidden h-6 w-px bg-zinc-200/60 sm:block dark:bg-white/10"></div>
-			<div class="flex w-full items-center gap-2 sm:w-auto sm:pl-1">
+			<div
+				class="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:pl-1"
+			>
 				<label for="categoria" class="sr-only">Categoría</label>
 				<select
 					id="categoria"
 					name="categoria"
 					value={data.categoria}
 					aria-label="Filtrar por categoría"
-					class="h-11 w-full flex-1 rounded-full bg-transparent px-3 py-2 text-sm text-zinc-600 focus:outline-none sm:w-[180px] dark:text-zinc-300"
+					class="h-11 w-full rounded-full bg-transparent px-3 py-2 text-sm text-zinc-600 focus:outline-none sm:flex-1 dark:text-zinc-300"
 				>
 					<option value="">Todas las categorías</option>
 					{#each data.categories as c (c.slug)}
@@ -75,7 +84,7 @@
 					name="provincia"
 					value={data.provincia}
 					aria-label="Filtrar por provincia"
-					class="h-11 w-full flex-1 rounded-full bg-transparent px-3 py-2 text-sm text-zinc-600 focus:outline-none sm:w-[180px] dark:text-zinc-300"
+					class="h-11 w-full rounded-full bg-transparent px-3 py-2 text-sm text-zinc-600 focus:outline-none sm:flex-1 dark:text-zinc-300"
 				>
 					<option value="">Todas las provincias</option>
 					{#each data.provincias as p (p.slug)}
@@ -93,13 +102,13 @@
 		</form>
 	</div>
 
-	{#if data.provinciaNotFound || data.provinciaFilterFailed}
+	{#if data.provinciaProblem}
 		<div
 			class="mx-auto mb-8 flex max-w-3xl items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-100"
 			role="alert"
 		>
 			<AlertTriangle class="h-4 w-4 shrink-0" aria-hidden="true" />
-			{#if data.provinciaFilterFailed}
+			{#if data.provinciaProblem === 'lookup-failed'}
 				<span>No se pudo aplicar el filtro de provincia. Inténtalo de nuevo más tarde.</span>
 			{:else}
 				<span>La provincia «{data.provincia}» no existe. No hay resultados para ese filtro.</span>
@@ -184,11 +193,11 @@
 											: 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900'}"
 										>{b.tipo ?? 'negocio'}</Badge
 									>
-									{#if b.categories as any}
+									{#if categoryName(b)}
 										<Badge
 											variant="outline"
 											class="hidden rounded-full bg-white/60 px-2 py-0.5 text-[11px] sm:inline-flex dark:bg-white/10"
-											>{(b.categories as any).nombre ?? (b.categories as any)[0]?.nombre}</Badge
+											>{categoryName(b)}</Badge
 										>
 									{/if}
 								</div>

@@ -9,6 +9,7 @@
 		CardContent
 	} from '$lib/components/ui/card';
 	import { ArrowLeft, MapPin, Store, Palette, Landmark, PackageOpen } from '@lucide/svelte';
+	import { regionLabel, tipoLabel } from '$lib/utils/provincias';
 	import type { Provincia } from '$lib/types';
 	import type { BusinessCard } from './+page.server';
 
@@ -17,17 +18,11 @@
 	const provincia = $derived(data.provincia as Provincia);
 	const businesses = $derived(data.businesses as BusinessCard[]);
 
-	const REGION_LABELS: Record<string, string> = {
-		costa: 'Costa',
-		sierra: 'Sierra',
-		amazonia: 'Amazonía',
-		insular: 'Insular'
-	};
-
-	const TIPO_META: Record<string, { label: string; icon: typeof Store }> = {
-		negocio: { label: 'Negocio', icon: Store },
-		artista: { label: 'Artista', icon: Palette },
-		lugar: { label: 'Lugar', icon: Landmark }
+	// Las etiquetas viven en $lib/utils/provincias; aquí solo los íconos.
+	const TIPO_ICONS: Record<string, typeof Store> = {
+		negocio: Store,
+		artista: Palette,
+		lugar: Landmark
 	};
 </script>
 
@@ -35,9 +30,9 @@
 	<title>{provincia.nombre} — Geografía de Ecuador | IISAR</title>
 	<meta
 		name="description"
-		content="Conoce {provincia.nombre} ({REGION_LABELS[
+		content="Conoce {provincia.nombre} ({regionLabel(
 			provincia.region
-		]}) y los negocios, artistas y lugares registrados ahí."
+		)}) y los negocios, artistas y lugares registrados ahí."
 	/>
 </svelte:head>
 
@@ -54,7 +49,7 @@
 			{provincia.nombre}
 		</h1>
 		<Badge variant="secondary" class="rounded-full"
-			><MapPin class="mr-1 h-3 w-3" /> {REGION_LABELS[provincia.region] ?? provincia.region}</Badge
+			><MapPin class="mr-1 h-3 w-3" /> {regionLabel(provincia.region)}</Badge
 		>
 	</div>
 
@@ -83,13 +78,15 @@
 					<CardDescription
 						>Nadie ha registrado un negocio, artista o lugar en {provincia.nombre} todavía.</CardDescription
 					>
-					<Button href="/dashboard" size="sm" class="mt-1">Registrar el mío</Button>
+					<Button href="/dashboard" size="sm" class="mt-1 h-11 w-full sm:h-8 sm:w-auto"
+						>Registrar el mío</Button
+					>
 				</CardContent>
 			</Card>
 		{:else}
 			<ul class="grid grid-cols-1 gap-3 sm:grid-cols-2" role="list">
 				{#each businesses as business (business.id)}
-					{@const meta = TIPO_META[business.tipo] ?? TIPO_META.negocio}
+					{@const TipoIcon = TIPO_ICONS[business.tipo] ?? Store}
 					<li>
 						<a
 							href="/negocio/{business.slug}"
@@ -100,7 +97,7 @@
 									<div class="flex items-center justify-between gap-2">
 										<CardTitle class="line-clamp-1 text-base">{business.nombre}</CardTitle>
 										<Badge variant="outline" class="shrink-0 gap-1 rounded-full"
-											><meta.icon class="h-3 w-3" /> {meta.label}</Badge
+											><TipoIcon class="h-3 w-3" /> {tipoLabel(business.tipo)}</Badge
 										>
 									</div>
 									{#if business.ciudad}
