@@ -101,12 +101,5 @@ export function parseEcuadorLessons(markdown: string): ParsedEcuadorContent {
 	return { general, regions, provincias };
 }
 
-/**
- * Envuelve cada `<table>` (con o sin atributos) en un contenedor con scroll horizontal,
- * para que las tablas anchas del contenido no rompan el layout mobile-first.
- */
-export function wrapTables(html: string): string {
-	return html
-		.replace(/<table(\s[^>]*)?>/g, (tag) => `<div class="table-scroll">${tag}`)
-		.replace(/<\/table>/g, '</table></div>');
-}
+// `wrapTables` vive en `render.ts` (junto al pipeline markdown -> sanitize -> tablas).
+export { wrapTables } from './render';
