@@ -4,15 +4,7 @@
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
 	import SearchPanel from '$lib/components/search-panel.svelte';
-	import {
-		LayoutDashboard,
-		ShieldCheck,
-		LogIn,
-		LogOut,
-		UserPlus,
-		MapPin,
-		Search
-	} from '@lucide/svelte';
+	import { LayoutDashboard, ShieldCheck, LogIn, LogOut, MapPin, Search } from '@lucide/svelte';
 	import { hasActiveFilters, parseFilters } from '$lib/search/filters';
 	import { Session } from '$lib/session.svelte';
 	import { provideSession } from '$lib/session-context';
@@ -47,8 +39,7 @@
 		map: MapPin,
 		dashboard: LayoutDashboard,
 		admin: ShieldCheck,
-		login: LogIn,
-		register: UserPlus
+		login: LogIn
 	} satisfies Record<NavIcon, typeof MapPin>;
 
 	onMount(session.start);

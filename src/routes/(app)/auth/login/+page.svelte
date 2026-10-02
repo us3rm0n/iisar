@@ -4,7 +4,6 @@
 	import { Button } from '$lib/components/ui/button';
 	import FormField from '$lib/components/form-field.svelte';
 	import PageHeader from '$lib/components/page-header.svelte';
-	import { UserPlus } from '@lucide/svelte';
 
 	let email = $state('');
 	let password = $state('');
@@ -57,10 +56,13 @@
 		</Button>
 	</form>
 
-	<div class="flex flex-col gap-2 border-t border-border pt-6">
-		<p class="text-center text-body text-muted-foreground">¿No tienes cuenta?</p>
-		<Button href="/auth/register" variant="outline" class="h-11 w-full">
-			<UserPlus /> Crear cuenta — prueba 7 días
-		</Button>
-	</div>
+	<p class="border-t border-border pt-6 text-center text-body text-muted-foreground">
+		¿No tienes cuenta? Regístrate
+		<a
+			href="/auth/register"
+			aria-label="Regístrate aquí"
+			class="-mx-2.5 inline-flex min-h-11 items-center px-2.5 font-medium text-foreground underline underline-offset-4"
+			>aquí</a
+		>
+	</p>
 </div>

@@ -4,14 +4,16 @@ import { navItemsFor } from './nav';
 const hrefs = (items: { href: string }[]) => items.map((item) => item.href);
 
 describe('navItemsFor', () => {
-	it('shows explore, login and register for visitors', () => {
+	it('shows explore and a single login entry for visitors (registration is linked from the login page)', () => {
 		const items = navItemsFor({ user: null, role: null });
-		expect(hrefs(items)).toEqual(['/ecuador', '/auth/login', '/auth/register']);
+		expect(hrefs(items)).toEqual(['/ecuador', '/auth/login']);
+		expect(hrefs(items)).not.toContain('/auth/register');
 	});
 
-	it('marks only the register entry as primary', () => {
+	it('marks only the login entry as primary and labels it "Iniciar sesión"', () => {
 		const items = navItemsFor({ user: null, role: null });
-		expect(items.filter((i) => i.primary).map((i) => i.href)).toEqual(['/auth/register']);
+		expect(items.filter((i) => i.primary).map((i) => i.href)).toEqual(['/auth/login']);
+		expect(items.find((i) => i.href === '/auth/login')?.label).toBe('Iniciar sesión');
 	});
 
 	it('shows explore and profile for a signed-in user', () => {

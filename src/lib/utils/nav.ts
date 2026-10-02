@@ -1,4 +1,4 @@
-export type NavIcon = 'map' | 'dashboard' | 'admin' | 'login' | 'register';
+export type NavIcon = 'map' | 'dashboard' | 'admin' | 'login';
 
 export type NavItem = {
 	href: string;
@@ -21,10 +21,8 @@ export function navItemsFor({ user, role }: NavContext): NavItem[] {
 		items.push({ href: '/dashboard', label: 'Mi perfil', icon: 'dashboard' });
 		if (role === 'webmaster') items.push({ href: '/admin', label: 'Admin', icon: 'admin' });
 	} else {
-		items.push(
-			{ href: '/auth/login', label: 'Entrar', icon: 'login' },
-			{ href: '/auth/register', label: 'Crear cuenta', icon: 'register', primary: true }
-		);
+		// One entry point: registration is linked from the login page.
+		items.push({ href: '/auth/login', label: 'Iniciar sesión', icon: 'login', primary: true });
 	}
 
 	return items;
