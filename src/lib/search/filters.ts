@@ -1,14 +1,15 @@
 /** Search filters shared by the header panel and the home results. */
-export type SearchFilters = { q: string; categoria: string; provincia: string };
+export type SearchFilters = { q: string; categoria: string; provincia: string; ciudad: string };
 
-const KEYS = ['q', 'categoria', 'provincia'] as const;
+const KEYS = ['q', 'categoria', 'provincia', 'ciudad'] as const;
 
 /** Reads the filters from URL params: trimmed, missing values become `''`. */
 export function parseFilters(params: URLSearchParams): SearchFilters {
 	return {
 		q: params.get('q')?.trim() ?? '',
 		categoria: params.get('categoria')?.trim() ?? '',
-		provincia: params.get('provincia')?.trim() ?? ''
+		provincia: params.get('provincia')?.trim() ?? '',
+		ciudad: params.get('ciudad')?.trim() ?? ''
 	};
 }
 

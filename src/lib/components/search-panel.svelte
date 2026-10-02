@@ -31,7 +31,7 @@
 
 	async function submit(event: SubmitEvent) {
 		event.preventDefault();
-		await goto(buildSearchHref({ q, categoria, provincia }));
+		await goto(buildSearchHref({ q, categoria, provincia, ciudad: '' }));
 		onclose();
 	}
 
