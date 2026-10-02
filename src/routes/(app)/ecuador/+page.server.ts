@@ -1,6 +1,5 @@
 import { error } from '@sveltejs/kit';
 import { getAnonSupabase } from '$lib/supabase/helpers';
-import { getGeneralLessons } from '$lib/content/ecuador.server';
 import type { Provincia } from '$lib/types';
 import type { PageServerLoad } from './$types';
 
@@ -14,13 +13,7 @@ export const load: PageServerLoad = async () => {
 
 	if (dbError) throw error(500, 'No se pudo cargar la geografía de Ecuador');
 
-	const general = getGeneralLessons().map((lesson) => ({
-		order: lesson.order,
-		title: lesson.title
-	}));
-
 	return {
-		provincias: (provincias ?? []) as Provincia[],
-		general
+		provincias: (provincias ?? []) as Provincia[]
 	};
 };

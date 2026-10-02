@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Badge } from '$lib/components/ui/badge';
 	import PageHeader from '$lib/components/page-header.svelte';
 	import { groupByRegion } from '$lib/utils/provincias';
 	import { regionIcon } from '$lib/utils/regions';
@@ -12,10 +11,6 @@
 			...group,
 			icon: regionIcon(group.region)
 		}))
-	);
-
-	const generalTitles = $derived(
-		(data.general as { order: number; title: string }[]).map((l) => l.title)
 	);
 </script>
 
@@ -33,15 +28,7 @@
 		class="mx-auto mb-8 max-w-2xl sm:mb-10"
 		title="Geografía de Ecuador"
 		description="24 provincias en cuatro regiones: relieve, clima y cultura de cada una, con los negocios, artistas y lugares que puedes visitar."
-	>
-		{#snippet actions()}
-			{#if generalTitles.length}
-				{#each generalTitles as title (title)}
-					<Badge variant="outline">{title}</Badge>
-				{/each}
-			{/if}
-		{/snippet}
-	</PageHeader>
+	></PageHeader>
 
 	{#each provincesByRegion as region (region.region)}
 		<section class="mb-10" aria-labelledby="region-{region.region}-heading">
@@ -64,7 +51,6 @@
 							class="flex h-full min-h-11 flex-col gap-1 rounded-lg border border-border bg-card p-4 text-card-foreground outline-none hover:bg-muted focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
 						>
 							<span class="text-body font-medium">{provincia.nombre}</span>
-							<span class="text-caption text-muted-foreground">Lección {provincia.orden}</span>
 						</a>
 					</li>
 				{/each}

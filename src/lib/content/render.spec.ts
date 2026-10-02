@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { renderProvinceHtml } from './render';
+import { renderProvinceHtml, wrapTables } from './render';
 
 describe('renderProvinceHtml: legit markdown', () => {
 	it('returns an empty string for empty or whitespace input', () => {
@@ -83,5 +83,19 @@ describe('renderProvinceHtml: hostile markdown', () => {
 		);
 		expect(out).toContain('<h3>T</h3>');
 		expect(out).not.toMatch(/<(script|img|div style)/i);
+	});
+});
+
+describe('wrapTables', () => {
+	it('wraps every table, with or without attributes, in .table-scroll', () => {
+		const html = '<table><tr><td>a</td></tr></table><table class="x"><tr><td>b</td></tr></table>';
+		expect(wrapTables(html)).toBe(
+			'<div class="table-scroll"><table><tr><td>a</td></tr></table></div>' +
+				'<div class="table-scroll"><table class="x"><tr><td>b</td></tr></table></div>'
+		);
+	});
+
+	it('leaves html without tables untouched', () => {
+		expect(wrapTables('<p>sin tablas</p>')).toBe('<p>sin tablas</p>');
 	});
 });
