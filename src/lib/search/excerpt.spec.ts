@@ -67,6 +67,39 @@ describe('markdownExcerpt', () => {
 		expect(long.endsWith(' …')).toBe(false);
 	});
 
+	it('prefers ending on a complete sentence when one fits, without an ellipsis', () => {
+		const text =
+			'Manabí es una provincia costera. Su capital es Portoviejo y tiene muchas playas. Aquí empieza una tercera oración mucho más larga que ya no cabe en el límite.';
+		const result = markdownExcerpt(text, 90);
+		expect(result).toBe(
+			'Manabí es una provincia costera. Su capital es Portoviejo y tiene muchas playas.'
+		);
+		expect(result.length).toBeLessThanOrEqual(90);
+		expect(result.endsWith('…')).toBe(false);
+	});
+
+	it('keeps as many whole sentences as fit', () => {
+		const text = 'Uno dos tres. Cuatro cinco seis. Siete ocho nueve diez once doce.';
+		expect(markdownExcerpt(text, 35)).toBe('Uno dos tres. Cuatro cinco seis.');
+		expect(markdownExcerpt(text, 16)).toBe('Uno dos tres.');
+	});
+
+	it('does not split a sentence on decimals or inner abbreviations', () => {
+		const text = 'La superficie ronda los 9 500 km² y la altura es de 2.850 m. Otra frase corta.';
+		expect(markdownExcerpt(text, 62)).toBe(
+			'La superficie ronda los 9 500 km² y la altura es de 2.850 m.'
+		);
+	});
+
+	it('falls back to a word-boundary cut with an ellipsis when not even one sentence fits', () => {
+		const result = markdownExcerpt(
+			'Esta es una única oración extremadamente larga que no cabe por ningún motivo en el límite.',
+			30
+		);
+		expect(result.endsWith('…')).toBe(true);
+		expect(result.length).toBeLessThanOrEqual(30);
+	});
+
 	it('does not truncate text that fits', () => {
 		expect(markdownExcerpt('corto texto', 11)).toBe('corto texto');
 	});

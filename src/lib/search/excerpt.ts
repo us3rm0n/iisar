@@ -15,8 +15,24 @@ function toPlainText(text: string): string {
 		.trim();
 }
 
+/** A sentence ends at . ! ? followed by a space and an uppercase letter, quote or opener: decimals ("2.850") and lowercase continuations do not split. */
+const SENTENCE_BREAK = /(?<=[.!?])\s+(?=[\p{Lu}¿¡«"“])/u;
+
+/** As many WHOLE sentences as fit in `maxChars`; empty when not even the first one fits. */
+function wholeSentences(text: string, maxChars: number): string {
+	let result = '';
+	for (const sentence of text.split(SENTENCE_BREAK)) {
+		const next = result ? `${result} ${sentence}` : sentence;
+		if (next.length > maxChars) break;
+		result = next;
+	}
+	return result;
+}
+
 function truncate(text: string, maxChars: number): string {
 	if (text.length <= maxChars) return text;
+	const sentences = wholeSentences(text, maxChars);
+	if (sentences) return sentences;
 	const room = Math.max(0, maxChars - 1);
 	let cut = text.slice(0, room);
 	if (text[room] !== ' ') {
