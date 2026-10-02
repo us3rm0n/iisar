@@ -3,32 +3,25 @@ import { getAnonSupabase } from '$lib/supabase/helpers';
 import { resolveProvinciaFilter } from '$lib/utils/provincia-filter';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, parent }) => {
 	const q = url.searchParams.get('q')?.trim() ?? '';
 	const categoria = url.searchParams.get('categoria')?.trim() ?? '';
 	const provincia = url.searchParams.get('provincia')?.trim() ?? '';
 
+	// Categories and provinces come from the layout (header search panel): no duplicate queries.
+	const {
+		searchOptions: { categories, provincias, provinciasError }
+	} = await parent();
+
 	const supabase = getAnonSupabase();
 
-	const { data: categories } = await supabase
-		.from('categories')
-		.select('id,nombre,slug')
-		.eq('activo', true)
-		.order('nombre');
-
-	const { data: provincias, error: provinciasError } = await supabase
-		.from('provincias')
-		.select('id,slug,nombre,region,orden')
-		.order('orden');
-
-	// Provinces are auxiliary: a failed lookup must not break the page. Without a
-	// filter the home still lists businesses; with one we cannot resolve it, so
-	// `resolveProvinciaFilter` reports the problem and we list nothing.
-	if (provinciasError) console.error('home: provincias lookup failed', provinciasError);
+	// Provinces are auxiliary: a failed lookup (logged by the layout loader) must not
+	// break the page. Without a filter the home still lists businesses; with one we
+	// cannot resolve it, so `resolveProvinciaFilter` reports the problem and we list nothing.
 	const { provinciaId, problem: provinciaProblem } = resolveProvinciaFilter(
-		provincias ?? [],
+		provincias,
 		provincia,
-		Boolean(provinciasError)
+		provinciasError
 	);
 
 	let query = supabase
@@ -39,7 +32,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		.limit(20);
 
 	if (categoria) {
-		const cat = categories?.find((c) => c.slug === categoria);
+		const cat = categories.find((c) => c.slug === categoria);
 		if (cat) query = query.eq('category_id', cat.id);
 	}
 
@@ -58,22 +51,11 @@ export const load: PageServerLoad = async ({ url }) => {
 
 	if (businessesError) throw error(500, 'No se pudieron cargar los negocios');
 
-	// ad slots home (max 2 no intrusivo)
-	const { data: ads } = await supabase
-		.from('ad_slots')
-		.select('id,ubicacion,business_id')
-		.eq('ubicacion', 'home')
-		.eq('activo', true)
-		.limit(2);
-
 	return {
 		q,
 		categoria,
 		provincia,
 		provinciaProblem,
-		categories: categories ?? [],
-		provincias: provincias ?? [],
-		businesses: businesses ?? [],
-		ads: ads ?? []
+		businesses: businesses ?? []
 	};
 };

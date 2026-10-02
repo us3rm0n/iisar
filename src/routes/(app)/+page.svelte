@@ -4,10 +4,11 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import BusinessCard from '$lib/components/business-card.svelte';
 	import PageHeader from '$lib/components/page-header.svelte';
-	import SelectField from '$lib/components/select-field.svelte';
-	import { Search, Store, Megaphone, Plus, SearchX, AlertTriangle } from '@lucide/svelte';
+	import { Store, Plus, SearchX, AlertTriangle } from '@lucide/svelte';
 
 	let { data } = $props();
+
+	const filtersActive = $derived(Boolean(data.q || data.categoria || data.provincia));
 </script>
 
 <svelte:head>
@@ -26,65 +27,16 @@
 		description="Directorio de productos y servicios · gastronomía, salud, artistas y más. Cada negocio con su landing page."
 	/>
 
-	<!-- Search bar -->
-	<div class="mx-auto mb-10 max-w-3xl">
-		<form
-			method="GET"
-			role="search"
-			aria-label="Buscar negocios"
-			class="flex flex-col gap-2 rounded-lg border border-border bg-card p-2 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 sm:flex-row sm:items-center sm:gap-0 sm:p-1.5"
-		>
-			<div class="relative flex flex-1 items-center">
-				<Search
-					class="pointer-events-none absolute left-4 size-4 text-muted-foreground"
-					aria-hidden="true"
-				/>
-				<label for="q" class="sr-only">Buscar negocio o servicio</label>
-				<input
-					id="q"
-					name="q"
-					value={data.q}
-					placeholder="Buscar negocio o servicio..."
-					aria-label="Buscar negocio"
-					class="h-11 w-full rounded-md bg-transparent pr-3 pl-10 text-body placeholder:text-muted-foreground focus:outline-none"
-				/>
-			</div>
-			<div class="hidden h-6 w-px bg-border sm:block"></div>
-			<div
-				class="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:pl-1"
+	{#if filtersActive}
+		<div class="mb-6 flex items-center justify-between gap-3 text-body text-muted-foreground">
+			<span>Resultados filtrados</span>
+			<a
+				href="/"
+				class="inline-flex min-h-11 items-center rounded-lg px-3 font-medium text-foreground underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+				>Limpiar</a
 			>
-				<SelectField
-					id="categoria"
-					name="categoria"
-					label="Categoría"
-					hideLabel
-					value={data.categoria}
-					class="sm:flex-1"
-				>
-					<option value="">Todas las categorías</option>
-					{#each data.categories as c (c.slug)}
-						<option value={c.slug}>{c.nombre}</option>
-					{/each}
-				</SelectField>
-				<SelectField
-					id="provincia"
-					name="provincia"
-					label="Provincia"
-					hideLabel
-					value={data.provincia}
-					class="sm:flex-1"
-				>
-					<option value="">Todas las provincias</option>
-					{#each data.provincias as p (p.slug)}
-						<option value={p.slug}>{p.nombre}</option>
-					{/each}
-				</SelectField>
-				<Button type="submit" variant="pill" class="shrink-0">
-					<Search class="size-4" aria-hidden="true" /> Buscar
-				</Button>
-			</div>
-		</form>
-	</div>
+		</div>
+	{/if}
 
 	{#if data.provinciaProblem}
 		<div
@@ -100,21 +52,6 @@
 		</div>
 	{/if}
 
-	{#if data.ads.length}
-		<div class="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
-			{#each data.ads as ad (ad.id)}
-				<div class="flex items-center gap-2.5 rounded-lg border border-border bg-card px-4 py-3">
-					<span
-						class="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground"
-						><Megaphone class="size-3.5" aria-hidden="true" /></span
-					>
-					<span class="text-body text-muted-foreground">Publicidad · slot {ad.id.slice(0, 6)}</span>
-					<Badge variant="secondary" class="ml-auto">Ad</Badge>
-				</div>
-			{/each}
-		</div>
-	{/if}
-
 	<section aria-labelledby="negocios-heading">
 		<div class="mb-4 flex items-center justify-between">
 			<h2 id="negocios-heading" class="text-title font-medium text-foreground">
@@ -123,7 +60,7 @@
 				>
 			</h2>
 			<Badge variant="outline" class="hidden sm:inline-flex"
-				><Store aria-hidden="true" /> {data.categories.length} categorías</Badge
+				><Store aria-hidden="true" /> {data.searchOptions.categories.length} categorías</Badge
 			>
 		</div>
 
