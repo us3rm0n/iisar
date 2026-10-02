@@ -7,6 +7,8 @@ type SessionUser = { id: string };
 export class Session {
 	user = $state<SessionUser | null>(null);
 	role = $state<string | null>(null);
+	/** True once the latest sync has fully resolved; until then `user === null` means "unknown", not "signed out". */
+	ready = $state(false);
 
 	private syncId = 0;
 
@@ -16,6 +18,7 @@ export class Session {
 		if (!next) {
 			this.user = null;
 			this.role = null;
+			this.ready = true;
 			return;
 		}
 		// Show the user right away; drop a previous user's role until this lookup resolves.
@@ -31,11 +34,21 @@ export class Session {
 		}
 		if (id !== this.syncId) return;
 		this.role = role;
+		this.ready = true;
 	}
 
 	/** Loads the current session and subscribes to changes. Returns the unsubscribe function. */
 	start = () => {
-		void getCurrentUser().then((user) => this.sync(user));
+		getCurrentUser()
+			.then((user) => this.sync(user))
+			.catch((error) => {
+				console.error('Failed to load current user', error);
+				// An auth event may already have synced; never clobber it.
+				if (this.syncId > 0) return;
+				this.user = null;
+				this.role = null;
+				this.ready = true;
+			});
 		return onAuthChange((user) => void this.sync(user));
 	};
 

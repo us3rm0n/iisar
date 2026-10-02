@@ -103,4 +103,68 @@ describe('Session', () => {
 		await flush();
 		expect(session.role).toBe('user');
 	});
+	describe('ready', () => {
+		it('is false before anything resolves', () => {
+			auth.getCurrentUser.mockReturnValue(new Promise(() => {}));
+			auth.onAuthChange.mockReturnValue(() => {});
+			const session = new Session();
+			session.start();
+			expect(session.ready).toBe(false);
+		});
+
+		it('becomes true after a signed-out sync', async () => {
+			const { session } = setup(null);
+			await flush();
+			expect(session.user).toBeNull();
+			expect(session.ready).toBe(true);
+		});
+
+		it('stays false for a user until the role lookup resolves', async () => {
+			const pending = deferred<string | null>();
+			auth.getProfileRole.mockReturnValue(pending.promise);
+			const { session } = setup({ id: 'u1' });
+			await flush();
+			expect(session.user).toEqual({ id: 'u1' });
+			expect(session.ready).toBe(false);
+			pending.resolve('webmaster');
+			await flush();
+			expect(session.ready).toBe(true);
+			expect(session.role).toBe('webmaster');
+		});
+
+		it('becomes true even when the role lookup rejects', async () => {
+			auth.getProfileRole.mockRejectedValue(new Error('boom'));
+			const { session } = setup({ id: 'u1' });
+			await flush();
+			expect(session.role).toBeNull();
+			expect(session.ready).toBe(true);
+		});
+
+		it('is not flipped early by a stale sync', async () => {
+			const first = deferred<string | null>();
+			const second = deferred<string | null>();
+			auth.getProfileRole.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+			const { session, emit } = setup({ id: 'old' });
+			await flush();
+			emit({ id: 'new' });
+			first.resolve('webmaster');
+			await flush();
+			expect(session.ready).toBe(false);
+			second.resolve('user');
+			await flush();
+			expect(session.ready).toBe(true);
+			expect(session.role).toBe('user');
+		});
+
+		it('becomes true with no user when getCurrentUser rejects', async () => {
+			auth.getCurrentUser.mockRejectedValue(new Error('offline'));
+			auth.onAuthChange.mockReturnValue(() => {});
+			const session = new Session();
+			session.start();
+			await flush();
+			expect(session.user).toBeNull();
+			expect(session.ready).toBe(true);
+			expect(console.error).toHaveBeenCalled();
+		});
+	});
 });
