@@ -32,11 +32,11 @@
 			method="GET"
 			role="search"
 			aria-label="Buscar negocios"
-			class="flex flex-col gap-2 rounded-xl border border-border bg-card p-2 sm:flex-row sm:items-center sm:gap-0 sm:p-1.5"
+			class="flex flex-col gap-2 rounded-lg border border-border bg-card p-2 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 sm:flex-row sm:items-center sm:gap-0 sm:p-1.5"
 		>
 			<div class="relative flex flex-1 items-center">
 				<Search
-					class="pointer-events-none absolute left-4 h-4 w-4 text-zinc-400"
+					class="pointer-events-none absolute left-4 size-4 text-muted-foreground"
 					aria-hidden="true"
 				/>
 				<label for="q" class="sr-only">Buscar negocio o servicio</label>
@@ -46,10 +46,10 @@
 					value={data.q}
 					placeholder="Buscar negocio o servicio..."
 					aria-label="Buscar negocio"
-					class="h-11 w-full rounded-full bg-transparent pr-3 pl-10 text-[15px] placeholder:text-zinc-400 focus:outline-none"
+					class="h-11 w-full rounded-md bg-transparent pr-3 pl-10 text-body placeholder:text-muted-foreground focus:outline-none"
 				/>
 			</div>
-			<div class="hidden h-6 w-px bg-zinc-200/60 sm:block dark:bg-white/10"></div>
+			<div class="hidden h-6 w-px bg-border sm:block"></div>
 			<div
 				class="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:pl-1"
 			>
@@ -80,7 +80,7 @@
 					{/each}
 				</SelectField>
 				<Button type="submit" variant="pill" class="shrink-0">
-					<Search class="h-4 w-4" /> Buscar
+					<Search class="size-4" aria-hidden="true" /> Buscar
 				</Button>
 			</div>
 		</form>
@@ -88,10 +88,10 @@
 
 	{#if data.provinciaProblem}
 		<div
-			class="mx-auto mb-8 flex max-w-3xl items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-100"
+			class="mx-auto mb-8 flex max-w-3xl items-center gap-2 rounded-lg border border-border bg-muted px-4 py-3 text-body text-foreground"
 			role="alert"
 		>
-			<AlertTriangle class="h-4 w-4 shrink-0" aria-hidden="true" />
+			<AlertTriangle class="size-4 shrink-0" aria-hidden="true" />
 			{#if data.provinciaProblem === 'lookup-failed'}
 				<span>No se pudo aplicar el filtro de provincia. Inténtalo de nuevo más tarde.</span>
 			{:else}
@@ -103,19 +103,13 @@
 	{#if data.ads.length}
 		<div class="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
 			{#each data.ads as ad (ad.id)}
-				<div class="flex items-center gap-2.5 rounded-xl border border-border bg-card px-4 py-3">
+				<div class="flex items-center gap-2.5 rounded-lg border border-border bg-card px-4 py-3">
 					<span
-						class="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
-						><Megaphone class="h-3.5 w-3.5" /></span
+						class="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground"
+						><Megaphone class="size-3.5" aria-hidden="true" /></span
 					>
-					<span class="text-sm text-zinc-600 dark:text-zinc-300"
-						>Publicidad · slot {ad.id.slice(0, 6)}</span
-					>
-					<Badge
-						variant="secondary"
-						class="ml-auto rounded-full bg-white/70 px-2.5 text-xs backdrop-blur dark:bg-white/10"
-						>Ad</Badge
-					>
+					<span class="text-body text-muted-foreground">Publicidad · slot {ad.id.slice(0, 6)}</span>
+					<Badge variant="secondary" class="ml-auto">Ad</Badge>
 				</div>
 			{/each}
 		</div>
@@ -123,32 +117,29 @@
 
 	<section aria-labelledby="negocios-heading">
 		<div class="mb-4 flex items-center justify-between">
-			<h2
-				id="negocios-heading"
-				class="text-[15px] font-medium tracking-[-0.01em] text-zinc-900 sm:text-[16px] dark:text-white"
-			>
-				Negocios activos <span class="font-normal text-zinc-500">· {data.businesses.length}</span>
+			<h2 id="negocios-heading" class="text-title font-medium text-foreground">
+				Negocios activos <span class="font-normal text-muted-foreground"
+					>· {data.businesses.length}</span
+				>
 			</h2>
-			<Badge
-				variant="outline"
-				class="hidden rounded-full border-zinc-200/60 bg-white/50 px-3 py-1 text-xs backdrop-blur sm:inline-flex dark:border-white/10 dark:bg-white/5"
-				><Store class="mr-1 h-3 w-3" /> {data.categories.length} categorías</Badge
+			<Badge variant="outline" class="hidden sm:inline-flex"
+				><Store aria-hidden="true" /> {data.categories.length} categorías</Badge
 			>
 		</div>
 
 		{#if data.businesses.length === 0}
-			<div class="rounded-xl border border-border bg-card py-12 text-center">
+			<div class="rounded-lg border border-border bg-card py-12 text-center">
 				<div class="mx-auto flex max-w-md flex-col items-center gap-3 px-6">
 					<span
-						class="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
-						><SearchX class="h-7 w-7" aria-hidden="true" /></span
+						class="flex size-14 items-center justify-center rounded-lg bg-primary text-primary-foreground"
+						><SearchX class="size-7" aria-hidden="true" /></span
 					>
-					<p class="text-lg font-medium tracking-[-0.01em]">No hay resultados</p>
-					<p class="text-sm text-zinc-500">
+					<p class="text-title font-medium">No hay resultados</p>
+					<p class="text-body text-muted-foreground">
 						Aún no hay negocios que coincidan con tu búsqueda. Sé el primero en crear tu landing.
 					</p>
 					<Button href="/dashboard" variant="pill" class="mt-2"
-						><Plus class="h-4 w-4" /> Crear mi negocio</Button
+						><Plus class="size-4" aria-hidden="true" /> Crear mi negocio</Button
 					>
 				</div>
 			</div>
@@ -164,13 +155,9 @@
 	</section>
 
 	<Separator class="my-10 opacity-50" />
-	<p class="text-center text-xs text-zinc-400 dark:text-zinc-500">
-		Slug MVP <code class="rounded-full bg-white/60 px-2 py-0.5 backdrop-blur dark:bg-white/10"
-			>/negocio/[slug]</code
-		>
+	<p class="text-center text-caption text-muted-foreground">
+		Slug MVP <code class="rounded-md bg-muted px-2 py-0.5">/negocio/[slug]</code>
 		· futuro
-		<code class="rounded-full bg-white/60 px-2 py-0.5 backdrop-blur dark:bg-white/10"
-			>negocio.iisar.com</code
-		>
+		<code class="rounded-md bg-muted px-2 py-0.5">negocio.iisar.com</code>
 	</p>
 </div>

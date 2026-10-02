@@ -1,24 +1,16 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
-	import { Card, CardHeader, CardTitle, CardDescription } from '$lib/components/ui/card';
-	import { Mountain, Waves, TreePalm, Compass } from '@lucide/svelte';
+	import PageHeader from '$lib/components/page-header.svelte';
 	import { groupByRegion } from '$lib/utils/provincias';
-	import type { Provincia, ProvinciaRegion } from '$lib/types';
+	import { regionIcon } from '$lib/utils/regions';
+	import type { Provincia } from '$lib/types';
 
 	let { data } = $props();
-
-	// Las etiquetas de región viven en $lib/utils/provincias; aquí solo los íconos.
-	const REGION_ICONS: Record<ProvinciaRegion, typeof Waves> = {
-		costa: Waves,
-		sierra: Mountain,
-		amazonia: TreePalm,
-		insular: Compass
-	};
 
 	const provincesByRegion = $derived(
 		groupByRegion(data.provincias as Provincia[]).map((group) => ({
 			...group,
-			icon: REGION_ICONS[group.region]
+			icon: regionIcon(group.region)
 		}))
 	);
 
@@ -36,36 +28,30 @@
 </svelte:head>
 
 <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-	<div class="mb-8 text-center sm:mb-10">
-		<h1
-			class="mx-auto max-w-2xl text-[28px] font-semibold tracking-[-0.02em] text-zinc-900 sm:text-[38px] dark:text-white"
-		>
-			Geografía de Ecuador
-		</h1>
-		<p
-			class="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-zinc-500 sm:text-[17px] dark:text-zinc-400"
-		>
-			24 provincias en cuatro regiones — relieve, clima y cultura de cada una, con los negocios,
-			artistas y lugares que puedes visitar.
-		</p>
-		{#if generalTitles.length}
-			<div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+	<PageHeader
+		align="center"
+		class="mx-auto mb-8 max-w-2xl sm:mb-10"
+		title="Geografía de Ecuador"
+		description="24 provincias en cuatro regiones: relieve, clima y cultura de cada una, con los negocios, artistas y lugares que puedes visitar."
+	>
+		{#snippet actions()}
+			{#if generalTitles.length}
 				{#each generalTitles as title (title)}
-					<Badge variant="outline" class="rounded-full">{title}</Badge>
+					<Badge variant="outline">{title}</Badge>
 				{/each}
-			</div>
-		{/if}
-	</div>
+			{/if}
+		{/snippet}
+	</PageHeader>
 
 	{#each provincesByRegion as region (region.region)}
 		<section class="mb-10" aria-labelledby="region-{region.region}-heading">
 			<h2
 				id="region-{region.region}-heading"
-				class="mb-4 flex items-center gap-2 text-lg font-semibold text-zinc-900 dark:text-white"
+				class="mb-4 flex items-center gap-2 text-title font-semibold text-foreground"
 			>
-				<region.icon class="h-5 w-5" aria-hidden="true" />
+				<region.icon class="size-5" aria-hidden="true" />
 				{region.label}
-				<span class="text-sm font-normal text-zinc-500"
+				<span class="text-body font-normal text-muted-foreground"
 					>· {region.provincias.length}
 					{region.provincias.length === 1 ? 'provincia' : 'provincias'}</span
 				>
@@ -75,14 +61,10 @@
 					<li>
 						<a
 							href="/ecuador/{provincia.slug}"
-							class="block h-full rounded-xl focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:outline-none"
+							class="flex h-full min-h-11 flex-col gap-1 rounded-lg border border-border bg-card p-4 text-card-foreground outline-none hover:bg-muted focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
 						>
-							<Card class="h-full min-h-[44px] transition-shadow hover:shadow-md">
-								<CardHeader>
-									<CardTitle class="text-base">{provincia.nombre}</CardTitle>
-									<CardDescription>Lección {provincia.orden}</CardDescription>
-								</CardHeader>
-							</Card>
+							<span class="text-body font-medium">{provincia.nombre}</span>
+							<span class="text-caption text-muted-foreground">Lección {provincia.orden}</span>
 						</a>
 					</li>
 				{/each}

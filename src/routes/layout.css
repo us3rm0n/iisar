@@ -87,3 +87,60 @@
 body {
 	@apply bg-background text-foreground;
 }
+
+/* Rendered markdown (trusted repo content). Wrap tables in `.table-scroll` to scroll on phones. */
+@layer components {
+	.prose-content {
+		font-size: var(--text-body);
+		line-height: 1.65;
+		color: var(--color-foreground);
+	}
+	.prose-content > :first-child {
+		margin-top: 0;
+	}
+	.prose-content h3 {
+		margin-top: 1.75rem;
+		margin-bottom: 0.5rem;
+		font-size: var(--text-title);
+		line-height: var(--text-title--line-height);
+		font-weight: 600;
+	}
+	.prose-content p,
+	.prose-content ul,
+	.prose-content ol {
+		margin-top: 0.5rem;
+	}
+	.prose-content ul,
+	.prose-content ol {
+		padding-left: 1.25rem;
+	}
+	.prose-content ul {
+		list-style: disc;
+	}
+	.prose-content ol {
+		list-style: decimal;
+	}
+	.prose-content strong {
+		font-weight: 600;
+	}
+	.prose-content .table-scroll {
+		margin-top: 0.75rem;
+		overflow-x: auto;
+	}
+	.prose-content table {
+		width: max-content;
+		min-width: 100%;
+		border-collapse: collapse;
+		font-size: inherit;
+	}
+	.prose-content th,
+	.prose-content td {
+		border: 1px solid var(--color-border);
+		padding: 0.5rem 0.75rem;
+		text-align: left;
+	}
+	.prose-content th {
+		background: var(--color-muted);
+		font-weight: 600;
+	}
+}

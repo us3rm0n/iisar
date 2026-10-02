@@ -1,5 +1,6 @@
 <script lang="ts">
 	import BusinessCard from '$lib/components/business-card.svelte';
+	import PageHeader from '$lib/components/page-header.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import { Card, CardTitle, CardDescription, CardContent } from '$lib/components/ui/card';
@@ -26,41 +27,40 @@
 <div class="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 	<a
 		href="/ecuador"
-		class="mb-4 inline-flex min-h-11 items-center gap-1 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+		class="mb-4 inline-flex min-h-11 items-center gap-1 text-body font-medium text-muted-foreground hover:text-foreground"
 	>
-		<ArrowLeft class="h-4 w-4" /> Todas las provincias
+		<ArrowLeft class="size-4" aria-hidden="true" /> Todas las provincias
 	</a>
 
-	<div class="mb-6 flex flex-wrap items-center gap-2">
-		<h1 class="text-2xl font-semibold tracking-[-0.01em] text-zinc-900 sm:text-3xl dark:text-white">
-			{provincia.nombre}
-		</h1>
-		<Badge variant="secondary" class="rounded-full"
-			><MapPin class="mr-1 h-3 w-3" /> {regionLabel(provincia.region)}</Badge
-		>
-	</div>
+	<PageHeader class="mb-6" title={provincia.nombre}>
+		{#snippet actions()}
+			<Badge variant="secondary"
+				><MapPin aria-hidden="true" /> {regionLabel(provincia.region)}</Badge
+			>
+		{/snippet}
+	</PageHeader>
 
 	{#if data.lessonHtml}
-		<article class="ecuador-content mb-10 max-w-none">
+		<article class="prose-content mb-10">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -- markdown de confianza del repo (content/geografia-ecuador.md), renderizado server-side, no input de usuario -->
 			{@html data.lessonHtml}
 		</article>
 	{:else}
-		<p class="mb-10 text-sm text-muted-foreground">
+		<p class="mb-10 text-body text-muted-foreground">
 			Aún no hay contenido editorial para esta provincia.
 		</p>
 	{/if}
 
 	<section aria-labelledby="negocios-heading">
-		<h2 id="negocios-heading" class="mb-3 text-lg font-semibold text-zinc-900 dark:text-white">
+		<h2 id="negocios-heading" class="mb-3 text-title font-semibold text-foreground">
 			Negocios, artistas y lugares en {provincia.nombre}
-			<span class="text-sm font-normal text-zinc-500">· {businesses.length}</span>
+			<span class="text-body font-normal text-muted-foreground">· {businesses.length}</span>
 		</h2>
 
 		{#if businesses.length === 0}
 			<Card class="py-10 text-center">
 				<CardContent class="flex flex-col items-center gap-3">
-					<PackageOpen class="h-10 w-10 text-muted-foreground" />
+					<PackageOpen class="size-10 text-muted-foreground" aria-hidden="true" />
 					<CardTitle class="text-base">Sin registros aún</CardTitle>
 					<CardDescription
 						>Nadie ha registrado un negocio, artista o lugar en {provincia.nombre} todavía.</CardDescription
@@ -81,54 +81,3 @@
 		{/if}
 	</section>
 </div>
-
-<style>
-	.ecuador-content :global(h3) {
-		margin-top: 1.75rem;
-		margin-bottom: 0.5rem;
-		font-size: 1.05rem;
-		font-weight: 600;
-		color: hsl(var(--foreground));
-	}
-	.ecuador-content :global(p) {
-		margin-top: 0.5rem;
-		font-size: 0.9375rem;
-		line-height: 1.6;
-		color: hsl(var(--foreground));
-	}
-	.ecuador-content :global(ul),
-	.ecuador-content :global(ol) {
-		margin-top: 0.5rem;
-		padding-left: 1.25rem;
-		font-size: 0.9375rem;
-		line-height: 1.6;
-	}
-	.ecuador-content :global(ul) {
-		list-style: disc;
-	}
-	.ecuador-content :global(ol) {
-		list-style: decimal;
-	}
-	.ecuador-content :global(strong) {
-		font-weight: 600;
-	}
-	.ecuador-content :global(table) {
-		margin-top: 0.75rem;
-		border-collapse: collapse;
-		font-size: 0.875rem;
-	}
-	.ecuador-content :global(.table-scroll) {
-		margin-top: 0.75rem;
-		overflow-x: auto;
-	}
-	.ecuador-content :global(th),
-	.ecuador-content :global(td) {
-		border: 1px solid hsl(var(--border));
-		padding: 0.4rem 0.6rem;
-		text-align: left;
-	}
-	.ecuador-content :global(th) {
-		background: hsl(var(--muted));
-		font-weight: 600;
-	}
-</style>
