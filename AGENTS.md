@@ -4,7 +4,7 @@
 - **Package Manager**: pnpm (also npm works, lockfile is pnpm-lock.yaml)
 - **Add-ons**: prettier, eslint, vitest, tailwindcss, sveltekit-adapter, shadcn-svelte, lucide
 - **Stack**: SvelteKit + Supabase (sin backend custom). Supabase = Auth/DB/Storage/RLS + Edge Runtime local. Pagos manuales.
-- **UI**: shadcn-svelte (`components.json:1`, `src/lib/components/ui/*`, `src/lib/utils.ts:1` con `cn`), iconos `@lucide/svelte` (+ `lucide-svelte` compat). Tailwind v4 con variables zinc en `src/routes/layout.css:1`. `svelte.config.js:1` define `adapter-cloudflare` + `vitePreprocess` (Cloudflare Pages, local `vite dev` sin adapter).
+- **UI**: shadcn-svelte (`components.json:1`, `src/lib/components/ui/*`, `src/lib/utils.ts:1` con `cn`), iconos `@lucide/svelte`. Tailwind v4 con variables zinc en `src/routes/layout.css:1`. `svelte.config.js:1` define `adapter-cloudflare` + `vitePreprocess` (Cloudflare Pages, local `vite dev` sin adapter).
 
 ---
 
