@@ -8,32 +8,30 @@
 	} from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Separator } from '$lib/components/ui/separator';
-	import { Tag, Megaphone, Clock, ShieldCheck } from '@lucide/svelte';
+	import PageHeader from '$lib/components/page-header.svelte';
+	import { Tag, Megaphone, Clock } from '@lucide/svelte';
+
+	const snippet = 'rounded-md bg-muted px-1.5 py-0.5 text-caption break-words';
 </script>
 
-<div class="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-	<div class="mb-6">
-		<h1 class="flex items-center gap-2 text-2xl font-bold sm:text-3xl">
-			<ShieldCheck class="h-6 w-6" /> Admin — Webmaster
-		</h1>
-		<p class="mt-1 text-sm text-muted-foreground">
-			Solo <code class="rounded bg-muted px-1 py-0.5">profiles.role = 'webmaster'</code> (función
-			<code>is_webmaster()</code>).
-		</p>
-	</div>
+<div class="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+	<PageHeader
+		title="Admin — Webmaster"
+		description="Solo para usuarios con el rol webmaster en profiles (función is_webmaster())."
+	/>
 
 	<div class="grid gap-4">
 		<Card>
 			<CardHeader>
-				<CardTitle class="flex items-center gap-2"><Tag class="h-5 w-5" /> Categorías</CardTitle>
+				<CardTitle class="flex items-center gap-2 text-title"><Tag /> Categorías</CardTitle>
 				<CardDescription
 					>Iniciales: gastronomía, salud. Escritura solo webmaster (RLS).</CardDescription
 				>
 			</CardHeader>
-			<CardContent>
-				<code class="rounded bg-muted px-2 py-1 text-xs">select * from categories;</code>
-				<p class="mt-2 text-sm text-muted-foreground">
-					Crear: <code class="rounded bg-muted px-1 py-0.5"
+			<CardContent class="flex flex-col gap-2">
+				<code class={snippet}>select * from categories;</code>
+				<p class="text-body text-muted-foreground">
+					Crear: <code class={snippet}
 						>insert into categories (nombre, slug) values ('Nueva','nueva');</code
 					>
 				</p>
@@ -42,30 +40,30 @@
 
 		<Card>
 			<CardHeader>
-				<CardTitle class="flex items-center gap-2"
-					><Clock class="h-5 w-5" /> Suscripciones pendientes</CardTitle
+				<CardTitle class="flex items-center gap-2 text-title"
+					><Clock /> Suscripciones pendientes</CardTitle
 				>
 				<CardDescription
-					>Cliente sube comprobante (attachment URL) → pendiente → webmaster aprueba.</CardDescription
+					>Cliente sube comprobante (attachment URL), queda pendiente y el webmaster aprueba.</CardDescription
 				>
 			</CardHeader>
-			<CardContent class="space-y-3">
+			<CardContent class="flex flex-col gap-3">
 				<pre
-					class="overflow-auto rounded bg-muted p-3 text-xs">select id, business_id, type, total, status, attachment, fecha_creacion, fecha_vencimiento, fecha_maxima from subscriptions where status='pendiente';</pre>
-				<div class="flex flex-wrap gap-2 text-sm">
+					class="overflow-auto rounded-md bg-muted p-3 text-caption">select id, business_id, type, total, status, attachment, fecha_creacion, fecha_vencimiento, fecha_maxima from subscriptions where status='pendiente';</pre>
+				<div class="flex flex-wrap gap-2">
 					<Badge variant="destructive">pendiente</Badge>
 					<Badge>aprobada</Badge>
 					<Badge variant="secondary">vencida</Badge>
 					<Badge variant="outline">rechazada</Badge>
 				</div>
-				<p class="text-xs">
-					Aprobar: <code class="rounded bg-muted px-1 py-0.5"
+				<p class="text-caption">
+					Aprobar: <code class={snippet}
 						>update subscriptions set status='aprobada', aprobada_por = auth.uid() where id = ...;</code
 					>
 				</p>
 				<Separator />
-				<p class="text-xs text-muted-foreground">
-					Gracia: mensual 7d · semestral 15d · anual 30d — ver trigger <code
+				<p class="text-caption text-muted-foreground">
+					Gracia: mensual 7d, semestral 15d, anual 30d. Ver trigger <code class={snippet}
 						>handle_subscription_dates()</code
 					>
 				</p>
@@ -74,29 +72,28 @@
 
 		<Card>
 			<CardHeader>
-				<CardTitle class="flex items-center gap-2"
-					><Megaphone class="h-5 w-5" /> Publicidad</CardTitle
-				>
-				<CardDescription>No intrusiva — límites por ubicación</CardDescription>
+				<CardTitle class="flex items-center gap-2 text-title"><Megaphone /> Publicidad</CardTitle>
+				<CardDescription>No intrusiva, con límites por ubicación</CardDescription>
 			</CardHeader>
-			<CardContent>
-				<p class="text-sm">
-					<Badge>home</Badge> max 2 · <Badge variant="secondary">category</Badge> max 2 · <Badge
-						variant="outline">business_page</Badge
-					> max 1. Asignar <code class="rounded bg-muted px-1 py-0.5">business_id</code> para ocupar slot.
+			<CardContent class="flex flex-col gap-3">
+				<div class="flex flex-wrap items-center gap-2 text-body">
+					<Badge>home</Badge> máx. 2 <Badge variant="secondary">category</Badge> máx. 2
+					<Badge variant="outline">business_page</Badge> máx. 1
+				</div>
+				<p class="text-body">
+					Asignar <code class={snippet}>business_id</code> para ocupar el slot.
 				</p>
-				<code class="mt-2 inline-block rounded bg-muted px-2 py-1 text-xs"
-					>select * from ad_slots where activo=true;</code
-				>
+				<code class={snippet}>select * from ad_slots where activo=true;</code>
 			</CardContent>
 		</Card>
 	</div>
 
-	<Separator class="my-6" />
-	<p class="text-xs text-muted-foreground">
-		Studio local: <a class="underline hover:text-foreground" href="http://127.0.0.1:54323"
+	<Separator />
+	<p class="text-caption text-muted-foreground">
+		Studio local:
+		<a class="inline-flex min-h-11 items-center underline" href="http://127.0.0.1:54323"
 			>http://127.0.0.1:54323</a
 		>
-		· <code class="rounded bg-muted px-1 py-0.5">npx supabase status</code>
+		y <code class={snippet}>npx supabase status</code>
 	</p>
 </div>

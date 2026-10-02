@@ -2,8 +2,8 @@
 	import { supabase } from '$lib/supabase';
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import FormField from '$lib/components/form-field.svelte';
+	import PageHeader from '$lib/components/page-header.svelte';
 	import { UserPlus } from '@lucide/svelte';
 
 	let email = $state('');
@@ -27,31 +27,40 @@
 
 <svelte:head><title>Iniciar sesión — IISAR</title></svelte:head>
 
-<div class="mx-auto max-w-md px-4 py-10 sm:px-6">
-	<Card>
-		<CardHeader>
-			<CardTitle>Iniciar sesión</CardTitle>
-			<CardDescription>Accede para gestionar tu negocio</CardDescription>
-		</CardHeader>
-		<CardContent>
-			<form onsubmit={handleLogin} class="grid gap-4">
-				<div class="grid gap-1.5">
-					<label for="email" class="text-sm font-medium">Email</label>
-					<Input id="email" type="email" bind:value={email} placeholder="tu@email.com" required />
-				</div>
-				<div class="grid gap-1.5">
-					<label for="password" class="text-sm font-medium">Contraseña</label>
-					<Input id="password" type="password" bind:value={password} placeholder="••••••••" required />
-				</div>
-				{#if err}<p class="rounded bg-destructive/10 px-3 py-2 text-sm text-destructive">{err}</p>{/if}
-				<Button type="submit" disabled={loading} class="h-11 w-full">
-					{loading ? 'Ingresando...' : 'Entrar'}
-				</Button>
-			</form>
-			<p class="mt-4 text-center text-sm text-muted-foreground">¿No tienes cuenta?</p>
-			<Button href="/auth/register" variant="outline" class="mt-2 h-11 w-full">
-				<UserPlus class="h-4 w-4" /> Crear cuenta — prueba 7 días
-			</Button>
-		</CardContent>
-	</Card>
+<div class="mx-auto flex max-w-md flex-col gap-6 px-4 py-8 sm:px-6">
+	<PageHeader title="Iniciar sesión" description="Accede para gestionar tu negocio" />
+
+	<form onsubmit={handleLogin} class="flex flex-col gap-4">
+		<FormField
+			id="email"
+			type="email"
+			label="Email"
+			bind:value={email}
+			placeholder="tu@email.com"
+			required
+		/>
+		<FormField
+			id="password"
+			type="password"
+			label="Contraseña"
+			bind:value={password}
+			placeholder="••••••••"
+			required
+		/>
+		{#if err}
+			<p class="rounded-lg bg-destructive/10 px-3 py-2 text-body text-destructive" role="alert">
+				{err}
+			</p>
+		{/if}
+		<Button type="submit" variant="pill" disabled={loading} class="w-full">
+			{loading ? 'Ingresando...' : 'Entrar'}
+		</Button>
+	</form>
+
+	<div class="flex flex-col gap-2 border-t border-border pt-6">
+		<p class="text-center text-body text-muted-foreground">¿No tienes cuenta?</p>
+		<Button href="/auth/register" variant="outline" class="h-11 w-full">
+			<UserPlus /> Crear cuenta — prueba 7 días
+		</Button>
+	</div>
 </div>

@@ -9,6 +9,8 @@
 		value?: string;
 		placeholder?: string;
 		required?: boolean;
+		type?: 'text' | 'email' | 'password';
+		minlength?: number;
 		/** Keep the label for assistive tech only. */
 		hideLabel?: boolean;
 		class?: string;
@@ -26,7 +28,9 @@
 		inputClass,
 		hint,
 		placeholder,
-		required
+		required,
+		type = 'text',
+		minlength
 	}: Props = $props();
 </script>
 
@@ -37,7 +41,15 @@
 	>
 		{label}
 	</label>
-	<Input {id} bind:value class={cn('sm:h-11', inputClass)} {placeholder} {required} />
+	<Input
+		{id}
+		bind:value
+		class={cn('sm:h-11', inputClass)}
+		{type}
+		{placeholder}
+		{required}
+		{minlength}
+	/>
 	{#if hint}
 		<p class="text-caption text-muted-foreground">{@render hint()}</p>
 	{/if}
