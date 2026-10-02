@@ -43,7 +43,8 @@ export const load: PageServerLoad = async ({ params }) => {
 	]);
 
 	if (stats.error) console.error('landing: business_stats lookup failed', stats.error);
-	if (highlights.error) console.error('landing: business_highlights lookup failed', highlights.error);
+	if (highlights.error)
+		console.error('landing: business_highlights lookup failed', highlights.error);
 
 	return {
 		business,
