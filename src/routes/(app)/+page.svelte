@@ -10,7 +10,12 @@
 	let { data } = $props();
 
 	const filtersActive = $derived(
-		hasActiveFilters({ q: data.q, categoria: data.categoria, provincia: data.provincia })
+		hasActiveFilters({
+			q: data.q,
+			categoria: data.categoria,
+			provincia: data.provincia,
+			ciudad: data.ciudad
+		})
 	);
 </script>
 

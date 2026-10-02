@@ -8,13 +8,14 @@ function fakeClient(results: Record<string, Result>) {
 	const calls: { table: string; method: string; args: unknown[] }[] = [];
 	const from = (table: string) => {
 		const chain: Record<string, unknown> = {};
-		for (const method of ['select', 'eq', 'order']) {
+		for (const method of ['select', 'eq', 'order', 'not', 'limit']) {
 			chain[method] = (...args: unknown[]) => {
 				calls.push({ table, method, args });
 				return chain;
 			};
 		}
-		chain.then = (resolve: (value: unknown) => unknown) => resolve(results[table]);
+		chain.then = (resolve: (value: unknown) => unknown) =>
+			resolve(results[table] ?? { data: [], error: null });
 		return chain;
 	};
 	return { client: { from } as never, calls };
@@ -67,6 +68,92 @@ describe('fetchSearchOptions', () => {
 	});
 });
 
+describe('fetchSearchOptions business cities', () => {
+	const provincias = {
+		data: [
+			{ id: 'p1', slug: 'loja', nombre: 'Loja', region: 'sierra', orden: 1 },
+			{ id: 'p2', slug: 'manabi', nombre: 'Manabí', region: 'costa', orden: 2 }
+		],
+		error: null
+	};
+
+	it('maps provincia_id to the slug and queries only active businesses with a city', async () => {
+		const { client, calls } = fakeClient({
+			provincias,
+			businesses: {
+				data: [
+					{ ciudad: 'Manta', provincia_id: 'p2' },
+					{ ciudad: 'Zamora', provincia_id: null },
+					{ ciudad: 'Cuenca', provincia_id: 'unknown' }
+				],
+				error: null
+			}
+		});
+		const { ciudades } = await fetchSearchOptions(client);
+		expect(ciudades).toEqual([
+			{ ciudad: 'Manta', provinciaSlug: 'manabi' },
+			{ ciudad: 'Zamora', provinciaSlug: null },
+			{ ciudad: 'Cuenca', provinciaSlug: null }
+		]);
+		expect(calls).toContainEqual({
+			table: 'businesses',
+			method: 'select',
+			args: ['ciudad,provincia_id']
+		});
+		expect(calls).toContainEqual({ table: 'businesses', method: 'eq', args: ['estado', 'activo'] });
+		expect(calls).toContainEqual({
+			table: 'businesses',
+			method: 'not',
+			args: ['ciudad', 'is', null]
+		});
+		expect(calls).toContainEqual({ table: 'businesses', method: 'limit', args: [500] });
+	});
+
+	it('de-duplicates by normalized name keeping the first spelling', async () => {
+		const { client } = fakeClient({
+			provincias,
+			businesses: {
+				data: [
+					{ ciudad: 'Quevedo', provincia_id: 'p1' },
+					{ ciudad: ' QUEVEDO ', provincia_id: 'p2' },
+					{ ciudad: 'Mantá', provincia_id: null },
+					{ ciudad: 'manta', provincia_id: null },
+					{ ciudad: '  ', provincia_id: null }
+				],
+				error: null
+			}
+		});
+		const { ciudades } = await fetchSearchOptions(client);
+		expect(ciudades).toEqual([
+			{ ciudad: 'Quevedo', provinciaSlug: 'loja' },
+			{ ciudad: 'Mantá', provinciaSlug: null }
+		]);
+	});
+
+	it('returns at most 200 cities', async () => {
+		const rows = Array.from({ length: 300 }, (_, i) => ({
+			ciudad: `Ciudad ${i}`,
+			provincia_id: null
+		}));
+		const { client } = fakeClient({ provincias, businesses: { data: rows, error: null } });
+		expect((await fetchSearchOptions(client)).ciudades).toHaveLength(200);
+	});
+
+	it('logs a failed query and returns no cities without flagging provinciasError', async () => {
+		const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+		const { client } = fakeClient({
+			provincias,
+			businesses: { data: null, error: { message: 'boom' } }
+		});
+		const options = await fetchSearchOptions(client);
+		expect(options.ciudades).toEqual([]);
+		expect(options.provinciasError).toBe(false);
+		expect(options.provincias).toHaveLength(2);
+		expect(spy).toHaveBeenCalled();
+		spy.mockRestore();
+	});
+});
+
 describe('loadSearchOptions (never throws: it runs in the layout of every page)', () => {
 	it('returns the options when everything works', async () => {
 		const { client } = fakeClient({
@@ -83,14 +170,19 @@ describe('loadSearchOptions (never throws: it runs in the layout of every page)'
 		const rejecting = {
 			from: () => {
 				const chain: Record<string, unknown> = {};
-				for (const method of ['select', 'eq', 'order']) chain[method] = () => chain;
+				for (const method of ['select', 'eq', 'order', 'not', 'limit']) chain[method] = () => chain;
 				chain.then = (_resolve: unknown, reject: (reason: unknown) => unknown) =>
 					reject(new Error('network down'));
 				return chain;
 			}
 		};
 		const options = await loadSearchOptions(() => rejecting as never);
-		expect(options).toEqual({ categories: [], provincias: [], provinciasError: true });
+		expect(options).toEqual({
+			categories: [],
+			provincias: [],
+			ciudades: [],
+			provinciasError: true
+		});
 		expect(spy).toHaveBeenCalled();
 		spy.mockRestore();
 	});
@@ -100,7 +192,12 @@ describe('loadSearchOptions (never throws: it runs in the layout of every page)'
 		const options = await loadSearchOptions(() => {
 			throw new Error('no env');
 		});
-		expect(options).toEqual({ categories: [], provincias: [], provinciasError: true });
+		expect(options).toEqual({
+			categories: [],
+			provincias: [],
+			ciudades: [],
+			provinciasError: true
+		});
 		expect(spy).toHaveBeenCalled();
 		spy.mockRestore();
 	});
