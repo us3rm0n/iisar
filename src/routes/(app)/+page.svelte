@@ -2,16 +2,12 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Separator } from '$lib/components/ui/separator';
-	import { Search, Store, MapPin, Megaphone, Plus, SearchX, AlertTriangle } from '@lucide/svelte';
-	import { firstRelation } from '$lib/supabase/helpers';
-	import type { Business } from '$lib/types';
+	import BusinessCard from '$lib/components/business-card.svelte';
+	import PageHeader from '$lib/components/page-header.svelte';
+	import SelectField from '$lib/components/select-field.svelte';
+	import { Search, Store, Megaphone, Plus, SearchX, AlertTriangle } from '@lucide/svelte';
 
 	let { data } = $props();
-
-	// PostgREST embebida la relación como objeto o como arreglo de un elemento.
-	// Solo se pide el campo que se lee, no la fila completa.
-	const categoryName = (business: Pick<Business, 'categories'>) =>
-		firstRelation(business.categories)?.nombre;
 </script>
 
 <svelte:head>
@@ -23,20 +19,12 @@
 </svelte:head>
 
 <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-	<!-- Hero Apple -->
-	<div class="mb-8 text-center sm:mb-10">
-		<h1
-			class="mx-auto max-w-2xl text-[30px] font-semibold tracking-[-0.03em] text-zinc-900 sm:text-[42px] sm:leading-[0.95] lg:text-[48px] dark:text-white"
-		>
-			Descubre negocios cerca de ti
-		</h1>
-		<p
-			class="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-zinc-500 sm:text-[17px] dark:text-zinc-400"
-		>
-			Directorio de productos y servicios · gastronomía, salud, artistas y más. Cada negocio con su
-			landing page.
-		</p>
-	</div>
+	<PageHeader
+		align="center"
+		class="mx-auto mb-8 max-w-2xl sm:mb-10"
+		title="Descubre negocios cerca de ti"
+		description="Directorio de productos y servicios · gastronomía, salud, artistas y más. Cada negocio con su landing page."
+	/>
 
 	<!-- Search bar -->
 	<div class="mx-auto mb-10 max-w-3xl">
@@ -65,37 +53,33 @@
 			<div
 				class="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:pl-1"
 			>
-				<label for="categoria" class="sr-only">Categoría</label>
-				<select
+				<SelectField
 					id="categoria"
 					name="categoria"
+					label="Categoría"
+					hideLabel
 					value={data.categoria}
-					aria-label="Filtrar por categoría"
-					class="h-11 w-full rounded-full bg-transparent px-3 py-2 text-sm text-zinc-600 focus:outline-none sm:flex-1 dark:text-zinc-300"
+					class="sm:flex-1"
 				>
 					<option value="">Todas las categorías</option>
 					{#each data.categories as c (c.slug)}
 						<option value={c.slug}>{c.nombre}</option>
 					{/each}
-				</select>
-				<label for="provincia" class="sr-only">Provincia</label>
-				<select
+				</SelectField>
+				<SelectField
 					id="provincia"
 					name="provincia"
+					label="Provincia"
+					hideLabel
 					value={data.provincia}
-					aria-label="Filtrar por provincia"
-					class="h-11 w-full rounded-full bg-transparent px-3 py-2 text-sm text-zinc-600 focus:outline-none sm:flex-1 dark:text-zinc-300"
+					class="sm:flex-1"
 				>
 					<option value="">Todas las provincias</option>
 					{#each data.provincias as p (p.slug)}
 						<option value={p.slug}>{p.nombre}</option>
 					{/each}
-				</select>
-				<Button
-					type="submit"
-					size="lg"
-					class="h-11 shrink-0 rounded-full bg-zinc-900 px-6 text-white shadow-[0_4px_16px_rgba(0,0,0,0.12)] hover:bg-zinc-800 dark:bg-white dark:text-zinc-900"
-				>
+				</SelectField>
+				<Button type="submit" variant="pill" class="shrink-0">
 					<Search class="h-4 w-4" /> Buscar
 				</Button>
 			</div>
@@ -163,9 +147,7 @@
 					<p class="text-sm text-zinc-500">
 						Aún no hay negocios que coincidan con tu búsqueda. Sé el primero en crear tu landing.
 					</p>
-					<Button
-						href="/dashboard"
-						class="mt-2 rounded-full bg-zinc-900 px-6 text-white dark:bg-white dark:text-zinc-900"
+					<Button href="/dashboard" variant="pill" class="mt-2"
 						><Plus class="h-4 w-4" /> Crear mi negocio</Button
 					>
 				</div>
@@ -174,52 +156,7 @@
 			<ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list">
 				{#each data.businesses as b (b.id)}
 					<li>
-						<a
-							href="/negocio/{b.slug}"
-							class="group flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-all hover:translate-y-[-2px] hover:shadow-[0_20px_56px_rgba(0,0,0,0.10)] focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:outline-none"
-						>
-							<div class="flex items-start justify-between gap-2">
-								<h3
-									class="line-clamp-1 text-[16px] leading-tight font-medium tracking-[-0.01em] text-zinc-900 group-hover:underline dark:text-white"
-								>
-									{b.nombre}
-								</h3>
-								<div class="flex shrink-0 gap-1">
-									<Badge
-										variant={b.tipo === 'artista' ? 'default' : 'secondary'}
-										class="rounded-full px-2 py-0.5 text-[11px] font-medium capitalize {b.tipo ===
-										'artista'
-											? 'bg-violet-600 text-white'
-											: 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900'}"
-										>{b.tipo ?? 'negocio'}</Badge
-									>
-									{#if categoryName(b)}
-										<Badge
-											variant="outline"
-											class="hidden rounded-full bg-white/60 px-2 py-0.5 text-[11px] sm:inline-flex dark:bg-white/10"
-											>{categoryName(b)}</Badge
-										>
-									{/if}
-								</div>
-							</div>
-							{#if b.ciudad}
-								<p class="mt-1 flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
-									<MapPin class="h-3 w-3" />
-									{b.ciudad}
-								</p>
-							{/if}
-							<p
-								class="mt-3 line-clamp-2 min-h-[40px] text-[14px] leading-relaxed text-zinc-500 dark:text-zinc-400"
-							>
-								{b.descripcion ?? 'Sin descripción'}
-							</p>
-							<span
-								class="mt-4 inline-flex items-center text-xs font-medium text-zinc-900 dark:text-white"
-								>Ver landing <span class="ml-1 transition-transform group-hover:translate-x-0.5"
-									>→</span
-								></span
-							>
-						</a>
+						<BusinessCard business={b} />
 					</li>
 				{/each}
 			</ul>

@@ -1,29 +1,16 @@
 <script lang="ts">
+	import BusinessCard from '$lib/components/business-card.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
-	import {
-		Card,
-		CardHeader,
-		CardTitle,
-		CardDescription,
-		CardContent
-	} from '$lib/components/ui/card';
-	import { ArrowLeft, MapPin, Store, Palette, Landmark, PackageOpen } from '@lucide/svelte';
-	import { regionLabel, tipoLabel } from '$lib/utils/provincias';
+	import { Card, CardTitle, CardDescription, CardContent } from '$lib/components/ui/card';
+	import { ArrowLeft, MapPin, PackageOpen } from '@lucide/svelte';
+	import { regionLabel } from '$lib/utils/provincias';
 	import type { Provincia } from '$lib/types';
-	import type { BusinessCard } from './+page.server';
 
 	let { data } = $props();
 
 	const provincia = $derived(data.provincia as Provincia);
-	const businesses = $derived(data.businesses as BusinessCard[]);
-
-	// Las etiquetas viven en $lib/utils/provincias; aquí solo los íconos.
-	const TIPO_ICONS: Record<string, typeof Store> = {
-		negocio: Store,
-		artista: Palette,
-		lugar: Landmark
-	};
+	const businesses = $derived(data.businesses);
 </script>
 
 <svelte:head>
@@ -86,33 +73,8 @@
 		{:else}
 			<ul class="grid grid-cols-1 gap-3 sm:grid-cols-2" role="list">
 				{#each businesses as business (business.id)}
-					{@const TipoIcon = TIPO_ICONS[business.tipo] ?? Store}
 					<li>
-						<a
-							href="/negocio/{business.slug}"
-							class="block h-full min-h-11 rounded-xl focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:outline-none"
-						>
-							<Card class="h-full transition-shadow hover:shadow-md">
-								<CardHeader class="pb-2">
-									<div class="flex items-center justify-between gap-2">
-										<CardTitle class="line-clamp-1 text-base">{business.nombre}</CardTitle>
-										<Badge variant="outline" class="shrink-0 gap-1 rounded-full"
-											><TipoIcon class="h-3 w-3" /> {tipoLabel(business.tipo)}</Badge
-										>
-									</div>
-									{#if business.ciudad}
-										<CardDescription class="flex items-center gap-1"
-											><MapPin class="h-3 w-3" /> {business.ciudad}</CardDescription
-										>
-									{/if}
-								</CardHeader>
-								{#if business.descripcion}
-									<CardContent>
-										<p class="line-clamp-2 text-sm text-muted-foreground">{business.descripcion}</p>
-									</CardContent>
-								{/if}
-							</Card>
-						</a>
+						<BusinessCard {business} />
 					</li>
 				{/each}
 			</ul>
