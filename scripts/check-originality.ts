@@ -2,7 +2,11 @@
  * Measures shared word n-grams between a source text and rewritten content.
  *
  * Usage:
- *   pnpm check:originality -- --source <git-ref>:<path> --target <path-or-dir> [--n 7] [--max 0]
+ *   pnpm check:originality -- --source <commit>:content/geografia-ecuador.md --target content/provincias [--n 7] [--max 0]
+ *
+ * The source book transcription was removed from the working tree (chore(content) commit that
+ * follows 7fd7af3); it now exists only in git history. Use commit 15fdc3a (or any commit before
+ * the removal) as <commit>, e.g. `--source 15fdc3a:content/geografia-ecuador.md`.
  *
  * Exit code 1 when shared shingles exceed --max (default 0).
  */

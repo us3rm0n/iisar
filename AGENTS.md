@@ -26,7 +26,7 @@ npx supabase status                   # URLs + anon/service keys
 npx supabase db reset                 # aplica migraciones + seed (pg_trgm, RLS, buckets) — verificado
 pnpm dev -- --open                    # SvelteKit dev (vite)
 pnpm check                            # svelte-kit sync + svelte-check — pasa
-pnpm lint                             # prettier --check + eslint — pasa (eslint relaja require-each-key/no-navigation/no-explicit-any para MVP)
+pnpm lint                             # prettier --check + eslint — eslint pasa; prettier falla solo en 2 archivos base ajenos a esta feature: `src/lib/supabase/helpers.ts` y `src/lib/utils/date.ts` (eslint relaja require-each-key/no-navigation/no-explicit-any para MVP)
 pnpm format                           # prettier --write
 pnpm test                             # vitest --run (1 test pass 316ms) — single test: pnpm run test:unit -- --run -t "<name>"
 pnpm build && pnpm preview            # vite build SSR + client — pasa (adapter-cloudflare, `pnpm-workspace.yaml` con `dangerouslyAllowAllBuilds` para workerd/esbuild)
@@ -41,6 +41,15 @@ npx supabase stop                     # baja stack local
 - Ventana edición: `has_active_subscription(business_id)` = `exists subscriptions status=aprobada and fecha_maxima > now()`. RLS bloquea `products_services` insert/update/delete si no hay suscripción vigente; `businesses` lectura pública si `estado=activo`.
 - Flujo manual: owner crea business → crea subscription pendiente + sube comprobante → webmaster aprueba en Studio o `update subscriptions set status='aprobada'` → gracia: entre `fecha_vencimiento` y `fecha_maxima` aviso, tras `fecha_maxima` solo lectura hasta renovar.
 - Categorías: `categories` escritura solo `is_webmaster()` (role webmaster en `profiles`). Seed iniciales: gastronomia, salud.
+
+## Contenido editorial de provincias
+
+- Fuente de verdad: tabla `provincia_contenido` (`provincia_id` PK, `body` markdown <= 20000, `updated_at/by`). RLS: lectura pública, escritura solo `is_webmaster()`.
+- Render: `renderProvinceHtml` (`src/lib/content/render.ts`: marked + allowlist `xss`, JS puro, apto para Cloudflare Workers y navegador).
+- Edición: inline en `/ecuador/<slug>` solo para el webmaster (textarea markdown + vista previa); la RLS es el control real, el botón es comodidad.
+- Borradores en `content/provincias/*.md`; seed con `pnpm content:seed-sql` → migración `20251002000002_provincia_contenido_seed.sql` (`on conflict do nothing`, nunca pisa ediciones de la UI). Ver `content/README.md`.
+- Producción: el mantenedor aplica la migración con `supabase db push`.
+- Originalidad: `pnpm check:originality -- --source 15fdc3a:content/geografia-ecuador.md --target content/provincias` (el libro fuente ya no está en el árbol, solo en el historial git).
 
 ## Gotchas locales
 
