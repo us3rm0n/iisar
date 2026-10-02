@@ -22,7 +22,7 @@
 
 <a
 	href="#main"
-	class="sr-only z-50 rounded bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
+	class="sr-only rounded-lg bg-primary px-4 text-body text-primary-foreground focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center"
 	>Saltar al contenido</a
 >
 
