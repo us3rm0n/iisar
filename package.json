@@ -13,6 +13,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:unit": "vitest",
+		"check:originality": "node scripts/check-originality.ts",
 		"test": "npm run test:unit -- --run"
 	},
 	"devDependencies": {
