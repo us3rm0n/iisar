@@ -2,28 +2,22 @@
 	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { LayoutDashboard, ShieldCheck, LogIn, LogOut, UserPlus, MapPin } from '@lucide/svelte';
-	import { supabase } from '$lib/supabase';
-	import { getCurrentUser, getProfileRole, onAuthChange } from '$lib/auth';
+	import { Session } from '$lib/session.svelte';
+	import { navItemsFor, type NavIcon } from '$lib/utils/nav';
 
 	let { children } = $props();
-	let user: { id: string } | null = $state(null);
-	let role: string | null = $state(null);
 
-	async function syncAuth(nextUser: { id: string } | null) {
-		user = nextUser;
-		role = await getProfileRole(nextUser?.id ?? null);
-	}
+	const session = new Session();
+	const items = $derived(navItemsFor({ user: session.user, role: session.role }));
+	const icons = {
+		map: MapPin,
+		dashboard: LayoutDashboard,
+		admin: ShieldCheck,
+		login: LogIn,
+		register: UserPlus
+	} satisfies Record<NavIcon, typeof MapPin>;
 
-	onMount(() => {
-		void (async () => await syncAuth((await getCurrentUser()) as unknown as never))();
-		const unsubscribe = onAuthChange((nextUser) => void syncAuth(nextUser as unknown as never));
-		return unsubscribe;
-	});
-
-	async function logout() {
-		await supabase.auth.signOut();
-		location.href = '/';
-	}
+	onMount(session.start);
 </script>
 
 <a
@@ -32,74 +26,27 @@
 	>Saltar al contenido</a
 >
 
-<header
-	class="sticky top-0 z-40 border-b border-white/20 bg-white/55 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/45 dark:border-white/10 dark:bg-zinc-900/40"
->
-	<div
-		class="mx-auto flex h-[60px] max-w-5xl items-center justify-between gap-3 px-4 sm:h-[68px] sm:px-6 lg:px-8"
-	>
-		<a
-			href="/"
-			class="-my-2 flex min-h-11 items-center py-2 text-lg font-semibold tracking-[-0.02em]"
-			>IISAR</a
-		>
-		<nav class="flex items-center gap-1.5 sm:gap-2" aria-label="Principal">
-			<Button
-				href="/ecuador"
-				variant="ghost"
-				size="sm"
-				class="h-11 rounded-full px-4 hover:bg-white/60 sm:h-9 dark:hover:bg-white/10"
-			>
-				<MapPin class="h-4 w-4" /> <span class="ml-1 hidden sm:inline">Ecuador</span>
-			</Button>
-			{#if user}
+<header class="sticky top-0 z-40 border-b border-border bg-background">
+	<div class="mx-auto flex h-14 max-w-5xl items-center justify-between gap-2 px-4 sm:px-6 lg:px-8">
+		<a href="/" class="flex min-h-11 items-center text-title font-semibold">IISAR</a>
+		<nav class="flex items-center gap-1" aria-label="Principal">
+			{#each items as item (item.href)}
+				{@const Icon = icons[item.icon]}
 				<Button
-					href="/dashboard"
-					variant="outline"
-					size="sm"
-					class="h-11 rounded-full border-zinc-200/60 bg-white/60 backdrop-blur hover:bg-white/80 sm:h-9 dark:border-white/10 dark:bg-white/10"
+					href={item.href}
+					variant={item.primary ? 'pill' : 'ghost'}
+					class={item.primary ? 'px-4' : 'h-11 min-w-11 px-3'}
 				>
-					<LayoutDashboard class="h-4 w-4" />
-					<span class="ml-1 hidden sm:inline">Mi perfil</span><span class="ml-1 sm:hidden"
-						>Perfil</span
-					>
+					<Icon />
+					<span class={item.primary ? 'sr-only sm:not-sr-only' : 'sr-only md:not-sr-only'}>
+						{item.label}
+					</span>
 				</Button>
-				<Button
-					variant="ghost"
-					size="sm"
-					class="h-11 rounded-full bg-white/0 hover:bg-white/60 sm:h-9 dark:hover:bg-white/10"
-					onclick={logout}
-				>
-					<LogOut class="h-4 w-4" /> <span class="ml-1 hidden sm:inline">Salir</span>
-				</Button>
-			{:else}
-				<Button
-					href="/auth/login"
-					variant="ghost"
-					size="sm"
-					class="h-11 rounded-full px-4 hover:bg-white/60 sm:h-9 dark:hover:bg-white/10"
-				>
-					<LogIn class="h-4 w-4" /> <span class="ml-1 hidden sm:inline">Entrar</span>
-				</Button>
-				<Button
-					href="/auth/register"
-					variant="default"
-					size="sm"
-					class="h-11 rounded-full bg-zinc-900 px-5 shadow-[0_4px_16px_rgba(0,0,0,0.12)] hover:bg-zinc-800 sm:h-9 dark:bg-white dark:text-zinc-900"
-				>
-					<UserPlus class="h-4 w-4" /> <span class="ml-1 hidden sm:inline">Crear cuenta</span><span
-						class="ml-1 sm:hidden">Registro</span
-					>
-				</Button>
-			{/if}
-			{#if role === 'webmaster'}
-				<Button
-					href="/admin"
-					variant="ghost"
-					size="sm"
-					class="h-11 rounded-full hover:bg-white/60 sm:h-9 dark:hover:bg-white/10"
-				>
-					<ShieldCheck class="h-4 w-4" /> <span class="ml-1 hidden sm:inline">Admin</span>
+			{/each}
+			{#if session.user}
+				<Button variant="ghost" class="h-11 min-w-11 px-3" onclick={session.logout}>
+					<LogOut />
+					<span class="sr-only md:not-sr-only">Salir</span>
 				</Button>
 			{/if}
 		</nav>
