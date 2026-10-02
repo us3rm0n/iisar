@@ -39,3 +39,20 @@ export async function fetchSearchOptions(
 		provinciasError: Boolean(provinciasResult.error)
 	};
 }
+
+/**
+ * Safe entry point for the layout load, which wraps every `(app)` route: it must
+ * never throw. A rejected query or a failing client factory degrades to empty
+ * lists with `provinciasError` set, so the home can tell a failed lookup apart
+ * from an unknown slug.
+ */
+export async function loadSearchOptions(
+	getClient: () => Pick<SupabaseClient, 'from'>
+): Promise<SearchOptions> {
+	try {
+		return await fetchSearchOptions(getClient());
+	} catch (error) {
+		console.error('search: options could not be loaded', error);
+		return { categories: [], provincias: [], provinciasError: true };
+	}
+}

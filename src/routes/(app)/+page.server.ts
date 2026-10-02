@@ -1,12 +1,12 @@
 import { error } from '@sveltejs/kit';
 import { getAnonSupabase } from '$lib/supabase/helpers';
+import { parseFilters } from '$lib/search/filters';
 import { resolveProvinciaFilter } from '$lib/utils/provincia-filter';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url, parent }) => {
-	const q = url.searchParams.get('q')?.trim() ?? '';
-	const categoria = url.searchParams.get('categoria')?.trim() ?? '';
-	const provincia = url.searchParams.get('provincia')?.trim() ?? '';
+	// Same parsing as the header panel prefill, so both agree on what counts as a filter.
+	const { q, categoria, provincia } = parseFilters(url.searchParams);
 
 	// Categories and provinces come from the layout (header search panel): no duplicate queries.
 	const {

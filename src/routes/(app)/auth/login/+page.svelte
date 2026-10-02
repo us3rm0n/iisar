@@ -58,6 +58,7 @@
 
 	<p class="border-t border-border pt-6 text-center text-body text-muted-foreground">
 		¿No tienes cuenta? Regístrate
+		<!-- The padding plus the matching negative margin widen the tap area to 44px without moving the word. -->
 		<a
 			href="/auth/register"
 			aria-label="Regístrate aquí"

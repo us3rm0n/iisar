@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchSearchOptions } from './options';
+import { fetchSearchOptions, loadSearchOptions } from './options';
 
 type Result = { data: unknown; error: { message: string } | null };
 
@@ -62,6 +62,45 @@ describe('fetchSearchOptions', () => {
 		expect(options.provincias).toEqual([]);
 		expect(options.provinciasError).toBe(true);
 		expect(options.categories).toHaveLength(1);
+		expect(spy).toHaveBeenCalled();
+		spy.mockRestore();
+	});
+});
+
+describe('loadSearchOptions (never throws: it runs in the layout of every page)', () => {
+	it('returns the options when everything works', async () => {
+		const { client } = fakeClient({
+			categories: { data: [{ id: 'c1', nombre: 'Salud', slug: 'salud' }], error: null },
+			provincias: { data: [{ id: 'p1' }], error: null }
+		});
+		const options = await loadSearchOptions(() => client);
+		expect(options.categories).toHaveLength(1);
+		expect(options.provinciasError).toBe(false);
+	});
+
+	it('returns empty lists and flags provinciasError when a query rejects', async () => {
+		const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+		const rejecting = {
+			from: () => {
+				const chain: Record<string, unknown> = {};
+				for (const method of ['select', 'eq', 'order']) chain[method] = () => chain;
+				chain.then = (_resolve: unknown, reject: (reason: unknown) => unknown) =>
+					reject(new Error('network down'));
+				return chain;
+			}
+		};
+		const options = await loadSearchOptions(() => rejecting as never);
+		expect(options).toEqual({ categories: [], provincias: [], provinciasError: true });
+		expect(spy).toHaveBeenCalled();
+		spy.mockRestore();
+	});
+
+	it('returns empty lists and flags provinciasError when creating the client throws', async () => {
+		const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+		const options = await loadSearchOptions(() => {
+			throw new Error('no env');
+		});
+		expect(options).toEqual({ categories: [], provincias: [], provinciasError: true });
 		expect(spy).toHaveBeenCalled();
 		spy.mockRestore();
 	});

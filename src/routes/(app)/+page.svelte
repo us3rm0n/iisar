@@ -5,10 +5,13 @@
 	import BusinessCard from '$lib/components/business-card.svelte';
 	import PageHeader from '$lib/components/page-header.svelte';
 	import { Store, Plus, SearchX, AlertTriangle } from '@lucide/svelte';
+	import { hasActiveFilters } from '$lib/search/filters';
 
 	let { data } = $props();
 
-	const filtersActive = $derived(Boolean(data.q || data.categoria || data.provincia));
+	const filtersActive = $derived(
+		hasActiveFilters({ q: data.q, categoria: data.categoria, provincia: data.provincia })
+	);
 </script>
 
 <svelte:head>
