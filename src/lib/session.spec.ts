@@ -166,5 +166,37 @@ describe('Session', () => {
 			expect(session.ready).toBe(true);
 			expect(console.error).toHaveBeenCalled();
 		});
+
+		it('goes back to not ready when a different user signs in after being signed out', async () => {
+			const { session, emit } = setup(null);
+			await flush();
+			expect(session.ready).toBe(true);
+			const pending = deferred<string | null>();
+			auth.getProfileRole.mockReturnValue(pending.promise);
+			emit({ id: 'u2' });
+			await flush();
+			expect(session.user).toEqual({ id: 'u2' });
+			expect(session.ready).toBe(false);
+			pending.resolve('webmaster');
+			await flush();
+			expect(session.ready).toBe(true);
+			expect(session.role).toBe('webmaster');
+		});
+
+		it('stays ready, without flicker, when the same user is re-synced (token refresh)', async () => {
+			auth.getProfileRole.mockResolvedValueOnce('webmaster');
+			const { session, emit } = setup({ id: 'u1' });
+			await flush();
+			expect(session.ready).toBe(true);
+			const pending = deferred<string | null>();
+			auth.getProfileRole.mockReturnValue(pending.promise);
+			emit({ id: 'u1' });
+			await flush();
+			expect(session.ready).toBe(true);
+			expect(session.role).toBe('webmaster');
+			pending.resolve('webmaster');
+			await flush();
+			expect(session.role).toBe('webmaster');
+		});
 	});
 });

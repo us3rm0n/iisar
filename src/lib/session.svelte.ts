@@ -22,7 +22,11 @@ export class Session {
 			return;
 		}
 		// Show the user right away; drop a previous user's role until this lookup resolves.
-		if (this.user?.id !== next.id) this.role = null;
+		// A different user means the access decision is unknown again until the role resolves.
+		if (this.user?.id !== next.id) {
+			this.role = null;
+			this.ready = false;
+		}
 		this.user = next;
 		let role: string | null;
 		try {
