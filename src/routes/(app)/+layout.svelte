@@ -3,11 +3,13 @@
 	import { Button } from '$lib/components/ui/button';
 	import { LayoutDashboard, ShieldCheck, LogIn, LogOut, UserPlus, MapPin } from '@lucide/svelte';
 	import { Session } from '$lib/session.svelte';
+	import { provideSession } from '$lib/session-context';
 	import { navItemsFor, type NavIcon } from '$lib/utils/nav';
 
 	let { children } = $props();
 
 	const session = new Session();
+	provideSession(session);
 	const items = $derived(navItemsFor({ user: session.user, role: session.role }));
 	const icons = {
 		map: MapPin,

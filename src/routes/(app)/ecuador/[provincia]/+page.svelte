@@ -4,7 +4,11 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import { Card, CardTitle, CardDescription, CardContent } from '$lib/components/ui/card';
-	import { ArrowLeft, MapPin, PackageOpen } from '@lucide/svelte';
+	import { ArrowLeft, MapPin, PackageOpen, Pencil } from '@lucide/svelte';
+	import { invalidateAll } from '$app/navigation';
+	import ProvinceEditor from '$lib/components/ecuador/province-editor.svelte';
+	import { useSession } from '$lib/session-context';
+	import { canEditProvince } from '$lib/utils/province-editor';
 	import { regionLabel } from '$lib/utils/provincias';
 	import type { Provincia } from '$lib/types';
 
@@ -12,6 +16,17 @@
 
 	const provincia = $derived(data.provincia as Provincia);
 	const businesses = $derived(data.businesses);
+
+	// Convenience only: RLS (`is_webmaster()`) is the real permission. While the role is still
+	// loading (null) nothing is shown, so the page looks exactly as it does for visitors.
+	const session = useSession();
+	const canEdit = $derived(canEditProvince(session?.role ?? null));
+	let editing = $state(false);
+
+	async function onsaved() {
+		await invalidateAll();
+		editing = false;
+	}
 </script>
 
 <svelte:head>
@@ -37,10 +52,23 @@
 			<Badge variant="secondary"
 				><MapPin aria-hidden="true" /> {regionLabel(provincia.region)}</Badge
 			>
+			{#if canEdit && !editing}
+				<Button variant="outline" class="h-11 px-4" onclick={() => (editing = true)}>
+					<Pencil aria-hidden="true" />
+					{data.body === '' ? 'Agregar contenido' : 'Editar contenido'}
+				</Button>
+			{/if}
 		{/snippet}
 	</PageHeader>
 
-	{#if data.lessonHtml}
+	{#if canEdit && editing}
+		<ProvinceEditor
+			provinciaId={provincia.id}
+			initialBody={data.body}
+			{onsaved}
+			oncancel={() => (editing = false)}
+		/>
+	{:else if data.lessonHtml}
 		<article class="prose-content mb-10">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -- el HTML pasa por renderProvinceHtml (marked + allowlist estricta de sanitize.ts); el markdown es editable por el webmaster, nunca se inyecta sin sanear -->
 			{@html data.lessonHtml}
