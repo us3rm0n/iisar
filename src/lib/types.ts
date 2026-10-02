@@ -11,6 +11,13 @@ export type Provincia = {
 	orden: number;
 };
 
+export type ProvinciaContenido = {
+	provincia_id: string;
+	body: string;
+	updated_at: string;
+	updated_by: string | null;
+};
+
 export type Business = {
 	id: string;
 	slug: string;

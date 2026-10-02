@@ -42,7 +42,7 @@
 
 	{#if data.lessonHtml}
 		<article class="prose-content mb-10">
-			<!-- eslint-disable-next-line svelte/no-at-html-tags -- markdown de confianza del repo (content/geografia-ecuador.md), renderizado server-side, no input de usuario -->
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- el HTML pasa por renderProvinceHtml (marked + allowlist estricta de sanitize.ts); el markdown es editable por el webmaster, nunca se inyecta sin sanear -->
 			{@html data.lessonHtml}
 		</article>
 	{:else}

@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { getAnonSupabase } from '$lib/supabase/helpers';
-import { getProvinceContent, renderLessonHtml } from '$lib/content/ecuador.server';
+import { fetchProvinceBody } from '$lib/content/provincia-contenido';
+import { renderProvinceHtml } from '$lib/content/render';
 import type { Business, Provincia } from '$lib/types';
 import type { PageServerLoad } from './$types';
 
@@ -25,12 +26,15 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	if (businessesError) throw error(500, 'No se pudieron cargar los negocios de esta provincia');
 
-	const lesson = getProvinceContent(provincia.slug);
+	// A content failure must not take the whole page down: log it and render without the article.
+	const { body, error: bodyError } = await fetchProvinceBody(supabase, provincia.id);
+	if (bodyError) console.error(bodyError);
+	const markdown = body ?? '';
 
 	return {
 		provincia: provincia as Provincia,
-		lessonTitle: lesson?.title ?? provincia.nombre,
-		lessonHtml: lesson ? renderLessonHtml(lesson) : null,
+		body: markdown,
+		lessonHtml: markdown ? renderProvinceHtml(markdown) : '',
 		businesses: (businesses ?? []) as unknown as Business[]
 	};
 };
