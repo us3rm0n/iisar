@@ -74,6 +74,9 @@
 		}
 		try {
 			await onsaved();
+		} catch {
+			// The write already succeeded; only refreshing the page failed.
+			saveError = 'Se guardó, pero no se pudo actualizar la página. Recargala para ver el cambio.';
 		} finally {
 			saving = false;
 		}
