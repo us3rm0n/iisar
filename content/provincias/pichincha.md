@@ -12,7 +12,7 @@ El censo de 2022 del INEC contó 3 089 473 habitantes, lo que sitúa a Pichincha
 
 ### Qué ver y cuándo ir
 
-El Centro Histórico de Quito fue inscrito en la lista de Patrimonio Mundial de la UNESCO en 1978, junto con Cracovia,. En él se alza la Basílica del Voto Nacional, un templo neogótico de torres de 115 m.
+El Centro Histórico de Quito fue inscrito en la lista de Patrimonio Mundial de la UNESCO en 1978, junto con Cracovia. En él se alza la Basílica del Voto Nacional, un templo neogótico de torres de 115 m.
 
 Fuera de la ciudad, Cochasquí conserva quince pirámides truncadas y veintiuna tolas de la cultura Quitu-Cara, a unos 52 km al norte de la capital. Las tres lagunas de Mojanda, en el límite con Imbabura, forman parte del área de conservación Mojanda-Cambugán, declarada en 2022. En el noroccidente, el Chocó Andino de Pichincha es reserva de biosfera desde 2018, y las montañas del este albergan los parques nacionales Cayambe-Coca, compartido con Imbabura, Napo y Sucumbíos, y Antisana. Al sur, en Mejía, el Refugio de Vida Silvestre Pasochoa protege un tramo de bosque andino.
 
