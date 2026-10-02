@@ -6,6 +6,7 @@
 	import type { Component, Snippet } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
+	import { externalLinkAttrs } from '$lib/utils/external-link';
 
 	let {
 		href,
@@ -34,8 +35,7 @@
 
 <Button
 	{href}
-	target="_blank"
-	rel="noopener"
+	{...externalLinkAttrs(href)}
 	variant={tone === 'outline' ? 'outline' : 'pill'}
 	class={cn('h-11 rounded-full', TONES[tone], className)}
 >
