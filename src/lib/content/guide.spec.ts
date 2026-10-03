@@ -90,7 +90,9 @@ describe('parseGuide edge cases', () => {
 	});
 
 	it('does not split on headings inside code fences', () => {
-		const guide = parseGuide('### Uno\n\n```\n### no es seccion\n```\n\n~~~\n### tampoco\n~~~\n\nfin');
+		const guide = parseGuide(
+			'### Uno\n\n```\n### no es seccion\n```\n\n~~~\n### tampoco\n~~~\n\nfin'
+		);
 		expect(guide.sections).toHaveLength(1);
 		expect(guide.sections[0].html).toContain('no es seccion');
 	});
