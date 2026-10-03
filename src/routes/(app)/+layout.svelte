@@ -5,7 +5,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import SearchPanel from '$lib/components/search-panel.svelte';
 	import { LayoutDashboard, ShieldCheck, LogIn, LogOut, MapPin, Search } from '@lucide/svelte';
+	import { PROVINCIAL_CAPITALS } from '$lib/search/capitals';
 	import { hasActiveFilters, parseFilters } from '$lib/search/filters';
+	import { buildPlaceIndex } from '$lib/search/places';
 	import { Session } from '$lib/session.svelte';
 	import { provideSession } from '$lib/session-context';
 	import { legalNav } from '$lib/site';
@@ -18,6 +20,14 @@
 	let searchButton = $state<HTMLElement | null>(null);
 	const filters = $derived(parseFilters(page.url.searchParams));
 	const filtersActive = $derived(hasActiveFilters(filters));
+	// Provinces and cities searchable from the header, built once per options change.
+	const places = $derived(
+		buildPlaceIndex({
+			provincias: data.searchOptions.provincias,
+			capitals: PROVINCIAL_CAPITALS,
+			businessCities: data.searchOptions.ciudades
+		})
+	);
 
 	async function closeSearch() {
 		searchOpen = false;
@@ -103,6 +113,7 @@
 				id={PANEL_ID}
 				categories={data.searchOptions.categories}
 				provincias={data.searchOptions.provincias}
+				{places}
 				{filters}
 				onclose={closeSearch}
 			/>
