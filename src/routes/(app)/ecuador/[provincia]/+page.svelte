@@ -1,7 +1,6 @@
 <script lang="ts">
 	import AdsenseScript from '$lib/components/adsense-script.svelte';
 	import BusinessCard from '$lib/components/business-card.svelte';
-	import PageHeader from '$lib/components/page-header.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Card, CardTitle, CardDescription, CardContent } from '$lib/components/ui/card';
 	import { ArrowLeft, PackageOpen, Pencil } from '@lucide/svelte';
