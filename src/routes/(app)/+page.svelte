@@ -4,18 +4,23 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import BusinessCard from '$lib/components/business-card.svelte';
 	import PageHeader from '$lib/components/page-header.svelte';
-	import { Store, Plus, SearchX, AlertTriangle } from '@lucide/svelte';
-	import { hasActiveFilters } from '$lib/search/filters';
+	import { Card, CardContent } from '$lib/components/ui/card';
+	import { Store, Plus, SearchX, AlertTriangle, X, ArrowRight } from '@lucide/svelte';
+	import { activeFilterChips } from '$lib/search/chips';
+	import { regionLabel } from '$lib/utils/provincias';
 
 	let { data } = $props();
 
-	const filtersActive = $derived(
-		hasActiveFilters({
-			q: data.q,
-			categoria: data.categoria,
-			provincia: data.provincia,
-			ciudad: data.ciudad
-		})
+	const chips = $derived(
+		activeFilterChips(
+			{
+				q: data.q,
+				categoria: data.categoria,
+				provincia: data.provincia,
+				ciudad: data.ciudad
+			},
+			data.searchOptions
+		)
 	);
 </script>
 
@@ -35,15 +40,49 @@
 		description="Directorio de productos y servicios · gastronomía, salud, artistas y más. Cada negocio con su landing page."
 	/>
 
-	{#if filtersActive}
-		<div class="mb-6 flex items-center justify-between gap-3 text-body text-muted-foreground">
-			<span>Resultados filtrados</span>
+	{#if chips.length > 0}
+		<div class="mb-6 flex flex-wrap items-center gap-2" aria-label="Filtros activos" role="group">
+			{#each chips as chip (chip.key)}
+				<a
+					href={chip.removeHref}
+					aria-label={`Quitar filtro: ${chip.label}`}
+					class="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-muted px-4 text-body text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+				>
+					<span>{chip.label}</span>
+					<X class="size-4 text-muted-foreground" aria-hidden="true" />
+				</a>
+			{/each}
 			<a
 				href="/"
 				class="inline-flex min-h-11 items-center rounded-lg px-3 font-medium text-foreground underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-				>Limpiar</a
+				>Limpiar todo</a
 			>
 		</div>
+	{/if}
+
+	{#if data.guide}
+		<Card class="mb-8 border border-border shadow-none">
+			<CardContent class="flex flex-col gap-4">
+				<div class="flex flex-col items-start gap-3">
+					<Badge variant="outline">{regionLabel(data.guide.provincia.region)}</Badge>
+					<h2 class="text-title font-medium text-foreground">
+						Guía de {data.guide.provincia.nombre}
+					</h2>
+				</div>
+				<p class="max-w-prose text-body text-muted-foreground">
+					{data.guide.excerpt || 'Todavía no hay guía editorial de esta provincia.'}
+				</p>
+				<div>
+					<Button
+						href={`/ecuador/${data.guide.provincia.slug}`}
+						variant="outline"
+						class="h-11 px-4"
+					>
+						Ver la guía completa <ArrowRight class="size-4" aria-hidden="true" />
+					</Button>
+				</div>
+			</CardContent>
+		</Card>
 	{/if}
 
 	{#if data.provinciaProblem}
