@@ -134,7 +134,11 @@
 				<a href="https://policies.google.com/privacy" {...externalLink}>políticas de privacidad</a>.
 			</li>
 		</ul>
-		<p>Ninguno de ellos vende tus datos para sus propios fines publicitarios.</p>
+		<p>
+			Supabase y Cloudflare tratan tus datos solo para prestarnos el servicio y no los usan para sus
+			propios fines publicitarios. Google AdSense, en cambio, usa cookies y datos de navegación para
+			mostrar anuncios, como se explica en el apartado 4.
+		</p>
 
 		<h3>6. Tus derechos</h3>
 		<p>
