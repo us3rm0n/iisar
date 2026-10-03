@@ -1,7 +1,8 @@
 import { error } from '@sveltejs/kit';
 import { getAnonSupabase } from '$lib/supabase/helpers';
 import { fetchProvinceBody } from '$lib/content/provincia-contenido';
-import { renderProvinceHtml } from '$lib/content/render';
+import { parseGuide } from '$lib/content/guide';
+import { neighborsOf } from '$lib/utils/province-neighbors';
 import type { Business, Provincia } from '$lib/types';
 import type { PageServerLoad } from './$types';
 
@@ -31,10 +32,24 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (bodyError) console.error(bodyError);
 	const markdown = body ?? '';
 
+	// Neighbour chips are decoration: a failed lookup logs and hides the block, never the page.
+	const neighborSlugs = neighborsOf(provincia.slug);
+	let neighbors: { slug: string; nombre: string }[] = [];
+	if (neighborSlugs.length > 0) {
+		const { data: rows, error: neighborsError } = await supabase
+			.from('provincias')
+			.select('slug,nombre')
+			.in('slug', neighborSlugs)
+			.order('orden');
+		if (neighborsError) console.error(neighborsError);
+		else neighbors = rows ?? [];
+	}
+
 	return {
 		provincia: provincia as Provincia,
 		body: markdown,
-		lessonHtml: markdown ? renderProvinceHtml(markdown) : '',
+		guide: parseGuide(markdown),
+		neighbors,
 		businesses: (businesses ?? []) as unknown as Business[]
 	};
 };

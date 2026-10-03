@@ -105,6 +105,28 @@ body {
 		line-height: var(--text-title--line-height);
 		font-weight: 600;
 	}
+	.prose-content h4 {
+		margin-top: 1.25rem;
+		margin-bottom: 0.25rem;
+		font-size: var(--text-body);
+		line-height: var(--text-body--line-height);
+		font-weight: 600;
+		letter-spacing: 0.01em;
+	}
+	.prose-content blockquote {
+		margin-top: 1rem;
+		border-left: 3px solid var(--color-border);
+		padding-left: 1rem;
+		color: var(--color-muted-foreground);
+		font-style: italic;
+	}
+	.prose-content blockquote > :first-child {
+		margin-top: 0;
+	}
+	.prose-content a {
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
 	.prose-content p,
 	.prose-content ul,
 	.prose-content ol {
@@ -119,6 +141,19 @@ body {
 	}
 	.prose-content ol {
 		list-style: decimal;
+	}
+	.prose-content li + li {
+		margin-top: 0.25rem;
+	}
+	.prose-content hr {
+		margin-block: 1.5rem;
+		border-color: var(--color-border);
+	}
+	/* Intro of a guide: one step up from body copy, with a more generous line height. */
+	.prose-lead {
+		font-size: var(--text-title);
+		line-height: 1.7;
+		color: var(--color-muted-foreground);
 	}
 	.prose-content strong {
 		font-weight: 600;
