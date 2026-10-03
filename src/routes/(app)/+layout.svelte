@@ -8,6 +8,7 @@
 	import { hasActiveFilters, parseFilters } from '$lib/search/filters';
 	import { Session } from '$lib/session.svelte';
 	import { provideSession } from '$lib/session-context';
+	import { legalNav } from '$lib/site';
 	import { navItemsFor, type NavIcon } from '$lib/utils/nav';
 
 	let { children, data } = $props();
@@ -114,10 +115,23 @@
 </main>
 
 <footer class="mt-8 border-t">
-	<div
-		class="mx-auto flex max-w-5xl flex-col justify-between gap-2 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:px-6 lg:px-8"
-	>
-		<span>© {new Date().getFullYear()} iisar — Directorio de negocios</span>
-		<span class="text-xs">Slug MVP · futuro <code>negocio.iisar.com</code></span>
+	<div class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+		<nav aria-label="Legal" class="mb-4">
+			<ul class="flex flex-wrap gap-x-4 gap-y-2" role="list">
+				{#each legalNav as item (item.href)}
+					<li>
+						<a
+							href={item.href}
+							class="inline-flex min-h-11 items-center text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+							>{item.label}</a
+						>
+					</li>
+				{/each}
+			</ul>
+		</nav>
+		<div class="flex flex-col justify-between gap-2 text-sm text-muted-foreground sm:flex-row">
+			<span>© {new Date().getFullYear()} iisar — Directorio de negocios</span>
+			<span class="text-xs">Slug MVP · futuro <code>negocio.iisar.com</code></span>
+		</div>
 	</div>
 </footer>
