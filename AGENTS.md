@@ -48,6 +48,7 @@ npx supabase stop                     # baja stack local
 - Fuente de verdad: tabla `provincia_contenido` (`provincia_id` PK, `body` markdown <= 20000, `updated_at/by`). RLS: lectura pública, escritura solo `is_webmaster()`.
 - Render: `renderProvinceHtml` (`src/lib/content/render.ts`: marked + allowlist `xss`, JS puro, apto para Cloudflare Workers y navegador).
 - Edición: inline en `/ecuador/<slug>` solo para el webmaster (textarea markdown + vista previa); la RLS es el control real, el botón es comodidad.
+- Vista: `parseGuide` (`src/lib/content/guide.ts`) parte el markdown en introducción, secciones `###` (ids para el índice) y fuentes (`### Fuentes`, solo http/https); `src/lib/components/ecuador/{province-hero,guide-toc,guide-sources,province-neighbors}.svelte` las presentan. Vecinas: constante curada y simétrica en `src/lib/utils/province-neighbors.ts` (validada contra el seed).
 - Borradores en `content/provincias/*.md`; seed con `pnpm content:seed-sql` → migración `20251002000002_provincia_contenido_seed.sql` (`on conflict do nothing`, nunca pisa ediciones de la UI). Ver `content/README.md`.
 - Producción: el mantenedor aplica la migración con `supabase db push`.
 - Originalidad: `pnpm check:originality -- --source 15fdc3a:content/geografia-ecuador.md --target content/provincias` (el libro fuente ya no está en el árbol, solo en el historial git).
