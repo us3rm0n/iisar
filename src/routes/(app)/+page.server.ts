@@ -68,11 +68,15 @@ export const load: PageServerLoad = async ({ url, parent }) => {
 		);
 	}
 
+	// A text filter made only of punctuation cannot match anything: ignoring it would list every
+	// business under a chip that says the list is filtered.
+	const unusableTextFilter =
+		(ciudad !== '' && ciudadPattern === '') || (q !== '' && qPattern === '');
+
 	// Slug desconocido o filtro irresoluble: no ejecutar la query como si no
 	// hubiera filtro, no hay nada que listar.
-	const { data: businesses, error: businessesError } = provinciaProblem
-		? { data: [], error: null }
-		: await query;
+	const { data: businesses, error: businessesError } =
+		provinciaProblem || unusableTextFilter ? { data: [], error: null } : await query;
 
 	if (businessesError) throw error(500, 'No se pudieron cargar los negocios');
 

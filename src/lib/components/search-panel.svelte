@@ -23,8 +23,9 @@
 	let { id, categories, provincias, places, filters, onclose }: Props = $props();
 
 	const SUGGESTION_LIMIT = 5;
-	const listId = `-suggestions`;
-	const moreId = `-more`;
+	// Derived from the panel id so the aria-controls / listbox ids stay unique and consistent.
+	const listId = $derived(`${id}-suggestions`);
+	const moreId = $derived(`${id}-more`);
 
 	// The panel is mounted only while open, so the fields start from the URL each time.
 	// svelte-ignore state_referenced_locally
