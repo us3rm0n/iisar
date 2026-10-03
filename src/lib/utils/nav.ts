@@ -27,3 +27,17 @@ export function navItemsFor({ user, role }: NavContext): NavItem[] {
 
 	return items;
 }
+
+/**
+ * Whether a link leads to a page that loads the AdSense script (home, Ecuador, business landings).
+ * Links to any other page must do a full page load (`data-sveltekit-reload`) so the script, which
+ * client-side navigation never unloads, does not stay alive on pages without publisher content.
+ */
+export function isContentHref(href: string): boolean {
+	return (
+		href === '/' ||
+		href === '/ecuador' ||
+		href.startsWith('/ecuador/') ||
+		href.startsWith('/negocio/')
+	);
+}

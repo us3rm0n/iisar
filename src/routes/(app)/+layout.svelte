@@ -11,7 +11,7 @@
 	import { Session } from '$lib/session.svelte';
 	import { provideSession } from '$lib/session-context';
 	import { legalNav } from '$lib/site';
-	import { navItemsFor, type NavIcon } from '$lib/utils/nav';
+	import { isContentHref, navItemsFor, type NavIcon } from '$lib/utils/nav';
 
 	let { children, data } = $props();
 
@@ -90,6 +90,7 @@
 				{@const Icon = icons[item.icon]}
 				<Button
 					href={item.href}
+					data-sveltekit-reload={isContentHref(item.href) ? undefined : ''}
 					variant={item.primary ? 'pill' : 'ghost'}
 					class={item.primary ? 'px-4' : 'h-11 min-w-11 px-3'}
 				>
@@ -133,6 +134,7 @@
 					<li>
 						<a
 							href={item.href}
+							data-sveltekit-reload={isContentHref(item.href) ? undefined : ''}
 							class="inline-flex min-h-11 items-center text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
 							>{item.label}</a
 						>

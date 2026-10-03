@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AdsenseScript from '$lib/components/adsense-script.svelte';
 	import PageHeader from '$lib/components/page-header.svelte';
 	import { groupByRegion } from '$lib/utils/provincias';
 	import { regionIcon } from '$lib/utils/regions';
@@ -13,6 +14,8 @@
 		}))
 	);
 </script>
+
+<AdsenseScript />
 
 <svelte:head>
 	<title>Geografía de Ecuador | IISAR</title>

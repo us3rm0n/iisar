@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { navItemsFor } from './nav';
+import { isContentHref, navItemsFor } from './nav';
 
 const hrefs = (items: { href: string }[]) => items.map((item) => item.href);
 
@@ -36,5 +36,33 @@ describe('navItemsFor', () => {
 		const items = navItemsFor({ user: { id: 'u1' }, role: 'webmaster' });
 		expect(items.map((i) => i.label)).toEqual(['Ecuador', 'Mi perfil', 'Admin']);
 		for (const item of items) expect(item.icon).toBeTruthy();
+	});
+});
+
+describe('isContentHref', () => {
+	it('is true for the pages that load the AdSense script', () => {
+		for (const href of ['/', '/ecuador', '/ecuador/pichincha', '/negocio/dianisport-macas']) {
+			expect(isContentHref(href)).toBe(true);
+		}
+	});
+
+	it('is false for pages without publisher content', () => {
+		for (const href of [
+			'/auth/login',
+			'/auth/register',
+			'/dashboard',
+			'/admin',
+			'/privacidad',
+			'/terminos',
+			'/contacto',
+			'/nosotros'
+		]) {
+			expect(isContentHref(href)).toBe(false);
+		}
+	});
+
+	it('does not match look-alike prefixes', () => {
+		expect(isContentHref('/ecuadorian')).toBe(false);
+		expect(isContentHref('/negocios')).toBe(false);
 	});
 });

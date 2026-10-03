@@ -62,4 +62,5 @@ npx supabase stop                     # baja stack local
 ## Convenciones agentes
 
 - Mantener AGENTS compacto; citar `package.json:6`, `supabase/migrations/*`, `vite.config.ts` como fuente ejecutable.
+- AdSense: el script se carga solo vía `src/lib/components/adsense-script.svelte`, en rutas de contenido (home, `/ecuador`, provincia con artículo, `/negocio/[slug]`), con `site.adsense.publisherId` (`src/lib/site.ts`) y `static/ads.txt`; los enlaces a páginas sin contenido llevan `data-sveltekit-reload` (`isContentHref`, `src/lib/utils/nav.ts`).
 - Preferir `search_graph`/`trace_path` tras indexar; fallback grep para literales/config.

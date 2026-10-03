@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AdsenseScript from '$lib/components/adsense-script.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Separator } from '$lib/components/ui/separator';
@@ -23,6 +24,8 @@
 		)
 	);
 </script>
+
+<AdsenseScript />
 
 <svelte:head>
 	<title>iisar — Directorio de negocios y servicios</title>

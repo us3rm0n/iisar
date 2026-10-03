@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AdsenseScript from '$lib/components/adsense-script.svelte';
 	import BusinessCard from '$lib/components/business-card.svelte';
 	import PageHeader from '$lib/components/page-header.svelte';
 	import { Badge } from '$lib/components/ui/badge';
@@ -28,6 +29,10 @@
 		editing = false;
 	}
 </script>
+
+{#if data.lessonHtml}
+	<AdsenseScript />
+{/if}
 
 <svelte:head>
 	<title>{provincia.nombre} — Geografía de Ecuador | IISAR</title>

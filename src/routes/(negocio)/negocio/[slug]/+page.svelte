@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AdsenseScript from '$lib/components/adsense-script.svelte';
 	import { Megaphone } from '@lucide/svelte';
 	import CatalogSection from '$lib/components/negocio/catalog-section.svelte';
 	import ContactCta from '$lib/components/negocio/contact-cta.svelte';
@@ -39,6 +40,8 @@
 	const tel = $derived(business.contacto ? `tel:${business.contacto}` : null);
 	const hasStory = $derived(Boolean(business.vision || business.mision));
 </script>
+
+<AdsenseScript />
 
 <svelte:head>
 	<title>{landingTitle(business.nombre, business.tipo, categoryName)}</title>
