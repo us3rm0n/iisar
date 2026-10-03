@@ -1,6 +1,6 @@
 <script lang="ts">
 	import PageHeader from '$lib/components/page-header.svelte';
-	import { externalLink, site } from '$lib/site';
+	import { site } from '$lib/site';
 </script>
 
 <svelte:head>
@@ -101,7 +101,7 @@
 
 		<h3>8. Limitación de responsabilidad</h3>
 		<p>
-			Respondemos por el daño directo que причиmos por incumplimiento de estas condiciones. No
+			Respondemos por el daño directo que causemos por incumplimiento de estas condiciones. No
 			respondemos por lucro cesante, pérdida de clientes ni daños indirectos. Nada en estos términos
 			excluye la responsabilidad que no puede excluirse por ley.
 		</p>
@@ -115,8 +115,8 @@
 		<h3>10. Contacto</h3>
 		<p>
 			Preguntas o reclamos: <a href="mailto:{site.contactEmail}">{site.contactEmail}</a>. Conoce
-			<a href="/privacidad" {...externalLink}>cómo tratamos tus datos</a> o
-			<a href="/contacto" {...externalLink}>escríbenos</a>.
+			<a href="/privacidad">cómo tratamos tus datos</a> o
+			<a href="/contacto">escríbenos</a>.
 		</p>
 	</div>
 </div>
