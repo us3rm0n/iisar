@@ -2,9 +2,8 @@
 	import AdsenseScript from '$lib/components/adsense-script.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Separator } from '$lib/components/ui/separator';
+	import HomeHero from '$lib/components/home-hero.svelte';
 	import BusinessCard from '$lib/components/business-card.svelte';
-	import PageHeader from '$lib/components/page-header.svelte';
 	import { Card, CardContent } from '$lib/components/ui/card';
 	import { Store, Plus, SearchX, AlertTriangle, X, ArrowRight } from '@lucide/svelte';
 	import { activeFilterChips } from '$lib/search/chips';
@@ -28,19 +27,20 @@
 <AdsenseScript />
 
 <svelte:head>
-	<title>iisar — Directorio de negocios y servicios</title>
+	<title>iisar — Directorio de negocios y servicios de Ecuador</title>
 	<meta
 		name="description"
-		content="Encuentra productos y servicios por categoría. Cada negocio con su landing page."
+		content="Encuentra servicios locales, productos y guías de las 24 provincias de Ecuador. Cada negocio con su landing page."
 	/>
 </svelte:head>
 
 <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-	<PageHeader
-		align="center"
-		class="mx-auto mb-8 max-w-2xl sm:mb-10"
-		title="Descubre negocios cerca de ti"
-		description="Directorio de productos y servicios · gastronomía, salud, artistas y más. Cada negocio con su landing page."
+	<HomeHero
+		categories={data.searchOptions.categories}
+		provincias={data.searchOptions.provincias}
+		ciudades={data.searchOptions.ciudades}
+		currentQ={data.q}
+		hasActiveFilters={chips.length > 0}
 	/>
 
 	{#if chips.length > 0}
@@ -140,11 +140,4 @@
 			</ul>
 		{/if}
 	</section>
-
-	<Separator class="my-10 opacity-50" />
-	<p class="text-center text-caption text-muted-foreground">
-		Slug MVP <code class="rounded-md bg-muted px-2 py-0.5">/negocio/[slug]</code>
-		· futuro
-		<code class="rounded-md bg-muted px-2 py-0.5">negocio.iisar.com</code>
-	</p>
 </div>
