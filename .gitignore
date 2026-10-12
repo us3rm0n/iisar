@@ -46,3 +46,7 @@ supabase/.temp-pooler
 # Logs
 logs
 *.log
+
+# Local agent tooling
+.atl/
+.codegraph/
