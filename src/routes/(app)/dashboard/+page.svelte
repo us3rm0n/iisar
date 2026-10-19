@@ -5,6 +5,7 @@
 	import BillingNotice from '$lib/components/dashboard/billing-notice.svelte';
 	import BusinessForm from '$lib/components/dashboard/business-form.svelte';
 	import BusinessList from '$lib/components/dashboard/business-list.svelte';
+	import CatalogSection from '$lib/components/dashboard/catalog-section.svelte';
 	import PageHeader from '$lib/components/page-header.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -103,6 +104,9 @@
 				onprovincia={dashboard.changeProvincia}
 				onedit={dashboard.startEdit}
 			/>
+			{#each dashboard.businesses as business (business.id)}
+				<CatalogSection {business} />
+			{/each}
 		{/if}
 		<BillingNotice />
 	{/if}
