@@ -10,9 +10,11 @@
 		email?: string;
 		error: string;
 		onprovincia: (business: Business, provinciaId: string) => Promise<boolean>;
+		onedit: (business: Business) => void;
 	};
 
-	let { businesses, subscriptions, provinciaGroups, email, error, onprovincia }: Props = $props();
+	let { businesses, subscriptions, provinciaGroups, email, error, onprovincia, onedit }: Props =
+		$props();
 </script>
 
 <section class="flex flex-col gap-3" aria-labelledby="businesses-heading">
@@ -32,6 +34,7 @@
 				subscription={subscriptions[business.id]}
 				{provinciaGroups}
 				{onprovincia}
+				{onedit}
 			/>
 		{/each}
 	</ul>

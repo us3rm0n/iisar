@@ -4,7 +4,7 @@ import type { Business, Provincia, Subscription } from '$lib/types';
 export type Category = { id: string; nombre: string; slug: string };
 
 const BUSINESS_COLUMNS =
-	'id,nombre,slug,tipo,ciudad,estado,primary_color,vision,mision,category_id,categories(nombre),provincia_id,provincias(nombre,slug)';
+	'id,nombre,slug,tipo,descripcion,contacto,ciudad,estado,primary_color,vision,mision,category_id,categories(nombre),provincia_id,provincias(nombre,slug)';
 
 export async function fetchCategories(): Promise<Category[]> {
 	const { data } = await supabase
@@ -76,6 +76,11 @@ export async function insertTrialSubscription(businessId: string): Promise<void>
 		status: 'aprobada'
 	});
 	if (error) throw new Error(`Negocio creado pero trial falló: ${error.message}`);
+}
+
+export async function updateBusiness(id: string, payload: object): Promise<void> {
+	const { error } = await supabase.from('businesses').update(payload).eq('id', id);
+	if (error) throw new Error(error.message);
 }
 
 /** Returns the error message, or null when the update succeeded. */

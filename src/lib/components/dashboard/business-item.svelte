@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Landmark, MapPin } from '@lucide/svelte';
+	import { Landmark, MapPin, Pencil } from '@lucide/svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import SelectField from '$lib/components/select-field.svelte';
@@ -15,9 +15,10 @@
 		provinciaGroups: { region: ProvinciaRegion; label: string; provincias: Provincia[] }[];
 		/** Resolves to false when saving failed, so the select can be restored. */
 		onprovincia: (business: Business, provinciaId: string) => Promise<boolean>;
+		onedit: (business: Business) => void;
 	};
 
-	let { business, subscription, provinciaGroups, onprovincia }: Props = $props();
+	let { business, subscription, provinciaGroups, onprovincia, onedit }: Props = $props();
 </script>
 
 <li
@@ -64,5 +65,14 @@
 			</SelectField>
 		</div>
 	</div>
-	<Button href="/negocio/{business.slug}" variant="outline" class="h-11 shrink-0 px-4">Ver</Button>
+	<div class="flex shrink-0 gap-2">
+		<Button
+			type="button"
+			variant="outline"
+			onclick={() => onedit(business)}
+			aria-label="Editar {business.nombre}"
+			class="h-11 px-4"><Pencil aria-hidden="true" /> Editar</Button
+		>
+		<Button href="/negocio/{business.slug}" variant="outline" class="h-11 px-4">Ver</Button>
+	</div>
 </li>

@@ -1,7 +1,11 @@
 import { getCurrentUser } from '$lib/auth';
 import type { Business, Provincia, Subscription } from '$lib/types';
 import {
+	ONE_BUSINESS_MESSAGE,
 	buildBusinessPayload,
+	buildBusinessUpdatePayload,
+	businessToForm,
+	canCreateBusiness,
 	emptyBusinessForm,
 	resetBusinessForm,
 	resolveSlug,
@@ -12,7 +16,7 @@ import * as repository from './repository';
 
 type DashboardUser = { id: string; email?: string };
 
-/** Owner dashboard state: loaded data plus the create-business form and its actions. */
+/** Owner dashboard state: loaded data plus the create and edit business forms and their actions. */
 export class Dashboard {
 	user = $state<DashboardUser | null>(null);
 	loading = $state(true);
@@ -27,7 +31,14 @@ export class Dashboard {
 	formError = $state('');
 	formMessage = $state('');
 
+	editingId = $state<string | null>(null);
+	editForm = $state(emptyBusinessForm());
+	saving = $state(false);
+	editError = $state('');
+	editMessage = $state('');
+
 	provinciasByRegion = $derived(groupByRegion(this.provincias));
+	canCreate = $derived(canCreateBusiness(this.businesses));
 
 	load = async () => {
 		this.user = await getCurrentUser();
@@ -57,6 +68,7 @@ export class Dashboard {
 		this.formError = '';
 		this.formMessage = '';
 		try {
+			if (!this.canCreate) throw new Error(ONE_BUSINESS_MESSAGE);
 			const invalid = validateBusinessForm(this.form);
 			if (invalid) throw new Error(invalid);
 			const slug = resolveSlug(this.form);
@@ -71,6 +83,38 @@ export class Dashboard {
 			this.formError = e instanceof Error ? e.message : 'Error desconocido';
 		} finally {
 			this.creating = false;
+		}
+	};
+
+	startEdit = (business: Business) => {
+		this.editingId = business.id;
+		this.editForm = businessToForm(business);
+		this.editError = '';
+		this.editMessage = '';
+	};
+
+	cancelEdit = () => {
+		this.editingId = null;
+		this.editError = '';
+	};
+
+	saveEdit = async () => {
+		const id = this.editingId;
+		if (!id) return;
+		this.saving = true;
+		this.editError = '';
+		this.editMessage = '';
+		try {
+			const invalid = validateBusinessForm(this.editForm);
+			if (invalid) throw new Error(invalid);
+			await repository.updateBusiness(id, buildBusinessUpdatePayload(this.editForm));
+			this.editingId = null;
+			this.editMessage = 'Cambios guardados';
+			await this.load();
+		} catch (e) {
+			this.editError = e instanceof Error ? e.message : 'Error desconocido';
+		} finally {
+			this.saving = false;
 		}
 	};
 

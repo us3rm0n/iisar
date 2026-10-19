@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import type { Business } from '$lib/types';
 import {
 	DEFAULT_PRIMARY_COLOR,
 	TIPOS,
 	TIPO_META,
 	buildBusinessPayload,
+	buildBusinessUpdatePayload,
+	businessToForm,
+	canCreateBusiness,
 	emptyBusinessForm,
 	resetBusinessForm,
 	resolveSlug,
@@ -145,5 +149,107 @@ describe('TIPO_META', () => {
 	it('covers every tipo', () => {
 		expect(TIPOS).toEqual(['negocio', 'artista', 'lugar']);
 		for (const tipo of TIPOS) expect(TIPO_META[tipo].hint).toBeTruthy();
+	});
+});
+
+describe('canCreateBusiness', () => {
+	it('allows creating when the owner has no business yet', () => {
+		expect(canCreateBusiness([])).toBe(true);
+	});
+
+	it('refuses once the owner already has one or more', () => {
+		expect(canCreateBusiness([{ id: 'b1' }])).toBe(false);
+		expect(canCreateBusiness([{ id: 'b1' }, { id: 'b2' }])).toBe(false);
+	});
+});
+
+const stored = (over: Partial<Business> = {}): Business => ({
+	id: 'b1',
+	slug: 'sabor-andino',
+	tipo: 'negocio',
+	nombre: 'Sabor Andino',
+	descripcion: 'Menú diario',
+	bio: null,
+	vision: 'Ser referente',
+	mision: 'Ofrecer productos',
+	ciudad: 'Macas',
+	contacto: '0991234567',
+	estado: 'activo',
+	primary_color: '#112233',
+	accent_color: null,
+	category_id: 'cat-1',
+	provincia_id: 'prov-1',
+	...over
+});
+
+describe('businessToForm', () => {
+	it('prefills every editable field from the stored business', () => {
+		expect(businessToForm(stored())).toEqual({
+			tipo: 'negocio',
+			nombre: 'Sabor Andino',
+			slug: 'sabor-andino',
+			descripcion: 'Menú diario',
+			vision: 'Ser referente',
+			mision: 'Ofrecer productos',
+			ciudad: 'Macas',
+			contacto: '0991234567',
+			categoryId: 'cat-1',
+			provinciaId: 'prov-1',
+			primaryColor: '#112233'
+		});
+	});
+
+	it('maps missing values to empty strings and the default color', () => {
+		const form = businessToForm(
+			stored({
+				descripcion: null,
+				vision: null,
+				mision: null,
+				ciudad: null,
+				contacto: null,
+				category_id: null,
+				provincia_id: null,
+				primary_color: null
+			})
+		);
+		expect(form).toMatchObject({
+			descripcion: '',
+			vision: '',
+			mision: '',
+			ciudad: '',
+			contacto: '',
+			categoryId: '',
+			provinciaId: '',
+			primaryColor: DEFAULT_PRIMARY_COLOR
+		});
+	});
+});
+
+describe('buildBusinessUpdatePayload', () => {
+	it('maps the same fields as the create payload without owner_id or estado', () => {
+		const { owner_id, estado, ...shared } = buildBusinessPayload(filled(), 'owner-1');
+		expect(owner_id).toBe('owner-1');
+		expect(estado).toBe('activo');
+		const update = buildBusinessUpdatePayload(filled());
+		expect(update).toEqual(shared);
+		expect(update).not.toHaveProperty('owner_id');
+		expect(update).not.toHaveProperty('estado');
+	});
+
+	it('round-trips a stored business unchanged', () => {
+		const business = stored();
+		expect(buildBusinessUpdatePayload(businessToForm(business))).toEqual({
+			category_id: business.category_id,
+			provincia_id: business.provincia_id,
+			slug: business.slug,
+			tipo: business.tipo,
+			nombre: business.nombre,
+			descripcion: business.descripcion,
+			vision: business.vision,
+			mision: business.mision,
+			ciudad: business.ciudad,
+			contacto: business.contacto,
+			primary_color: business.primary_color
+		});
 	});
 });
