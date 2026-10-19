@@ -50,3 +50,4 @@ logs
 # Local agent tooling
 .atl/
 .codegraph/
+odd/
