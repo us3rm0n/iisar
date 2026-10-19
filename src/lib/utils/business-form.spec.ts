@@ -4,6 +4,7 @@ import {
 	TIPOS,
 	TIPO_META,
 	buildBusinessPayload,
+	canCreateBusiness,
 	emptyBusinessForm,
 	resetBusinessForm,
 	resolveSlug,
@@ -145,5 +146,16 @@ describe('TIPO_META', () => {
 	it('covers every tipo', () => {
 		expect(TIPOS).toEqual(['negocio', 'artista', 'lugar']);
 		for (const tipo of TIPOS) expect(TIPO_META[tipo].hint).toBeTruthy();
+	});
+});
+
+describe('canCreateBusiness', () => {
+	it('allows creating when the owner has no business yet', () => {
+		expect(canCreateBusiness([])).toBe(true);
+	});
+
+	it('refuses once the owner already has one or more', () => {
+		expect(canCreateBusiness([{ id: 'b1' }])).toBe(false);
+		expect(canCreateBusiness([{ id: 'b1' }, { id: 'b2' }])).toBe(false);
 	});
 });

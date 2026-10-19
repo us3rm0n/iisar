@@ -1,7 +1,9 @@
 import { getCurrentUser } from '$lib/auth';
 import type { Business, Provincia, Subscription } from '$lib/types';
 import {
+	ONE_BUSINESS_MESSAGE,
 	buildBusinessPayload,
+	canCreateBusiness,
 	emptyBusinessForm,
 	resetBusinessForm,
 	resolveSlug,
@@ -28,6 +30,7 @@ export class Dashboard {
 	formMessage = $state('');
 
 	provinciasByRegion = $derived(groupByRegion(this.provincias));
+	canCreate = $derived(canCreateBusiness(this.businesses));
 
 	load = async () => {
 		this.user = await getCurrentUser();
@@ -57,6 +60,7 @@ export class Dashboard {
 		this.formError = '';
 		this.formMessage = '';
 		try {
+			if (!this.canCreate) throw new Error(ONE_BUSINESS_MESSAGE);
 			const invalid = validateBusinessForm(this.form);
 			if (invalid) throw new Error(invalid);
 			const slug = resolveSlug(this.form);

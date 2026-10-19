@@ -117,6 +117,14 @@ export function buildBusinessPayload(form: BusinessFormValues, ownerId: string) 
 	};
 }
 
+/** Shown when an owner tries to create a second business; matches the database trigger. */
+export const ONE_BUSINESS_MESSAGE = 'Solo puedes tener un negocio por cuenta';
+
+/** Accounts are limited to one business: creating is only offered while the owner has none. */
+export function canCreateBusiness(businesses: readonly unknown[]): boolean {
+	return businesses.length === 0;
+}
+
 /** Color safe to render as a swatch: a valid `#rrggbb`, otherwise the brand fallback. */
 export function swatchColor(color: string | null | undefined): string {
 	return getBrandColors({ primary_color: color }).primary;

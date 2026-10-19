@@ -16,6 +16,7 @@ vi.mock('$lib/auth', () => auth);
 
 import { Dashboard } from './dashboard.svelte';
 import type { Business } from '$lib/types';
+import { ONE_BUSINESS_MESSAGE } from '$lib/utils/business-form';
 
 const business = (over: Partial<Business> = {}) =>
 	({ id: 'b1', slug: 'sabor', provincia_id: null, provincias: null, ...over }) as Business;
@@ -129,6 +130,24 @@ describe('Dashboard.create', () => {
 		expect(dashboard.formError).toBe('Negocio creado pero trial falló: x');
 		expect(dashboard.formMessage).toBe('');
 		expect(dashboard.form.nombre).toBe('Sabor');
+	});
+
+	it('refuses to create a second business without touching the database', async () => {
+		auth.getCurrentUser.mockResolvedValue({ id: 'u1' });
+		repo.fetchBusinesses.mockResolvedValue([business()]);
+		const dashboard = new Dashboard();
+		await dashboard.load();
+		expect(dashboard.canCreate).toBe(false);
+		dashboard.form.nombre = 'Otro';
+		await dashboard.create();
+		expect(dashboard.formError).toBe(ONE_BUSINESS_MESSAGE);
+		expect(repo.insertBusiness).not.toHaveBeenCalled();
+		expect(dashboard.creating).toBe(false);
+	});
+
+	it('allows creating while the owner has no business', async () => {
+		const dashboard = await ready();
+		expect(dashboard.canCreate).toBe(true);
 	});
 
 	it('uses a generic message for non-Error rejections', async () => {
