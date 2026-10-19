@@ -51,14 +51,18 @@ export type Subscription = {
 	fecha_maxima: string;
 };
 
+export type CatalogTipo = 'producto' | 'servicio';
+
 export type ProductService = {
 	id: string;
-	tipo: 'producto' | 'servicio';
+	tipo: CatalogTipo;
 	nombre: string;
 	descripcion: string | null;
 	precio_estimado: number | null;
 	moneda: string;
 	imagen_url: string | null;
+	/** Display position; only selected by the dashboard catalog. */
+	orden?: number;
 };
 
 /** Métrica de la banda de estadísticas: cifra grande + rótulo. */

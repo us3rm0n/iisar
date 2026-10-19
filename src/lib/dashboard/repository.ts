@@ -1,5 +1,5 @@
 import { supabase } from '$lib/supabase';
-import type { Business, Provincia, Subscription } from '$lib/types';
+import type { Business, ProductService, Provincia, Subscription } from '$lib/types';
 
 export type Category = { id: string; nombre: string; slug: string };
 
@@ -93,6 +93,47 @@ export async function setBusinessProvincia(
 		.update({ provincia_id: provinciaId })
 		.eq('id', businessId);
 	return error?.message ?? null;
+}
+
+const CATALOG_COLUMNS = 'id,tipo,nombre,descripcion,precio_estimado,moneda,imagen_url,orden';
+
+/** RLS filters rows instead of failing, so a write that matches nothing is reported here. */
+const SUBSCRIPTION_HINT = 'revisa que tu suscripción esté vigente';
+
+export async function fetchCatalog(businessId: string): Promise<ProductService[]> {
+	const { data, error } = await supabase
+		.from('products_services')
+		.select(CATALOG_COLUMNS)
+		.eq('business_id', businessId)
+		.order('orden')
+		.order('created_at');
+	if (error) throw new Error(`No se pudo cargar el catálogo: ${error.message}`);
+	return (data as ProductService[]) ?? [];
+}
+
+export async function insertCatalogItem(payload: object): Promise<void> {
+	const { error } = await supabase.from('products_services').insert(payload);
+	if (error) throw new Error(error.message);
+}
+
+export async function updateCatalogItem(id: string, payload: object): Promise<void> {
+	const { data, error } = await supabase
+		.from('products_services')
+		.update(payload)
+		.eq('id', id)
+		.select('id');
+	if (error) throw new Error(error.message);
+	if (!data?.length) throw new Error(`No se pudo guardar: ${SUBSCRIPTION_HINT}`);
+}
+
+export async function deleteCatalogItem(id: string): Promise<void> {
+	const { data, error } = await supabase
+		.from('products_services')
+		.delete()
+		.eq('id', id)
+		.select('id');
+	if (error) throw new Error(error.message);
+	if (!data?.length) throw new Error(`No se pudo eliminar: ${SUBSCRIPTION_HINT}`);
 }
 
 export async function signOut(): Promise<void> {
