@@ -1,4 +1,4 @@
-import type { BusinessTipo } from '$lib/types';
+import type { Business, BusinessTipo } from '$lib/types';
 import { getBrandColors } from './brand';
 import { slugify } from './slug';
 
@@ -98,10 +98,10 @@ export function validateBusinessForm(form: BusinessFormValues): string | null {
 	return !resolveSlug(form) || !form.nombre.trim() ? 'Nombre y slug son requeridos' : null;
 }
 
-export function buildBusinessPayload(form: BusinessFormValues, ownerId: string) {
+/** Column mapping shared by create and update: trimmed text, empty optionals as null. */
+function businessFields(form: BusinessFormValues) {
 	const isNegocio = form.tipo === 'negocio';
 	return {
-		owner_id: ownerId,
 		category_id: form.categoryId || null,
 		provincia_id: form.provinciaId || null,
 		slug: resolveSlug(form),
@@ -112,8 +112,33 @@ export function buildBusinessPayload(form: BusinessFormValues, ownerId: string) 
 		mision: isNegocio ? form.mision.trim() || null : null,
 		ciudad: form.ciudad.trim() || null,
 		contacto: form.contacto.trim() || null,
-		estado: 'activo' as const,
 		primary_color: form.primaryColor
+	};
+}
+
+export function buildBusinessPayload(form: BusinessFormValues, ownerId: string) {
+	return { owner_id: ownerId, ...businessFields(form), estado: 'activo' as const };
+}
+
+/** Update payload: the owner and estado are never changed from the edit form. */
+export function buildBusinessUpdatePayload(form: BusinessFormValues) {
+	return businessFields(form);
+}
+
+/** Prefills the edit form from a stored business. */
+export function businessToForm(business: Business): BusinessFormValues {
+	return {
+		tipo: business.tipo,
+		nombre: business.nombre,
+		slug: business.slug,
+		descripcion: business.descripcion ?? '',
+		vision: business.vision ?? '',
+		mision: business.mision ?? '',
+		ciudad: business.ciudad ?? '',
+		contacto: business.contacto ?? '',
+		categoryId: business.category_id ?? '',
+		provinciaId: business.provincia_id ?? '',
+		primaryColor: business.primary_color ?? DEFAULT_PRIMARY_COLOR
 	};
 }
 

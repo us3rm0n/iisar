@@ -7,7 +7,8 @@ const repo = vi.hoisted(() => ({
 	fetchLatestSubscriptions: vi.fn(),
 	insertBusiness: vi.fn(),
 	insertTrialSubscription: vi.fn(),
-	setBusinessProvincia: vi.fn()
+	setBusinessProvincia: vi.fn(),
+	updateBusiness: vi.fn()
 }));
 const auth = vi.hoisted(() => ({ getCurrentUser: vi.fn() }));
 
@@ -202,5 +203,92 @@ describe('Dashboard.changeProvincia', () => {
 		expect(dashboard.businesses[0].provincia_id).toBeNull();
 		expect(await dashboard.changeProvincia(dashboard.businesses[0], 'p1')).toBe(true);
 		expect(dashboard.provinciaError).toBe('');
+	});
+});
+
+describe('Dashboard edit', () => {
+	async function ready() {
+		auth.getCurrentUser.mockResolvedValue({ id: 'u1' });
+		repo.fetchBusinesses.mockResolvedValue([
+			business({ nombre: 'Sabor', tipo: 'negocio', ciudad: 'Macas', category_id: 'c1' })
+		]);
+		const dashboard = new Dashboard();
+		await dashboard.load();
+		vi.clearAllMocks();
+		repo.fetchCategories.mockResolvedValue([]);
+		repo.fetchProvincias.mockResolvedValue({ provincias: [], error: null });
+		repo.fetchLatestSubscriptions.mockResolvedValue({});
+		auth.getCurrentUser.mockResolvedValue({ id: 'u1' });
+		return dashboard;
+	}
+
+	it('starts editing with a form prefilled from the business', async () => {
+		const dashboard = await ready();
+		dashboard.startEdit(dashboard.businesses[0]);
+		expect(dashboard.editingId).toBe('b1');
+		expect(dashboard.editForm).toMatchObject({
+			nombre: 'Sabor',
+			slug: 'sabor',
+			ciudad: 'Macas',
+			categoryId: 'c1'
+		});
+	});
+
+	it('cancels editing and clears its error', async () => {
+		const dashboard = await ready();
+		dashboard.startEdit(dashboard.businesses[0]);
+		dashboard.editError = 'x';
+		dashboard.cancelEdit();
+		expect(dashboard.editingId).toBeNull();
+		expect(dashboard.editError).toBe('');
+	});
+
+	it('rejects an invalid edit without touching the database', async () => {
+		const dashboard = await ready();
+		dashboard.startEdit(dashboard.businesses[0]);
+		dashboard.editForm.nombre = ' ';
+		await dashboard.saveEdit();
+		expect(dashboard.editError).toBe('Nombre y slug son requeridos');
+		expect(repo.updateBusiness).not.toHaveBeenCalled();
+		expect(dashboard.editingId).toBe('b1');
+		expect(dashboard.saving).toBe(false);
+	});
+
+	it('saves the changes without owner or estado, closes the form and reloads', async () => {
+		const dashboard = await ready();
+		dashboard.startEdit(dashboard.businesses[0]);
+		dashboard.editForm.nombre = 'Sabor Andino';
+		repo.updateBusiness.mockResolvedValue(undefined);
+		repo.fetchBusinesses.mockResolvedValue([business({ nombre: 'Sabor Andino' })]);
+		await dashboard.saveEdit();
+		expect(repo.updateBusiness).toHaveBeenCalledWith(
+			'b1',
+			expect.objectContaining({ nombre: 'Sabor Andino', slug: 'sabor' })
+		);
+		const payload = repo.updateBusiness.mock.calls[0][1];
+		expect(payload).not.toHaveProperty('owner_id');
+		expect(payload).not.toHaveProperty('estado');
+		expect(dashboard.editingId).toBeNull();
+		expect(dashboard.editMessage).toBe('Cambios guardados');
+		expect(repo.fetchBusinesses).toHaveBeenCalledTimes(1);
+		expect(dashboard.businesses[0].nombre).toBe('Sabor Andino');
+		expect(dashboard.saving).toBe(false);
+	});
+
+	it('keeps the form open and shows the update error', async () => {
+		const dashboard = await ready();
+		dashboard.startEdit(dashboard.businesses[0]);
+		repo.updateBusiness.mockRejectedValue(new Error('duplicate slug'));
+		await dashboard.saveEdit();
+		expect(dashboard.editError).toBe('duplicate slug');
+		expect(dashboard.editingId).toBe('b1');
+		expect(dashboard.editMessage).toBe('');
+		expect(dashboard.saving).toBe(false);
+	});
+
+	it('does nothing when no business is being edited', async () => {
+		const dashboard = await ready();
+		await dashboard.saveEdit();
+		expect(repo.updateBusiness).not.toHaveBeenCalled();
 	});
 });

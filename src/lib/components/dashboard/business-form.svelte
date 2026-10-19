@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Plus, Store } from '@lucide/svelte';
+	import { Plus, Save, Store } from '@lucide/svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -27,21 +27,28 @@
 		form: BusinessFormValues;
 		categories: Category[];
 		provinciaGroups: { region: ProvinciaRegion; label: string; provincias: Provincia[] }[];
-		creating: boolean;
+		/** `create` adds a new business with a trial; `edit` saves changes to an existing one. */
+		mode?: 'create' | 'edit';
+		busy: boolean;
 		error: string;
 		message: string;
 		onsubmit: () => void;
+		oncancel?: () => void;
 	};
 
 	let {
 		form = $bindable(),
 		categories,
 		provinciaGroups,
-		creating,
+		mode = 'create',
+		busy,
 		error,
 		message,
-		onsubmit
+		onsubmit,
+		oncancel
 	}: Props = $props();
+
+	const editing = $derived(mode === 'edit');
 
 	const meta = $derived(TIPO_META[form.tipo]);
 
@@ -53,13 +60,17 @@
 <Card>
 	<CardHeader>
 		<CardTitle class="flex items-center gap-2 text-title">
-			<Store class="size-5" aria-hidden="true" /> Crear {tipoLabel(form.tipo)}
+			<Store class="size-5" aria-hidden="true" />
+			{editing ? 'Editar' : 'Crear'}
+			{tipoLabel(form.tipo)}
 		</CardTitle>
-		<CardDescription class="text-body">
-			Al crearlo se activa prueba <Badge>7 días</Badge> con <code>has_active_subscription</code>.
-			Artista solo servicios, negocio productos+servicios, lugar es un sitio (hotel, mirador,
-			atractivo) con dueño o gestor.
-		</CardDescription>
+		{#if !editing}
+			<CardDescription class="text-body">
+				Al crearlo se activa prueba <Badge>7 días</Badge> con <code>has_active_subscription</code>.
+				Artista solo servicios, negocio productos+servicios, lugar es un sitio (hotel, mirador,
+				atractivo) con dueño o gestor.
+			</CardDescription>
+		{/if}
 	</CardHeader>
 	<CardContent>
 		<form
@@ -175,15 +186,26 @@
 			{#if message}
 				<p class="rounded-lg bg-muted px-3 py-2 text-body">{message}</p>
 			{/if}
-			<Button
-				type="submit"
-				variant="pill"
-				disabled={creating}
-				class="w-full sm:w-auto sm:self-start"
-			>
-				<Plus aria-hidden="true" />
-				{creating ? 'Creando...' : 'Crear negocio + trial 7d'}
-			</Button>
+			<div class="flex flex-col gap-2 sm:flex-row">
+				<Button type="submit" variant="pill" disabled={busy} class="w-full sm:w-auto">
+					{#if editing}
+						<Save aria-hidden="true" />
+						{busy ? 'Guardando...' : 'Guardar cambios'}
+					{:else}
+						<Plus aria-hidden="true" />
+						{busy ? 'Creando...' : 'Crear negocio + trial 7d'}
+					{/if}
+				</Button>
+				{#if editing && oncancel}
+					<Button
+						type="button"
+						variant="outline"
+						disabled={busy}
+						onclick={oncancel}
+						class="h-11 w-full px-4 sm:w-auto">Cancelar</Button
+					>
+				{/if}
+			</div>
 		</form>
 	</CardContent>
 </Card>

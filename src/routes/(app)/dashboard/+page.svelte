@@ -65,7 +65,7 @@
 				bind:form={dashboard.form}
 				categories={dashboard.categories}
 				provinciaGroups={dashboard.provinciasByRegion}
-				creating={dashboard.creating}
+				busy={dashboard.creating}
 				error={dashboard.formError}
 				message={dashboard.formMessage}
 				onsubmit={dashboard.create}
@@ -74,7 +74,24 @@
 			{#if dashboard.formMessage}
 				<p class="rounded-lg bg-muted px-3 py-2 text-body">{dashboard.formMessage}</p>
 			{/if}
-			<p class="text-caption text-muted-foreground">Cada cuenta puede tener un solo negocio.</p>
+			<p class="text-caption text-muted-foreground">
+				Cada cuenta puede tener un solo negocio. Usa «Editar» para cambiar sus datos.
+			</p>
+		{/if}
+		{#if dashboard.editingId}
+			<BusinessForm
+				mode="edit"
+				bind:form={dashboard.editForm}
+				categories={dashboard.categories}
+				provinciaGroups={dashboard.provinciasByRegion}
+				busy={dashboard.saving}
+				error={dashboard.editError}
+				message=""
+				onsubmit={dashboard.saveEdit}
+				oncancel={dashboard.cancelEdit}
+			/>
+		{:else if dashboard.editMessage}
+			<p class="rounded-lg bg-muted px-3 py-2 text-body" role="status">{dashboard.editMessage}</p>
 		{/if}
 		{#if dashboard.businesses.length}
 			<BusinessList
@@ -84,6 +101,7 @@
 				email={dashboard.user.email}
 				error={dashboard.provinciaError}
 				onprovincia={dashboard.changeProvincia}
+				onedit={dashboard.startEdit}
 			/>
 		{/if}
 		<BillingNotice />
