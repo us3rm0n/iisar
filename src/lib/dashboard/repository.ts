@@ -1,5 +1,6 @@
 import { supabase } from '$lib/supabase';
 import type { Business, ProductService, Provincia, Subscription } from '$lib/types';
+import { catalogImagePath } from '$lib/utils/image-upload';
 
 export type Category = { id: string; nombre: string; slug: string };
 
@@ -109,6 +110,15 @@ export async function fetchCatalog(businessId: string): Promise<ProductService[]
 		.order('created_at');
 	if (error) throw new Error(`No se pudo cargar el catálogo: ${error.message}`);
 	return (data as ProductService[]) ?? [];
+}
+
+/** Uploads a catalog photo to the public `business-assets` bucket and returns its public URL. */
+export async function uploadCatalogImage(businessId: string, file: File): Promise<string> {
+	const path = catalogImagePath(businessId, file.type, crypto.randomUUID());
+	const bucket = supabase.storage.from('business-assets');
+	const { error } = await bucket.upload(path, file, { contentType: file.type });
+	if (error) throw new Error('No se pudo subir la imagen. Inténtalo de nuevo.');
+	return bucket.getPublicUrl(path).data.publicUrl;
 }
 
 export async function insertCatalogItem(payload: object): Promise<void> {

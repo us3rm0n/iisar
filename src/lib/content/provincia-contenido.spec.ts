@@ -85,14 +85,14 @@ describe('saveProvinceBody', () => {
 			}
 		};
 		await expect(saveProvinceBody(client, 'p1', 'x')).resolves.toEqual({
-			error: 'No tenés permiso para editar este contenido.'
+			error: 'No tienes permiso para editar este contenido.'
 		});
 	});
 
 	it('treats a silent no-op (no row, no error) as a permission failure', async () => {
 		state.result = { data: null, error: null };
 		await expect(saveProvinceBody(client, 'p1', 'x')).resolves.toEqual({
-			error: 'No tenés permiso para editar este contenido.'
+			error: 'No tienes permiso para editar este contenido.'
 		});
 	});
 
@@ -100,7 +100,7 @@ describe('saveProvinceBody', () => {
 		vi.spyOn(console, 'error').mockImplementation(() => {});
 		state.result = { data: null, error: { message: 'connection reset by peer' } };
 		const res = await saveProvinceBody(client, 'p1', 'x');
-		expect(res.error).toBe('No se pudo guardar el contenido. Intentá de nuevo en unos minutos.');
+		expect(res.error).toBe('No se pudo guardar el contenido. Inténtalo de nuevo en unos minutos.');
 		expect(res.error).not.toContain('connection');
 	});
 });

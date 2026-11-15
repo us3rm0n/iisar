@@ -36,7 +36,7 @@
 
 		<h3>2. Registro y cuenta</h3>
 		<p>
-			Podés registrarte con una dirección de correo válido. Sos responsable de la confidencialidad
+			Puedes registrarte con una dirección de correo válida. Eres responsable de la confidencialidad
 			de tu contraseña y de toda actividad realizada desde tu cuenta. Una cuenta es personal: no la
 			compartas ni la vendas. Podemos suspender cuentas que publiquen contenido ilegal, engañoso o
 			que viole los derechos de terceros.

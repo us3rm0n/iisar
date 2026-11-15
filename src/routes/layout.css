@@ -179,3 +179,15 @@ body {
 		font-weight: 600;
 	}
 }
+
+/* Visitors who ask their system for less motion get instant state changes. */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+	}
+}

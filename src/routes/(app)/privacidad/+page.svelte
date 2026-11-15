@@ -28,7 +28,7 @@
 		<h3>1. Quién es el responsable</h3>
 		<p>
 			El responsable del tratamiento es <strong>{site.owner}</strong>, con domicilio en {site.location}.
-			Para cualquier consulta sobre datos personales podés escribir a
+			Para cualquier consulta sobre datos personales puedes escribir a
 			<a href="mailto:{site.contactEmail}">{site.contactEmail}</a>.
 		</p>
 

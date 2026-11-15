@@ -113,10 +113,10 @@
 	<div class="mx-auto flex max-w-4xl flex-col items-start gap-4 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 		<PageHeader title="Admin" />
 		{#if access === 'signed-out'}
-			<p class="text-body text-muted-foreground">Necesitás iniciar sesión para ver esta página.</p>
+			<p class="text-body text-muted-foreground">Necesitas iniciar sesión para ver esta página.</p>
 			<Button href="/auth/login" variant="pill" class="min-h-11">Iniciar sesión</Button>
 		{:else}
-			<p class="text-body text-muted-foreground">No tenés permiso para ver esta página.</p>
+			<p class="text-body text-muted-foreground">No tienes permiso para ver esta página.</p>
 			<Button href="/" variant="pill" class="min-h-11">Volver al inicio</Button>
 		{/if}
 	</div>

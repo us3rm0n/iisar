@@ -125,7 +125,7 @@
 					<p class="text-body text-muted-foreground">
 						Aún no hay negocios que coincidan con tu búsqueda. Sé el primero en crear tu landing.
 					</p>
-					<Button href="/dashboard" variant="pill" class="mt-2"
+					<Button href="/dashboard" data-sveltekit-reload variant="pill" class="mt-2"
 						><Plus class="size-4" aria-hidden="true" /> Crear mi negocio</Button
 					>
 				</div>

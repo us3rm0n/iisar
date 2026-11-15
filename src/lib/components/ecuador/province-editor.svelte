@@ -133,7 +133,7 @@
 				class="min-h-80 w-full rounded-lg border border-input bg-transparent p-3 text-body outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive lg:min-h-96 dark:bg-input/30"
 			></textarea>
 			<p id="province-help" class="text-caption text-muted-foreground">
-				Usá ### para los títulos y [texto](https://…) para los enlaces.
+				Usa ### para los títulos y [texto](https://…) para los enlaces.
 			</p>
 			<p
 				id="province-count"
@@ -182,7 +182,7 @@
 			aria-labelledby="province-confirm-text"
 		>
 			<p id="province-confirm-text" class="text-body text-foreground">
-				El contenido está vacío: al guardar se borra el artículo de esta provincia. ¿Confirmás?
+				El contenido está vacío: al guardar se borra el artículo de esta provincia. ¿Confirmas?
 			</p>
 			<div class="flex flex-col gap-2 sm:flex-row">
 				<Button variant="pill" disabled={saving} onclick={requestSave}>

@@ -35,7 +35,7 @@
 				<PackageOpen class="size-10 text-muted-foreground" aria-hidden="true" />
 				<h3 class="text-title font-semibold">Sin productos ni servicios aún</h3>
 				<p class="max-w-md text-body text-muted-foreground">
-					{nombre} todavía no cargó su catálogo. Escríbenos y te contamos qué tiene para vos.
+					{nombre} todavía no cargó su catálogo. Escríbenos y te contamos qué tiene para ti.
 				</p>
 				{#if whatsapp}
 					<LandingButton href={whatsapp} icon={MessageCircle} class="mt-1">

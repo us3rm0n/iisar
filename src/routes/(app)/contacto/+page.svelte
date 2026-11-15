@@ -18,7 +18,7 @@
 	<PageHeader
 		class="mb-8"
 		title="Contacto"
-		description="Escribinos y te respondemos por correo. Atendemos Ecuador en español."
+		description="Escríbenos y te respondemos por correo. Atendemos Ecuador en español."
 	/>
 
 	<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -61,21 +61,22 @@
 		<h3>Qué escribirnos</h3>
 		<ul>
 			<li>
-				<strong>Quiero registrar mi negocio.</strong> Creá una cuenta en el sitio y seguí el proceso de
+				<strong>Quiero registrar mi negocio.</strong> Crea una cuenta en el sitio y sigue el proceso de
 				registro; el aviso aparece en tu panel.
 			</li>
 			<li>
-				<strong>Consulta sobre mi suscripción o comprobante.</strong> Indicá el nombre del negocio y el
+				<strong>Consulta sobre mi suscripción o comprobante.</strong> Indica el nombre del negocio y el
 				correo de la cuenta.
 			</li>
 			<li>
-				<strong>Un dato está mal o quiero editar mi ficha.</strong> Entrá a tu panel y corregilo vos mismo;
-				si no podés, escribinos.
+				<strong>Un dato está mal o quiero editar mi ficha.</strong> Entra a tu panel y corrígelo tú mismo;
+				si no puedes, escríbenos.
 			</li>
 			<li>
-				<strong>Reportar contenido ajeno o un problema del sitio.</strong> Contá qué página es y qué falla.
+				<strong>Reportar contenido ajeno o un problema del sitio.</strong> Cuenta qué página es y qué
+				falla.
 			</li>
-			<li><strong>Publicidad.</strong> Escribinos al mismo correo con el asunto «Publicidad».</li>
+			<li><strong>Publicidad.</strong> Escríbenos al mismo correo con el asunto «Publicidad».</li>
 		</ul>
 
 		<h3>Antes de escribir</h3>

@@ -140,8 +140,11 @@
 					<CardDescription
 						>Nadie ha registrado un negocio, artista o lugar en {provincia.nombre} todavía.</CardDescription
 					>
-					<Button href="/dashboard" size="sm" class="mt-1 h-11 w-full sm:h-8 sm:w-auto"
-						>Registrar el mío</Button
+					<Button
+						href="/dashboard"
+						data-sveltekit-reload
+						size="sm"
+						class="mt-1 h-11 w-full sm:h-8 sm:w-auto">Registrar el mío</Button
 					>
 				</CardContent>
 			</Card>

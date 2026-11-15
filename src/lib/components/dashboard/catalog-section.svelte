@@ -55,7 +55,9 @@
 				tipos={catalog.tipos}
 				editing={catalog.editingId !== null}
 				busy={catalog.saving}
+				uploading={catalog.uploading}
 				error={catalog.error}
+				onupload={catalog.uploadImage}
 				onsubmit={catalog.save}
 				oncancel={catalog.cancel}
 			/>

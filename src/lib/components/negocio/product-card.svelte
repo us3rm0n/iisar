@@ -9,12 +9,7 @@
 
 <article class="flex h-full flex-col overflow-hidden rounded-lg border border-primary/20 bg-card">
 	{#if product.imagen_url}
-		<img
-			src={product.imagen_url}
-			alt={product.nombre}
-			class="aspect-4/3 w-full object-cover"
-			loading="lazy"
-		/>
+		<img src={product.imagen_url} alt="" class="aspect-4/3 w-full object-cover" loading="lazy" />
 	{/if}
 	<div class="flex flex-1 flex-col gap-2 p-5">
 		<div class="flex items-start justify-between gap-3">

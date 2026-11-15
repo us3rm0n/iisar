@@ -95,9 +95,9 @@
 	<div class="prose-content mb-8">
 		<h3>Cómo se publica una ficha</h3>
 		<ol>
-			<li>Creás una cuenta con tu correo.</li>
-			<li>Registrás tu negocio con categoría, ciudad y contacto.</li>
-			<li>Elegís un plan, pagás por adelantado y subís el comprobante.</li>
+			<li>Creas una cuenta con tu correo.</li>
+			<li>Registras tu negocio con categoría, ciudad y contacto.</li>
+			<li>Eliges un plan, pagas por adelantado y envías el comprobante.</li>
 			<li>El webmaster revisa y aprueba; tu página queda activa con tu propia URL.</li>
 		</ol>
 		<p>
@@ -107,5 +107,5 @@
 		</p>
 	</div>
 
-	<Button href="/contacto" size="lg" class="h-11 px-4">Escribinos</Button>
+	<Button href="/contacto" size="lg" class="h-11 px-4">Escríbenos</Button>
 </div>

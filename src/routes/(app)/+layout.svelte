@@ -90,6 +90,7 @@
 				{@const Icon = icons[item.icon]}
 				<Button
 					href={item.href}
+					aria-current={page.url.pathname === item.href ? 'page' : undefined}
 					data-sveltekit-reload={isContentHref(item.href) ? undefined : ''}
 					variant={item.primary ? 'pill' : 'ghost'}
 					class={item.primary ? 'px-4' : 'h-11 min-w-11 px-3'}

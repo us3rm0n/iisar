@@ -19,8 +19,8 @@ export async function fetchProvinceBody(
 	return { body: (data as { body: string } | null)?.body ?? null, error: null };
 }
 
-const PERMISSION_ERROR = 'No tenés permiso para editar este contenido.';
-const GENERIC_SAVE_ERROR = 'No se pudo guardar el contenido. Intentá de nuevo en unos minutos.';
+const PERMISSION_ERROR = 'No tienes permiso para editar este contenido.';
+const GENERIC_SAVE_ERROR = 'No se pudo guardar el contenido. Inténtalo de nuevo en unos minutos.';
 
 /**
  * Saves the article (upsert by province). RLS is the real permission: a non-webmaster `update`
