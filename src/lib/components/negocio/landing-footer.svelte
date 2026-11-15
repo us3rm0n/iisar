@@ -2,7 +2,7 @@
 	import { ArrowLeft } from '@lucide/svelte';
 	import { initials } from '$lib/utils/brand';
 
-	let { nombre, slug }: { nombre: string; slug: string } = $props();
+	let { nombre }: { nombre: string } = $props();
 </script>
 
 <footer class="border-t bg-foreground text-background">
@@ -17,8 +17,8 @@
 			{nombre}
 		</span>
 		<p class="text-caption opacity-80">
-			© {new Date().getFullYear()} · <span class="font-mono">{slug}.iisar.com</span> · página creada
-			con
+			© {new Date().getFullYear()}
+			{nombre} · página creada con
 			<a
 				href="/"
 				class="inline-flex min-h-11 min-w-11 items-center justify-center font-medium underline"

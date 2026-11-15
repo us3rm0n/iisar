@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { supabase } from '$lib/supabase';
 	import { goto } from '$app/navigation';
+	import { authErrorMessage } from '$lib/auth-errors';
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
 	import FormField from '$lib/components/form-field.svelte';
@@ -24,16 +25,19 @@
 		});
 		loading = false;
 		if (error) {
-			err = error.message;
+			err = authErrorMessage(error);
 			return;
 		}
 		if (data.user) {
-			// enable_confirmations=false => sesión inmediata
+			// Without email confirmation Supabase signs the user in right away.
 			if (data.session) {
 				msg = 'Cuenta creada. Redirigiendo...';
 				setTimeout(() => goto('/dashboard'), 600);
 			} else {
-				msg = 'Cuenta creada. Revisa Mailpit http://127.0.0.1:54324 y luego inicia sesión.';
+				msg =
+					'Cuenta creada. Te enviamos un correo a ' +
+					email +
+					': abre el enlace para confirmarla y luego inicia sesión.';
 			}
 		}
 	}
@@ -55,6 +59,7 @@
 			label="Email"
 			bind:value={email}
 			placeholder="tu@email.com"
+			autocomplete="email"
 			required
 		/>
 		<FormField
@@ -63,6 +68,7 @@
 			label="Contraseña"
 			bind:value={password}
 			placeholder="••••••••"
+			autocomplete="new-password"
 			required
 			minlength={6}
 		>

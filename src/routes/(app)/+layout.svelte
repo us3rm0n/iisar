@@ -142,9 +142,8 @@
 				{/each}
 			</ul>
 		</nav>
-		<div class="flex flex-col justify-between gap-2 text-sm text-muted-foreground sm:flex-row">
-			<span>© {new Date().getFullYear()} iisar — Directorio de negocios</span>
-			<span class="text-xs">Slug MVP · futuro <code>negocio.iisar.com</code></span>
-		</div>
+		<p class="text-sm text-muted-foreground">
+			© {new Date().getFullYear()} iisar — Directorio de negocios
+		</p>
 	</div>
 </footer>

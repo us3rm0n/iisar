@@ -15,7 +15,6 @@
 		CardHeader,
 		CardTitle
 	} from '$lib/components/ui/card';
-	import { Separator } from '$lib/components/ui/separator';
 	import { Dashboard } from '$lib/dashboard/dashboard.svelte';
 	import { signOut } from '$lib/dashboard/repository';
 
@@ -50,7 +49,7 @@
 			<CardHeader>
 				<CardTitle class="text-title">Inicia sesión para crear tu negocio</CardTitle>
 				<CardDescription class="text-body">
-					Frontend ya disponible — prueba 7 días automática.
+					Crea tu cuenta gratis y publica tu negocio con 7 días de prueba.
 				</CardDescription>
 			</CardHeader>
 			<CardContent class="flex flex-wrap gap-2">
@@ -73,7 +72,7 @@
 			/>
 		{:else}
 			{#if dashboard.formMessage}
-				<p class="rounded-lg bg-muted px-3 py-2 text-body">{dashboard.formMessage}</p>
+				<p class="rounded-lg bg-muted px-3 py-2 text-body" role="status">{dashboard.formMessage}</p>
 			{/if}
 			<p class="text-caption text-muted-foreground">
 				Cada cuenta puede tener un solo negocio. Usa «Editar» para cambiar sus datos.
@@ -108,12 +107,6 @@
 				<CatalogSection {business} />
 			{/each}
 		{/if}
-		<BillingNotice />
+		<BillingNotice businessName={dashboard.businesses[0]?.nombre} email={dashboard.user.email} />
 	{/if}
-
-	<Separator />
-	<p class="text-caption text-muted-foreground">
-		Tablas: <code>businesses</code> <code>subscriptions type='prueba'</code> 7d · Buckets
-		<code>business-assets</code> / <code>comprobantes</code>
-	</p>
 </div>

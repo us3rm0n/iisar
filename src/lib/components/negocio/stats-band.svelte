@@ -14,7 +14,7 @@
 		{#each stats as stat (stat.id)}
 			<div class="text-center">
 				<dt class="text-display font-bold">{stat.valor}</dt>
-				<dd class="mt-1 text-caption tracking-widest uppercase opacity-80">{stat.etiqueta}</dd>
+				<dd class="mt-1 text-caption tracking-widest uppercase">{stat.etiqueta}</dd>
 			</div>
 		{/each}
 	</dl>

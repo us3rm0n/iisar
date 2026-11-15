@@ -102,11 +102,7 @@
 
 		<Separator />
 		<p class="text-caption text-muted-foreground">
-			Studio local:
-			<a class="inline-flex min-h-11 items-center underline" href="http://127.0.0.1:54323"
-				>http://127.0.0.1:54323</a
-			>
-			y <code class={snippet}>npx supabase status</code>
+			Ejecuta estas consultas en el SQL Editor del proyecto en el panel de Supabase.
 		</p>
 	</div>
 {:else if access === 'loading'}

@@ -1,6 +1,15 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Search, MapPin, Waves, Mountain, TreePalm, Compass, Sparkles } from '@lucide/svelte';
+	import {
+		ArrowRight,
+		Search,
+		MapPin,
+		Waves,
+		Mountain,
+		TreePalm,
+		Compass,
+		Sparkles
+	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
 	import { PROVINCIAL_CAPITALS } from '$lib/search/capitals';
@@ -25,14 +34,10 @@
 		hasActiveFilters = false
 	}: Props = $props();
 
-	// svelte-ignore state_referenced_locally
-	let q = $state(currentQ);
+	// Follows the URL query on navigation; typing overrides it until the next one.
+	let q = $derived(currentQ);
 	let listOpen = $state(false);
 	let activeIndex = $state(-1);
-
-	$effect(() => {
-		q = currentQ;
-	});
 
 	const places = $derived(
 		buildPlaceIndex({
@@ -46,6 +51,13 @@
 	const queryText = $derived(q.trim());
 	const suggesting = $derived(listOpen && normalizeText(q).length >= 2);
 	const optionCount = $derived(matches.length + 1);
+	const LIST_ID = 'hero-suggestions-list';
+	// Announces the highlighted suggestion to screen readers while focus stays in the input.
+	const activeId = $derived(
+		suggesting && activeIndex >= 0 && activeIndex < optionCount
+			? `hero-option-${activeIndex}`
+			: undefined
+	);
 
 	async function go(href: string) {
 		listOpen = false;
@@ -157,11 +169,13 @@
 				class="flex w-full items-center gap-2 rounded-full border border-border bg-background p-1.5 shadow-xs transition-shadow focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/40"
 			>
 				<div class="relative flex flex-1 items-center">
+					<label for="hero-q" class="sr-only">Buscar negocios o lugares</label>
 					<Search
 						class="pointer-events-none absolute left-3.5 size-4 text-muted-foreground"
 						aria-hidden="true"
 					/>
 					<input
+						id="hero-q"
 						name="q"
 						bind:value={q}
 						oninput={onInput}
@@ -172,7 +186,8 @@
 						role="combobox"
 						aria-expanded={suggesting}
 						aria-autocomplete="list"
-						aria-controls={suggesting ? 'hero-suggestions-list' : undefined}
+						aria-controls={suggesting ? LIST_ID : undefined}
+						aria-activedescendant={activeId}
 						class="h-11 w-full rounded-full border-0 bg-transparent pr-3 pl-10 text-body text-foreground outline-none placeholder:text-muted-foreground"
 					/>
 				</div>
@@ -186,7 +201,7 @@
 			<!-- Suggestions popover -->
 			{#if suggesting}
 				<ul
-					id="hero-suggestions-list"
+					id={LIST_ID}
 					role="listbox"
 					aria-label="Sugerencias de búsqueda"
 					class="absolute top-full right-0 left-0 z-30 mt-2 overflow-hidden rounded-xl border border-border bg-card p-1 text-left shadow-lg"
@@ -194,6 +209,7 @@
 				>
 					{#each matches as place, index (place.kind + place.name)}
 						<li
+							id="hero-option-{index}"
 							role="option"
 							aria-selected={index === activeIndex}
 							class="flex min-h-11 cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-body text-card-foreground transition-colors hover:bg-muted aria-selected:bg-muted"
@@ -213,6 +229,7 @@
 					{/each}
 
 					<li
+						id="hero-option-{matches.length}"
 						role="option"
 						aria-selected={matches.length === activeIndex}
 						class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-body text-foreground transition-colors hover:bg-muted aria-selected:bg-muted {matches.length >
@@ -223,7 +240,9 @@
 						onkeydown={() => {}}
 					>
 						<Search class="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-						<span class="min-w-0">Buscar «<strong class="font-semibold">{queryText}</strong>» en negocios y servicios</span>
+						<span class="min-w-0"
+							>Buscar «<strong class="font-semibold">{queryText}</strong>» en negocios y servicios</span
+						>
 					</li>
 				</ul>
 			{/if}
@@ -236,7 +255,7 @@
 				{#each categories.slice(0, 6) as cat (cat.slug)}
 					<a
 						href="/?categoria={cat.slug}"
-						class="rounded-full border border-border/80 bg-background/60 px-3 py-1 text-caption text-foreground transition-colors hover:bg-muted"
+						class="inline-flex min-h-11 items-center rounded-full border border-border/80 bg-background/60 px-4 text-caption text-foreground transition-colors hover:bg-muted"
 					>
 						{cat.nombre}
 					</a>
@@ -252,9 +271,9 @@
 				<h2 class="text-body font-semibold text-foreground">Explora Ecuador por región</h2>
 				<a
 					href="/ecuador"
-					class="text-caption font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+					class="inline-flex min-h-11 items-center gap-1 text-caption font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
 				>
-					Ver las 24 provincias $\rightarrow$
+					Ver las 24 provincias <ArrowRight class="size-3.5" aria-hidden="true" />
 				</a>
 			</div>
 

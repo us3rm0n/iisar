@@ -15,7 +15,7 @@
 			>Escribir por WhatsApp</LandingButton
 		>
 		{#if location}
-			<p class="mt-5 flex items-center justify-center gap-1.5 text-body opacity-80">
+			<p class="mt-5 flex items-center justify-center gap-1.5 text-body">
 				<MapPin class="size-4" aria-hidden="true" />
 				{location}
 			</p>

@@ -64,35 +64,37 @@
 		showCatalog={products.length > 0}
 		{whatsapp}
 	/>
-	<LandingHero
-		nombre={business.nombre}
-		eyebrow={heroEyebrow([categoryName, tipoLabel(business.tipo), location])}
-		blurb={businessBlurb(business)}
-		coverUrl={business.cover_url}
-		{whatsapp}
-		{tel}
-	/>
-	{#if stats.length}<StatsBand {stats} />{/if}
-
-	<div id="contenido">
-		{#if data.ads.length}
-			<p
-				class="mx-auto flex max-w-6xl items-center gap-2 border-b px-4 py-2 text-caption text-muted-foreground sm:px-6 lg:px-8"
-			>
-				<Megaphone class="size-3.5" aria-hidden="true" /> Publicidad
-			</p>
-		{/if}
-		{#if hasStory}<StorySection mision={business.mision} vision={business.vision} />{/if}
-		<CatalogSection
-			title={catalogTitle(business.tipo)}
-			{products}
+	<main id="contenido" tabindex="-1" class="outline-none">
+		<LandingHero
 			nombre={business.nombre}
-			contacto={business.contacto}
+			eyebrow={heroEyebrow([categoryName, tipoLabel(business.tipo), location])}
+			blurb={businessBlurb(business)}
+			coverUrl={business.cover_url}
 			{whatsapp}
+			{tel}
 		/>
-		{#if highlights.length}<HighlightsBand {highlights} />{/if}
-		{#if whatsapp}<ContactCta {whatsapp} {location} />{/if}
-	</div>
+		{#if stats.length}<StatsBand {stats} />{/if}
 
-	<LandingFooter nombre={business.nombre} slug={business.slug} />
+		<div>
+			{#if data.ads.length}
+				<p
+					class="mx-auto flex max-w-6xl items-center gap-2 border-b px-4 py-2 text-caption text-muted-foreground sm:px-6 lg:px-8"
+				>
+					<Megaphone class="size-3.5" aria-hidden="true" /> Publicidad
+				</p>
+			{/if}
+			{#if hasStory}<StorySection mision={business.mision} vision={business.vision} />{/if}
+			<CatalogSection
+				title={catalogTitle(business.tipo)}
+				{products}
+				nombre={business.nombre}
+				contacto={business.contacto}
+				{whatsapp}
+			/>
+			{#if highlights.length}<HighlightsBand {highlights} />{/if}
+			{#if whatsapp}<ContactCta {whatsapp} {location} />{/if}
+		</div>
+	</main>
+
+	<LandingFooter nombre={business.nombre} />
 </div>

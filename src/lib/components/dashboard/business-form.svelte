@@ -66,9 +66,9 @@
 		</CardTitle>
 		{#if !editing}
 			<CardDescription class="text-body">
-				Al crearlo se activa prueba <Badge>7 días</Badge> con <code>has_active_subscription</code>.
-				Artista solo servicios, negocio productos+servicios, lugar es un sitio (hotel, mirador,
-				atractivo) con dueño o gestor.
+				Al crearlo empieza tu prueba gratis de <Badge>7 días</Badge>. Un negocio ofrece productos y
+				servicios; un artista, servicios; un lugar es un sitio con dueño o gestor (hotel, mirador,
+				atractivo).
 			</CardDescription>
 		{/if}
 	</CardHeader>
@@ -104,7 +104,12 @@
 					placeholder={meta.nombrePlaceholder}
 					required
 				/>
-				<FormField id="slug" label="Slug" bind:value={form.slug} placeholder={meta.slugPlaceholder}>
+				<FormField
+					id="slug"
+					label="Dirección de tu página"
+					bind:value={form.slug}
+					placeholder={meta.slugPlaceholder}
+				>
 					{#snippet hint()}/negocio/{resolveSlug(form) || '...'}{/snippet}
 				</FormField>
 			</div>
@@ -137,7 +142,9 @@
 				<FormField id="ciudad" label="Ciudad" bind:value={form.ciudad} placeholder="Macas" />
 				<FormField
 					id="contacto"
-					label="Contacto (wa/tel)"
+					type="tel"
+					autocomplete="tel"
+					label="Teléfono o WhatsApp"
 					bind:value={form.contacto}
 					placeholder="0991234567"
 				/>
@@ -154,18 +161,18 @@
 					<ProvinceOptions groups={provinciaGroups} />
 				</SelectField>
 				<p class="text-caption text-muted-foreground">
-					Opcional · se muestra en la landing y en <code>/ecuador/[provincia]</code>.
+					Opcional · aparece en tu página y en la guía de la provincia.
 				</p>
 			</div>
 
 			<fieldset class="grid gap-1.5">
-				<legend class="text-caption font-medium text-muted-foreground">Color marca</legend>
+				<legend class="text-caption font-medium text-muted-foreground">Color de marca</legend>
 				<div class="flex items-center gap-2">
 					<input
 						id="primaryColorPicker"
 						type="color"
 						bind:value={form.primaryColor}
-						aria-label="Selector color marca"
+						aria-label="Elegir color de marca"
 						class="h-11 w-16 shrink-0 cursor-pointer rounded-lg border border-input bg-background p-1"
 					/>
 					<FormField
@@ -181,10 +188,12 @@
 			</fieldset>
 
 			{#if error}
-				<p class="rounded-lg bg-destructive/10 px-3 py-2 text-body text-destructive">{error}</p>
+				<p class="rounded-lg bg-destructive/10 px-3 py-2 text-body text-destructive" role="alert">
+					{error}
+				</p>
 			{/if}
 			{#if message}
-				<p class="rounded-lg bg-muted px-3 py-2 text-body">{message}</p>
+				<p class="rounded-lg bg-muted px-3 py-2 text-body" role="status">{message}</p>
 			{/if}
 			<div class="flex flex-col gap-2 sm:flex-row">
 				<Button type="submit" variant="pill" disabled={busy} class="w-full sm:w-auto">
@@ -193,7 +202,7 @@
 						{busy ? 'Guardando...' : 'Guardar cambios'}
 					{:else}
 						<Plus aria-hidden="true" />
-						{busy ? 'Creando...' : 'Crear negocio + trial 7d'}
+						{busy ? 'Creando...' : 'Crear y empezar la prueba gratis'}
 					{/if}
 				</Button>
 				{#if editing && oncancel}

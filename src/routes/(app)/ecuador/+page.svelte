@@ -34,7 +34,12 @@
 	></PageHeader>
 
 	{#each provincesByRegion as region (region.region)}
-		<section class="mb-10" aria-labelledby="region-{region.region}-heading">
+		<!-- `id` is the target of the region cards on the home page (`/ecuador#region-costa`). -->
+		<section
+			id="region-{region.region}"
+			class="mb-10 scroll-mt-20"
+			aria-labelledby="region-{region.region}-heading"
+		>
 			<h2
 				id="region-{region.region}-heading"
 				class="mb-4 flex items-center gap-2 text-title font-semibold text-foreground"

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { HTMLInputAttributes } from 'svelte/elements';
 	import { Input } from '$lib/components/ui/input';
 	import { cn } from '$lib/utils';
 
@@ -9,8 +10,12 @@
 		value?: string;
 		placeholder?: string;
 		required?: boolean;
-		type?: 'text' | 'email' | 'password';
+		type?: 'text' | 'email' | 'password' | 'tel' | 'url';
+		/** Picks the mobile keyboard (`decimal` for prices, `numeric` for whole numbers). */
+		inputmode?: HTMLInputAttributes['inputmode'];
 		minlength?: number;
+		/** Lets browsers and password managers fill the field (`email`, `current-password`...). */
+		autocomplete?: HTMLInputAttributes['autocomplete'];
 		/** Keep the label for assistive tech only. */
 		hideLabel?: boolean;
 		class?: string;
@@ -30,8 +35,12 @@
 		placeholder,
 		required,
 		type = 'text',
-		minlength
+		minlength,
+		autocomplete,
+		inputmode
 	}: Props = $props();
+
+	const hintId = $derived(hint ? `${id}-hint` : undefined);
 </script>
 
 <div class={cn('flex flex-col gap-1.5', className)}>
@@ -49,8 +58,11 @@
 		{placeholder}
 		{required}
 		{minlength}
+		{autocomplete}
+		{inputmode}
+		aria-describedby={hintId}
 	/>
 	{#if hint}
-		<p class="text-caption text-muted-foreground">{@render hint()}</p>
+		<p id={hintId} class="text-caption text-muted-foreground">{@render hint()}</p>
 	{/if}
 </div>

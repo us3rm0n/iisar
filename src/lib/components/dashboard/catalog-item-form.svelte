@@ -63,16 +63,25 @@
 	<div class="grid gap-4 sm:grid-cols-3">
 		<FormField
 			id="{idPrefix}-precio"
+			inputmode="decimal"
 			label="Precio estimado"
 			bind:value={form.precio}
 			placeholder="4,50"
 		/>
 		<FormField id="{idPrefix}-moneda" label="Moneda" bind:value={form.moneda} placeholder="USD" />
-		<FormField id="{idPrefix}-orden" label="Orden" bind:value={form.orden} placeholder="0" />
+		<FormField
+			id="{idPrefix}-orden"
+			inputmode="numeric"
+			label="Orden"
+			bind:value={form.orden}
+			placeholder="0"
+		/>
 	</div>
 
 	<FormField
 		id="{idPrefix}-imagen"
+		type="url"
+		inputmode="url"
 		label="Imagen (URL)"
 		bind:value={form.imagenUrl}
 		placeholder="https://..."

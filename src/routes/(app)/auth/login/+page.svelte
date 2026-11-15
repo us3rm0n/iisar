@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { supabase } from '$lib/supabase';
 	import { goto } from '$app/navigation';
+	import { authErrorMessage } from '$lib/auth-errors';
 	import { Button } from '$lib/components/ui/button';
 	import FormField from '$lib/components/form-field.svelte';
 	import PageHeader from '$lib/components/page-header.svelte';
@@ -17,7 +18,7 @@
 		const { error } = await supabase.auth.signInWithPassword({ email, password });
 		loading = false;
 		if (error) {
-			err = error.message;
+			err = authErrorMessage(error);
 			return;
 		}
 		goto('/dashboard');
@@ -36,6 +37,7 @@
 			label="Email"
 			bind:value={email}
 			placeholder="tu@email.com"
+			autocomplete="email"
 			required
 		/>
 		<FormField
@@ -44,8 +46,14 @@
 			label="Contraseña"
 			bind:value={password}
 			placeholder="••••••••"
+			autocomplete="current-password"
 			required
 		/>
+		<a
+			href="/auth/recuperar"
+			class="-mt-2 inline-flex min-h-11 w-fit items-center text-body font-medium text-foreground underline underline-offset-4"
+			>¿Olvidaste tu contraseña?</a
+		>
 		{#if err}
 			<p class="rounded-lg bg-destructive/10 px-3 py-2 text-body text-destructive" role="alert">
 				{err}
