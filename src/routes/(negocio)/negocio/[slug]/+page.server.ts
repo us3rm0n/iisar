@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	// Las tres son independientes, así que van en paralelo. Las bandas son
 	// decoración: si fallan la landing se renderiza igual, sin ellas, en vez de
 	// caer en 500 por un dato accesorio (mismo criterio que las provincias en el home).
-	const [productos, stats, highlights, ads] = await Promise.all([
+	const [productos, stats, highlights] = await Promise.all([
 		supabase
 			.from('products_services')
 			.select('id,nombre,descripcion,precio_estimado,moneda,tipo,imagen_url')
@@ -33,13 +33,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			.from('business_highlights')
 			.select('id,titulo,descripcion,orden')
 			.eq('business_id', business.id)
-			.order('orden'),
-		supabase
-			.from('ad_slots')
-			.select('id')
-			.eq('ubicacion', 'business_page')
-			.eq('activo', true)
-			.limit(1)
+			.order('orden')
 	]);
 
 	if (stats.error) console.error('landing: business_stats lookup failed', stats.error);
@@ -50,7 +44,6 @@ export const load: PageServerLoad = async ({ params }) => {
 		business,
 		productos: productos.data ?? [],
 		stats: stats.data ?? [],
-		highlights: highlights.data ?? [],
-		ads: ads.data ?? []
+		highlights: highlights.data ?? []
 	};
 };

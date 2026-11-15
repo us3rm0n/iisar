@@ -7,7 +7,6 @@ import {
 	itemToCatalogForm,
 	validateCatalogForm
 } from '$lib/utils/catalog-form';
-import { validateImageFile } from '$lib/utils/image-upload';
 import * as repository from './repository';
 
 const errorMessage = (e: unknown) => (e instanceof Error ? e.message : 'Error desconocido');
@@ -24,8 +23,6 @@ export class Catalog {
 	editingId = $state<string | null>(null);
 	form = $state(emptyCatalogForm('negocio'));
 	saving = $state(false);
-	/** True while a photo picked in the form is being uploaded. */
-	uploading = $state(false);
 	error = $state('');
 	message = $state('');
 
@@ -90,26 +87,6 @@ export class Catalog {
 			this.error = errorMessage(e);
 		} finally {
 			this.saving = false;
-		}
-	};
-
-	/** Uploads the photo picked in the form and points the item at it; saved with the form. */
-	uploadImage = async (file: File) => {
-		const business = this.business;
-		if (!business) return;
-		this.error = '';
-		const invalid = validateImageFile(file);
-		if (invalid) {
-			this.error = invalid;
-			return;
-		}
-		this.uploading = true;
-		try {
-			this.form.imagenUrl = await repository.uploadCatalogImage(business.id, file);
-		} catch (e) {
-			this.error = errorMessage(e);
-		} finally {
-			this.uploading = false;
 		}
 	};
 

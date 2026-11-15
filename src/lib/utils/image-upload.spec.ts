@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { IMAGE_MAX_BYTES, catalogImagePath, validateImageFile } from './image-upload';
+import { IMAGE_MAX_BYTES, imagePath, validateImageFile } from './image-upload';
 
 describe('validateImageFile', () => {
 	it('accepts JPG, PNG and WebP up to the size limit', () => {
@@ -15,9 +15,9 @@ describe('validateImageFile', () => {
 	});
 });
 
-describe('catalogImagePath', () => {
-	it('puts the photo in the folder of its business with the right extension', () => {
-		expect(catalogImagePath('b1', 'image/webp', 'abc')).toBe('catalog/b1/abc.webp');
-		expect(catalogImagePath('b1', 'image/jpeg', 'abc')).toBe('catalog/b1/abc.jpg');
+describe('imagePath', () => {
+	it('puts the image in its folder with the right extension', () => {
+		expect(imagePath('catalog/b1', 'image/webp', 'abc')).toBe('catalog/b1/abc.webp');
+		expect(imagePath('branding/u1', 'image/jpeg', 'abc')).toBe('branding/u1/abc.jpg');
 	});
 });

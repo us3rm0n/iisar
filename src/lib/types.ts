@@ -32,6 +32,8 @@ export type Business = {
 	estado: string;
 	primary_color: string | null;
 	accent_color: string | null;
+	logo_url?: string | null;
+	cover_url?: string | null;
 	category_id: string | null;
 	provincia_id: string | null;
 	/**

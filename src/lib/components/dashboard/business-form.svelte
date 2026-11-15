@@ -10,6 +10,7 @@
 		CardTitle
 	} from '$lib/components/ui/card';
 	import FormField from '$lib/components/form-field.svelte';
+	import ImageField from '$lib/components/image-field.svelte';
 	import SelectField from '$lib/components/select-field.svelte';
 	import type { Category } from '$lib/dashboard/repository';
 	import type { Provincia, ProvinciaRegion } from '$lib/types';
@@ -32,6 +33,8 @@
 		busy: boolean;
 		error: string;
 		message: string;
+		/** Uploads a picked logo or cover and resolves to its public URL. */
+		onupload: (file: File) => Promise<string>;
 		onsubmit: () => void;
 		oncancel?: () => void;
 	};
@@ -44,6 +47,7 @@
 		busy,
 		error,
 		message,
+		onupload,
 		onsubmit,
 		oncancel
 	}: Props = $props();
@@ -51,6 +55,10 @@
 	const editing = $derived(mode === 'edit');
 
 	const meta = $derived(TIPO_META[form.tipo]);
+
+	let logoUploading = $state(false);
+	let coverUploading = $state(false);
+	const uploading = $derived(logoUploading || coverUploading);
 
 	$effect(() => {
 		if (form.nombre && !form.slug) form.slug = resolveSlug(form);
@@ -187,6 +195,28 @@
 				</div>
 			</fieldset>
 
+			<div class="grid gap-4 sm:grid-cols-2">
+				<ImageField
+					id="{mode}-logo"
+					label="Logo"
+					hint="Se muestra junto al nombre de tu página."
+					bind:value={form.logoUrl}
+					bind:uploading={logoUploading}
+					upload={onupload}
+					disabled={busy}
+				/>
+				<ImageField
+					id="{mode}-cover"
+					label="Foto de portada"
+					hint="Fondo del encabezado de tu página."
+					previewClass="h-16 w-28"
+					bind:value={form.coverUrl}
+					bind:uploading={coverUploading}
+					upload={onupload}
+					disabled={busy}
+				/>
+			</div>
+
 			{#if error}
 				<p class="rounded-lg bg-destructive/10 px-3 py-2 text-body text-destructive" role="alert">
 					{error}
@@ -196,7 +226,7 @@
 				<p class="rounded-lg bg-muted px-3 py-2 text-body" role="status">{message}</p>
 			{/if}
 			<div class="flex flex-col gap-2 sm:flex-row">
-				<Button type="submit" variant="pill" disabled={busy} class="w-full sm:w-auto">
+				<Button type="submit" variant="pill" disabled={busy || uploading} class="w-full sm:w-auto">
 					{#if editing}
 						<Save aria-hidden="true" />
 						{busy ? 'Guardando...' : 'Guardar cambios'}

@@ -57,6 +57,9 @@ export type BusinessFormValues = {
 	categoryId: string;
 	provinciaId: string;
 	primaryColor: string;
+	/** Public URLs of the uploaded images; empty when there is none. */
+	logoUrl: string;
+	coverUrl: string;
 };
 
 export function emptyBusinessForm(): BusinessFormValues {
@@ -71,7 +74,9 @@ export function emptyBusinessForm(): BusinessFormValues {
 		contacto: '',
 		categoryId: '',
 		provinciaId: '',
-		primaryColor: DEFAULT_PRIMARY_COLOR
+		primaryColor: DEFAULT_PRIMARY_COLOR,
+		logoUrl: '',
+		coverUrl: ''
 	};
 }
 
@@ -85,7 +90,9 @@ export function resetBusinessForm(form: BusinessFormValues): BusinessFormValues 
 		vision: '',
 		mision: '',
 		contacto: '',
-		provinciaId: ''
+		provinciaId: '',
+		logoUrl: '',
+		coverUrl: ''
 	};
 }
 
@@ -112,7 +119,9 @@ function businessFields(form: BusinessFormValues) {
 		mision: isNegocio ? form.mision.trim() || null : null,
 		ciudad: form.ciudad.trim() || null,
 		contacto: form.contacto.trim() || null,
-		primary_color: form.primaryColor
+		primary_color: form.primaryColor,
+		logo_url: form.logoUrl || null,
+		cover_url: form.coverUrl || null
 	};
 }
 
@@ -138,7 +147,9 @@ export function businessToForm(business: Business): BusinessFormValues {
 		contacto: business.contacto ?? '',
 		categoryId: business.category_id ?? '',
 		provinciaId: business.provincia_id ?? '',
-		primaryColor: business.primary_color ?? DEFAULT_PRIMARY_COLOR
+		primaryColor: business.primary_color ?? DEFAULT_PRIMARY_COLOR,
+		logoUrl: business.logo_url ?? '',
+		coverUrl: business.cover_url ?? ''
 	};
 }
 

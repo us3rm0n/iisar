@@ -18,7 +18,7 @@ export function validateImageFile(file: { type: string; size: number }): string 
 	return null;
 }
 
-/** Storage path of a catalog photo: one folder per business, a unique name per upload. */
-export function catalogImagePath(businessId: string, type: string, uniqueId: string): string {
-	return `catalog/${businessId}/${uniqueId}.${EXTENSIONS[type] ?? 'jpg'}`;
+/** Storage path of an uploaded image: a folder per owner or business, a unique name per upload. */
+export function imagePath(folder: string, type: string, uniqueId: string): string {
+	return `${folder}/${uniqueId}.${EXTENSIONS[type] ?? 'jpg'}`;
 }

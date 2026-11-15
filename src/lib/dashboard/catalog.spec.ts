@@ -4,8 +4,7 @@ const repo = vi.hoisted(() => ({
 	fetchCatalog: vi.fn(),
 	insertCatalogItem: vi.fn(),
 	updateCatalogItem: vi.fn(),
-	deleteCatalogItem: vi.fn(),
-	uploadCatalogImage: vi.fn()
+	deleteCatalogItem: vi.fn()
 }));
 
 vi.mock('./repository', () => repo);
@@ -164,38 +163,5 @@ describe('Catalog.remove', () => {
 		catalog.startEdit(item());
 		await catalog.remove(item(), confirmAll);
 		expect(catalog.formOpen).toBe(false);
-	});
-});
-
-describe('uploadImage', () => {
-	const photo = (type = 'image/png', size = 100) => ({ type, size }) as File;
-
-	it('uploads the photo and points the form at its URL', async () => {
-		repo.uploadCatalogImage.mockResolvedValue('https://cdn.test/catalog/b1/x.png');
-		const catalog = await loaded();
-		catalog.startCreate();
-		await catalog.uploadImage(photo());
-		expect(repo.uploadCatalogImage).toHaveBeenCalledWith('b1', expect.anything());
-		expect(catalog.form.imagenUrl).toBe('https://cdn.test/catalog/b1/x.png');
-		expect(catalog.uploading).toBe(false);
-		expect(catalog.error).toBe('');
-	});
-
-	it('rejects an invalid file without uploading', async () => {
-		const catalog = await loaded();
-		catalog.startCreate();
-		await catalog.uploadImage(photo('application/pdf'));
-		expect(repo.uploadCatalogImage).not.toHaveBeenCalled();
-		expect(catalog.error).toMatch(/JPG, PNG o WebP/);
-	});
-
-	it('shows the error and keeps the previous image when the upload fails', async () => {
-		repo.uploadCatalogImage.mockRejectedValue(new Error('No se pudo subir la imagen.'));
-		const catalog = await loaded();
-		catalog.startEdit(item({ imagen_url: 'https://cdn.test/old.png' }));
-		await catalog.uploadImage(photo());
-		expect(catalog.form.imagenUrl).toBe('https://cdn.test/old.png');
-		expect(catalog.error).toMatch(/No se pudo subir/);
-		expect(catalog.uploading).toBe(false);
 	});
 });

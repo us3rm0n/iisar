@@ -86,6 +86,12 @@ export class Dashboard {
 		}
 	};
 
+	/** Uploads a logo or cover picked in a business form; the URL is saved with the form. */
+	uploadImage = (file: File): Promise<string> => {
+		if (!this.user) return Promise.reject(new Error('Inicia sesión para subir imágenes.'));
+		return repository.uploadImage(`branding/${this.user.id}`, file);
+	};
+
 	startEdit = (business: Business) => {
 		this.editingId = business.id;
 		this.editForm = businessToForm(business);

@@ -25,7 +25,8 @@ const filled = () => ({
 	contacto: ' 0991234567 ',
 	categoryId: 'cat-1',
 	provinciaId: 'prov-1',
-	primaryColor: '#112233'
+	primaryColor: '#112233',
+	logoUrl: 'https://cdn.test/logo.png'
 });
 
 describe('emptyBusinessForm', () => {
@@ -107,7 +108,9 @@ describe('buildBusinessPayload', () => {
 			ciudad: 'Macas',
 			contacto: '0991234567',
 			estado: 'activo',
-			primary_color: '#112233'
+			primary_color: '#112233',
+			logo_url: 'https://cdn.test/logo.png',
+			cover_url: null
 		});
 	});
 
@@ -177,6 +180,7 @@ const stored = (over: Partial<Business> = {}): Business => ({
 	estado: 'activo',
 	primary_color: '#112233',
 	accent_color: null,
+	cover_url: 'https://cdn.test/cover.webp',
 	category_id: 'cat-1',
 	provincia_id: 'prov-1',
 	...over
@@ -195,7 +199,9 @@ describe('businessToForm', () => {
 			contacto: '0991234567',
 			categoryId: 'cat-1',
 			provinciaId: 'prov-1',
-			primaryColor: '#112233'
+			primaryColor: '#112233',
+			logoUrl: '',
+			coverUrl: 'https://cdn.test/cover.webp'
 		});
 	});
 
@@ -249,7 +255,9 @@ describe('buildBusinessUpdatePayload', () => {
 			mision: business.mision,
 			ciudad: business.ciudad,
 			contacto: business.contacto,
-			primary_color: business.primary_color
+			primary_color: business.primary_color,
+			logo_url: null,
+			cover_url: business.cover_url
 		});
 	});
 });

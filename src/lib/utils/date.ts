@@ -8,5 +8,9 @@ export function daysLeft(fechaMaxima: string | Date): number {
 }
 
 export function formatDateShort(date: string | Date): string {
-	return new Date(date).toLocaleDateString('es-EC', { year: 'numeric', month: 'short', day: 'numeric' });
+	return new Date(date).toLocaleDateString('es-EC', {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric'
+	});
 }

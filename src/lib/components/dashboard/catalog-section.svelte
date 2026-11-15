@@ -9,6 +9,7 @@
 		CardTitle
 	} from '$lib/components/ui/card';
 	import { Catalog } from '$lib/dashboard/catalog.svelte';
+	import { uploadImage } from '$lib/dashboard/repository';
 	import type { Business } from '$lib/types';
 	import CatalogItem from './catalog-item.svelte';
 	import CatalogItemForm from './catalog-item-form.svelte';
@@ -55,9 +56,8 @@
 				tipos={catalog.tipos}
 				editing={catalog.editingId !== null}
 				busy={catalog.saving}
-				uploading={catalog.uploading}
 				error={catalog.error}
-				onupload={catalog.uploadImage}
+				onupload={(file) => uploadImage(`catalog/${business.id}`, file)}
 				onsubmit={catalog.save}
 				oncancel={catalog.cancel}
 			/>

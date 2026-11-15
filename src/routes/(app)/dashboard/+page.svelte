@@ -68,6 +68,7 @@
 				busy={dashboard.creating}
 				error={dashboard.formError}
 				message={dashboard.formMessage}
+				onupload={dashboard.uploadImage}
 				onsubmit={dashboard.create}
 			/>
 		{:else}
@@ -87,6 +88,7 @@
 				busy={dashboard.saving}
 				error={dashboard.editError}
 				message=""
+				onupload={dashboard.uploadImage}
 				onsubmit={dashboard.saveEdit}
 				oncancel={dashboard.cancelEdit}
 			/>

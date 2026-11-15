@@ -1,6 +1,5 @@
 <script lang="ts">
 	import AdsenseScript from '$lib/components/adsense-script.svelte';
-	import { Megaphone } from '@lucide/svelte';
 	import CatalogSection from '$lib/components/negocio/catalog-section.svelte';
 	import ContactCta from '$lib/components/negocio/contact-cta.svelte';
 	import HighlightsBand from '$lib/components/negocio/highlights-band.svelte';
@@ -76,13 +75,6 @@
 		{#if stats.length}<StatsBand {stats} />{/if}
 
 		<div>
-			{#if data.ads.length}
-				<p
-					class="mx-auto flex max-w-6xl items-center gap-2 border-b px-4 py-2 text-caption text-muted-foreground sm:px-6 lg:px-8"
-				>
-					<Megaphone class="size-3.5" aria-hidden="true" /> Publicidad
-				</p>
-			{/if}
 			{#if hasStory}<StorySection mision={business.mision} vision={business.vision} />{/if}
 			<CatalogSection
 				title={catalogTitle(business.tipo)}
