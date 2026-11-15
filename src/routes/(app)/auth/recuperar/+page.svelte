@@ -15,7 +15,7 @@
 		loading = true;
 		err = '';
 		const { error } = await supabase.auth.resetPasswordForEmail(email, {
-			redirectTo: `${location.origin}/auth/nueva-contrasena`
+			redirectTo: `${location.origin}/auth/new-password`
 		});
 		loading = false;
 		if (error) {
