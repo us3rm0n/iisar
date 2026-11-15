@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { heroSearch } from '$lib/search/hero-search.svelte';
 	import {
 		ArrowRight,
 		Search,
@@ -52,6 +54,23 @@
 	const suggesting = $derived(listOpen && normalizeText(q).length >= 2);
 	const optionCount = $derived(matches.length + 1);
 	const LIST_ID = 'hero-suggestions-list';
+
+	let searchBox = $state<HTMLElement | null>(null);
+
+	// Tells the header when this search box leaves the screen, so it can show its own button.
+	onMount(() => {
+		if (!searchBox) return;
+		// The sticky header (56px) covers the top of the viewport.
+		const observer = new IntersectionObserver(
+			([entry]) => (heroSearch.visible = entry.isIntersecting),
+			{ rootMargin: '-56px 0px 0px 0px' }
+		);
+		observer.observe(searchBox);
+		return () => {
+			observer.disconnect();
+			heroSearch.visible = true;
+		};
+	});
 	// Announces the highlighted suggestion to screen readers while focus stays in the input.
 	const activeId = $derived(
 		suggesting && activeIndex >= 0 && activeIndex < optionCount
@@ -159,7 +178,7 @@
 		</p>
 
 		<!-- Unified Smart Search Bar -->
-		<div class="relative mt-6 w-full max-w-xl">
+		<div bind:this={searchBox} class="relative mt-6 w-full max-w-xl">
 			<form
 				method="GET"
 				action="/"
@@ -181,7 +200,7 @@
 						oninput={onInput}
 						onkeydown={onKeydown}
 						onblur={() => (listOpen = false)}
-						placeholder="¿Qué buscas o a dónde vas? (ej. Cuenca, pizza, Baños, dentista)..."
+						placeholder="Ej.: Cuenca, pizza, dentista"
 						autocomplete="off"
 						role="combobox"
 						aria-expanded={suggesting}

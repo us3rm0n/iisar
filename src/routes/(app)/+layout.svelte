@@ -7,6 +7,7 @@
 	import { LayoutDashboard, ShieldCheck, LogIn, LogOut, MapPin, Search } from '@lucide/svelte';
 	import { PROVINCIAL_CAPITALS } from '$lib/search/capitals';
 	import { hasActiveFilters, parseFilters } from '$lib/search/filters';
+	import { heroSearch } from '$lib/search/hero-search.svelte';
 	import { buildPlaceIndex } from '$lib/search/places';
 	import { Session } from '$lib/session.svelte';
 	import { provideSession } from '$lib/session-context';
@@ -20,6 +21,9 @@
 	let searchButton = $state<HTMLElement | null>(null);
 	const filters = $derived(parseFilters(page.url.searchParams));
 	const filtersActive = $derived(hasActiveFilters(filters));
+	// On the home page the hero has its own search box: the header button only shows once the
+	// visitor scrolls past it (or while the panel is open), so there is one search at a time.
+	const showSearchButton = $derived(searchOpen || page.url.pathname !== '/' || !heroSearch.visible);
 	// Provinces and cities searchable from the header, built once per options change.
 	const places = $derived(
 		buildPlaceIndex({
@@ -68,24 +72,26 @@
 	<div class="mx-auto flex h-14 max-w-5xl items-center justify-between gap-2 px-4 sm:px-6 lg:px-8">
 		<a href="/" class="flex min-h-11 items-center text-title font-semibold">IISAR</a>
 		<nav class="flex items-center gap-1" aria-label="Principal">
-			<Button
-				bind:ref={searchButton}
-				variant="ghost"
-				class="relative h-11 min-w-11 px-3"
-				aria-expanded={searchOpen}
-				aria-controls={PANEL_ID}
-				onclick={() => (searchOpen = !searchOpen)}
-			>
-				<Search />
-				<span class="sr-only md:not-sr-only">Buscar</span>
-				{#if filtersActive}
-					<span
-						class="absolute top-2 right-2 size-2 rounded-full bg-primary md:right-1"
-						aria-hidden="true"
-					></span>
-					<span class="sr-only">filtros activos</span>
-				{/if}
-			</Button>
+			{#if showSearchButton}
+				<Button
+					bind:ref={searchButton}
+					variant="ghost"
+					class="relative h-11 min-w-11 px-3"
+					aria-expanded={searchOpen}
+					aria-controls={PANEL_ID}
+					onclick={() => (searchOpen = !searchOpen)}
+				>
+					<Search />
+					<span class="sr-only md:not-sr-only">Buscar</span>
+					{#if filtersActive}
+						<span
+							class="absolute top-2 right-2 size-2 rounded-full bg-primary md:right-1"
+							aria-hidden="true"
+						></span>
+						<span class="sr-only">filtros activos</span>
+					{/if}
+				</Button>
+			{/if}
 			{#each items as item (item.href)}
 				{@const Icon = icons[item.icon]}
 				<Button
