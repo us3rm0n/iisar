@@ -12,7 +12,7 @@ export const site = {
 	name: 'iisar',
 	tagline: 'Directorio de negocios y servicios',
 	/** Public origin. Confirm it matches the deployed domain before publishing the legal pages. */
-	origin: 'https://iisar.com',
+	origin: 'https://iisar.pages.dev',
 	/** Owner of the site and of the personal data it processes. */
 	owner: 'Vidal Juank',
 	contactEmail: 'us3rm0n@gmail.com',
