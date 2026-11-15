@@ -7,7 +7,7 @@
 	<title>Política de privacidad | IISAR</title>
 	<meta
 		name="description"
-		content="Qué datos recoge iisar, para qué los usa, qué cookies y publicidad carga y cómo ejercer tus derechos."
+		content="Qué datos recoge iisar, para qué los usa, qué cookies, analítica y publicidad carga y cómo ejercer tus derechos."
 	/>
 </svelte:head>
 
@@ -38,6 +38,12 @@
 				<strong>Sin cuenta.</strong> No creamos perfiles de visitantes anónimos. Guardamos en el servidor
 				los registros técnicos de conexión (dirección IP, navegador, páginas visitadas) para seguridad
 				y diagnóstico del servicio.
+			</li>
+			<li>
+				<strong>Estadísticas de uso.</strong> Mediante Google Analytics recogemos datos de navegación
+				de forma agregada: páginas visitadas, tiempo en el sitio, origen de la visita, tipo de dispositivo
+				y navegador, y una ubicación aproximada (país o ciudad). Google Analytics no nos muestra tu nombre
+				ni tu correo, y no lo usamos para identificarte.
 			</li>
 			<li>
 				<strong>Con cuenta.</strong> Tu dirección de correo electrónico y el identificador interno de
@@ -80,21 +86,38 @@
 				por el webmaster del sitio.
 			</li>
 			<li>
+				<strong>Medir y mejorar el sitio</strong>: saber qué páginas se visitan y cómo llegan los
+				visitantes, para decidir qué contenido mejorar.
+			</li>
+			<li>
 				<strong>Obligaciones legales</strong>: conservar registros de pago durante el plazo que
 				exija la ley.
 			</li>
 		</ul>
 		<p>
 			La base legal es tu <strong>consentimiento</strong> al registrarte y publicar una ficha, tu
-			<strong>ejecución del contrato</strong> para la suscripción y el
+			<strong>ejecución del contrato</strong> para la suscripción, nuestro
+			<strong>interés legítimo</strong> en medir el uso del sitio para las estadísticas, y el
 			<strong>cumplimiento de obligaciones legales</strong> para la conservación de registros.
 		</p>
 
-		<h3>4. Cookies y publicidad</h3>
+		<h3>4. Cookies, analítica y publicidad</h3>
 		<p>
 			El sitio usa cookies propias y de terceros. Las cookies propias (por ejemplo
 			<code>sb-*-auth-token</code>) guardan tu sesión iniciada y son necesarias para que funcione el
-			panel. Las de terceros miden y condicionan la publicidad.
+			panel. Las de terceros miden las visitas y condicionan la publicidad.
+		</p>
+		<p>
+			Para las estadísticas usamos <strong>Google Analytics</strong>, cargado mediante
+			<strong>Google Tag Manager</strong>. Google Analytics guarda cookies propias del sitio (por
+			ejemplo <code>_ga</code> y <code>_ga_*</code>, que duran hasta dos años) para distinguir
+			visitas y sesiones, y envía los datos de navegación a Google. Más información en
+			<a href="https://policies.google.com/technologies/partner-sites" {...externalLink}
+				>cómo usa Google la información de los sitios web de sus socios</a
+			>. Puedes impedir la medición bloqueando las cookies en tu navegador o instalando el
+			<a href="https://tools.google.com/dlpage/gaoptout" {...externalLink}
+				>complemento de inhabilitación de Google Analytics</a
+			>; el sitio sigue funcionando igual.
 		</p>
 		<p>
 			Este sitio publica anuncios mediante <strong>Google AdSense</strong>. Google y sus socios
@@ -133,11 +156,15 @@
 				propio tratamiento se rige por sus
 				<a href="https://policies.google.com/privacy" {...externalLink}>políticas de privacidad</a>.
 			</li>
+			<li>
+				<strong>Google Analytics y Google Tag Manager</strong> — estadísticas de uso del sitio, según
+				el apartado 4.
+			</li>
 		</ul>
 		<p>
 			Supabase y Cloudflare tratan tus datos solo para prestarnos el servicio y no los usan para sus
-			propios fines publicitarios. Google AdSense, en cambio, usa cookies y datos de navegación para
-			mostrar anuncios, como se explica en el apartado 4.
+			propios fines publicitarios. Google AdSense usa cookies y datos de navegación para mostrar
+			anuncios, y Google Analytics para medir las visitas, como se explica en el apartado 4.
 		</p>
 
 		<h3>6. Tus derechos</h3>

@@ -18,7 +18,7 @@ export const site = {
 	contactEmail: 'us3rm0n@gmail.com',
 	location: 'Macas, Morona Santiago, Ecuador',
 	/** Date shown by the legal pages. Bump it when their text changes. */
-	legalUpdated: '2 de octubre de 2026',
+	legalUpdated: '15 de noviembre de 2026',
 	/** Google AdSense publisher id. Also listed in `static/ads.txt`. */
 	adsense: { publisherId: 'ca-pub-3925338113009222' }
 } as const;
